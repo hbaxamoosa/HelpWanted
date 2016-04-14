@@ -1,15 +1,20 @@
-package com.baxamoosa.helpwanted;
+package com.baxamoosa.helpwanted.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.baxamoosa.helpwanted.BuildConfig;
+import com.baxamoosa.helpwanted.R;
+
+import timber.log.Timber;
 
 /**
  * An activity representing a single JobPosting detail screen. This
@@ -22,6 +27,11 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onCreate");
+        }
+
         setContentView(R.layout.activity_jobposting_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);

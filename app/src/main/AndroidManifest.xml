@@ -3,13 +3,14 @@
     package="com.baxamoosa.helpwanted">
 
     <application
+        android:name=".application.HelpWantedApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".JobPostingListActivity"
+            android:name=".ui.JobPostingListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,13 +20,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".JobPostingDetailActivity"
+            android:name=".ui.JobPostingDetailActivity"
             android:label="@string/title_jobposting_detail"
-            android:parentActivityName=".JobPostingListActivity"
+            android:parentActivityName=".ui.JobPostingListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.baxamoosa.helpwanted.JobPostingListActivity" />
+                android:value=".ui.JobPostingListActivity" />
         </activity>
     </application>
 

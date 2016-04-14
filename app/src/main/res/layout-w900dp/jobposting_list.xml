@@ -9,7 +9,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.baxamoosa.helpwanted.JobPostingListActivity">
+    tools:context=".ui.JobPostingListActivity">
 
     <!--
     This layout is a two-pane layout for the JobPostings
@@ -26,7 +26,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.baxamoosa.helpwanted.JobPostingListActivity"
+        tools:context=".ui.JobPostingListActivity"
         tools:listitem="@layout/jobposting_list_content" />
 
     <FrameLayout

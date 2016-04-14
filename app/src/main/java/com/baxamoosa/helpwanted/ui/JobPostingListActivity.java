@@ -1,24 +1,26 @@
-package com.baxamoosa.helpwanted;
+package com.baxamoosa.helpwanted.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
+import com.baxamoosa.helpwanted.BuildConfig;
+import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.dummy.DummyContent;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * An activity representing a list of JobPostings. This activity
@@ -39,6 +41,11 @@ public class JobPostingListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onCreate");
+        }
+
         setContentView(R.layout.activity_jobposting_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -1,15 +1,19 @@
-package com.baxamoosa.helpwanted;
+package com.baxamoosa.helpwanted.ui;
 
 import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.baxamoosa.helpwanted.BuildConfig;
+import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.dummy.DummyContent;
+
+import timber.log.Timber;
 
 /**
  * A fragment representing a single JobPosting detail screen.
@@ -39,6 +43,10 @@ public class JobPostingDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onCreate");
+        }
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment

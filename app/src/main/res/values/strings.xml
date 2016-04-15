@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">HelpWanted</string>
     <string name="title_jobposting_detail">JobPosting Detail</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Key name for storing location in SharedPreferences -->
+    <string name="default_zipcode">zipcode</string>
 </resources>

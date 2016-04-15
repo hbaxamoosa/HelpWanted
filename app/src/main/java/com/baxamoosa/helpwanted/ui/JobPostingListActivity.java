@@ -2,7 +2,9 @@ package com.baxamoosa.helpwanted.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,13 +12,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.dummy.DummyContent;
+import com.baxamoosa.helpwanted.utility.Utility;
 
 import java.util.List;
 
@@ -36,15 +43,27 @@ public class JobPostingListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+    public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        firstLoad = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // set a flag to track whether this is the first time the JobPostingsAdapter is being loaded into the app.
+        firstLoad = true;
+
         if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
         }
+
+        boolean isConnected = Utility.isNetworkAvailable(HelpWantedApplication.getAppContext());
 
         setContentView(R.layout.activity_jobposting_list);
 
@@ -72,8 +91,54 @@ public class JobPostingListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        if (savedInstanceState != null) {
+            // TODO: 4/14/16 do something
+        }
+
+        if (savedInstanceState == null) {
+            if (isConnected) {
+                // TODO: 4/14/16 do something here
+            }
+        } else {
+            // Timber.v(TAG + " (inside else) isConnected: " + isConnected);
+            Toast.makeText(this, "No network connection.", Toast.LENGTH_LONG).show();
+        }
+        // TODO: 4/14/16 add settings so user can pick location
+
+        // TODO: 4/14/16 add navigation drawer
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO: 4/14/16 do something here as well 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, Settings.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
     }

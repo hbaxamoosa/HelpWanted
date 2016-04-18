@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -40,11 +44,11 @@ import timber.log.Timber;
 public class JobPostingListActivity extends AppCompatActivity {
 
     /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
      */
     public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
     public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -65,11 +69,15 @@ public class JobPostingListActivity extends AppCompatActivity {
 
         boolean isConnected = Utility.isNetworkAvailable(HelpWantedApplication.getAppContext());
 
-        setContentView(R.layout.activity_jobposting_list);
+        setContentView(R.layout.activity_jobposting_list_drawer);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
+
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +87,13 @@ public class JobPostingListActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
 
         View recyclerView = findViewById(R.id.jobposting_list);
         assert recyclerView != null;
@@ -101,7 +116,9 @@ public class JobPostingListActivity extends AppCompatActivity {
                 // TODO: 4/14/16 do something here
             }
         } else {
-            // Timber.v(TAG + " (inside else) isConnected: " + isConnected);
+            if (BuildConfig.DEBUG) {
+                Timber.v("(inside else) isConnected: " + isConnected);
+            }
             Toast.makeText(this, "No network connection.", Toast.LENGTH_LONG).show();
         }
         // TODO: 4/14/16 add settings so user can pick location
@@ -125,22 +142,52 @@ public class JobPostingListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, Settings.class));
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(this, Settings.class));
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-    
+
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        menuItem.setChecked(true);
+                        Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
+
+                        if (menuItem.getTitle() == getString(R.string.job_posting)) {
+                            Timber.v("getString(R.string.job_posting: " + getString(R.string.job_posting));
+                            startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
+                        }
+                        if (menuItem.getTitle() == getString(R.string.my_jobs)) {
+                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
+                            startActivity(new Intent(getApplicationContext(), MyJobs.class));
+                        }
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     public class SimpleItemRecyclerViewAdapter

@@ -123,4 +123,9 @@
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
     <string name="server_client_id">YOUR_SERVER_CLIENT_ID</string>
+
+    <!-- CardView -->
+    <string name="imagetext_cardview_overlay">Image Overlay</string>
+    <string name="imagetext_cardview_title">Title</string>
+    <string name="imagetext_cardview_contents">This is a CardView widget. CardView widgets can have shadows and rounded corners.</string>
 </resources>

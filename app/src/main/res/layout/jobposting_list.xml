@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/jobposting_list"
     android:name="com.baxamoosa.helpwanted.JobPostingListFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ui.JobPostingListActivity"
-    tools:listitem="@layout/jobposting_list_content" />
+    tools:listitem="@layout/cardview_jobpost" />

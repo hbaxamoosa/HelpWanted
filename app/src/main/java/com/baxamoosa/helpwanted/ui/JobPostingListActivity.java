@@ -210,13 +210,14 @@ public class JobPostingListActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.jobposting_list_content, parent, false);
+                    .inflate(R.layout.cardview_jobpost, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+            holder.mOverlayTextView.setText(mValues.get(position).id);
             holder.mIdView.setText(mValues.get(position).id);
             holder.mContentView.setText(mValues.get(position).content);
 
@@ -249,6 +250,7 @@ public class JobPostingListActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
+            public final TextView mOverlayTextView;
             public final TextView mIdView;
             public final TextView mContentView;
             public DummyContent.DummyItem mItem;
@@ -256,6 +258,7 @@ public class JobPostingListActivity extends AppCompatActivity {
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
+                mOverlayTextView = (TextView) view.findViewById(R.id.overlaytext);
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }

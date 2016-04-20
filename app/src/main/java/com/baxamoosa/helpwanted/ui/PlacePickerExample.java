@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.adapter.PlacesAutoCompleteAdapter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -44,7 +45,9 @@ public class PlacePickerExample extends AppCompatActivity {
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
-                Timber.v("Place query did not complete. Error: " + places.getStatus().toString());
+                if (BuildConfig.DEBUG) {
+                    Timber.v("Place query did not complete. Error: " + places.getStatus().toString());
+                }
                 return;
             }
             // Selecting the first object buffer.
@@ -69,7 +72,7 @@ public class PlacePickerExample extends AppCompatActivity {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .build();
-        setContentView(R.layout.activity_placepicker);
+        setContentView(R.layout.activity_placepickerexample);
         builder = new PlacePicker.IntentBuilder();
         myLocation = (AutoCompleteTextView) findViewById(R.id.myLocation);
         mPlacesAdapter = new PlacesAutoCompleteAdapter(this, android.R.layout.simple_list_item_1,

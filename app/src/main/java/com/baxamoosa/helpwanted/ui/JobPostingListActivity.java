@@ -180,7 +180,7 @@ public class JobPostingListActivity extends AppCompatActivity {
                         }
                         if (menuItem.getTitle() == getString(R.string.google_account)) {
                             Timber.v("getString(R.string.my_jobs): " + getString(R.string.google_account));
-                            startActivity(new Intent(getApplicationContext(), GoogleAccount.class));
+                            startActivity(new Intent(getApplicationContext(), GoogleAccountExample.class));
                         }
                         mDrawerLayout.closeDrawers();
                         return true;

@@ -31,7 +31,7 @@
     <application
         android:name=".application.HelpWantedApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher_big"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -96,7 +96,7 @@
                 android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
         </activity>
         <activity
-            android:name=".ui.GoogleAccount"
+            android:name=".ui.GoogleAccountExample"
             android:label="@string/title_activity_google_accounts"
             android:parentActivityName=".ui.JobPostingListActivity"
             android:theme="@style/AppTheme.NoActionBar">

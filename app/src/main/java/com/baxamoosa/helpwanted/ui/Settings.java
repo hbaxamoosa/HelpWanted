@@ -48,7 +48,7 @@ public class Settings extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
 
-        // If we are using a PlacePicker location, we need to show attributions.
+        // If we are using a PlacePickerExample location, we need to show attributions.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mAttribution = new ImageView(this);
             mAttribution.setImageResource(R.drawable.powered_by_google_light);
@@ -156,13 +156,13 @@ public class Settings extends PreferenceActivity
 
         if (key.equals(getString(R.string.pref_location_key))) {
             // we've changed the location
-            // Wipe out any potential PlacePicker latlng values so that we can use this text entry.
+            // Wipe out any potential PlacePickerExample latlng values so that we can use this text entry.
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.pref_location_latitude));
             editor.remove(getString(R.string.pref_location_longitude));
             editor.commit();
 
-            // Remove attributions for our any PlacePicker locations.
+            // Remove attributions for our any PlacePickerExample locations.
             if (mAttribution != null) {
                 mAttribution.setVisibility(View.GONE);
             }
@@ -219,12 +219,12 @@ public class Settings extends PreferenceActivity
 
                 // Tell the SyncAdapter that we've changed the location, so that we can update
                 // our UI with new values. We need to do this manually because we are respondings
-                // to the PlacePicker widget result here instead of allowing the
+                // to the PlacePickerExample widget result here instead of allowing the
                 // LocationEditTextPreference to handle these changes and invoke our callbacks.
                 Preference locationPreference = findPreference(getString(R.string.pref_location_key));
                 onPreferenceChange(locationPreference, address);
 
-                // Add attributions for our new PlacePicker location.
+                // Add attributions for our new PlacePickerExample location.
                 if (mAttribution != null) {
                     mAttribution.setVisibility(View.VISIBLE);
                 } else {

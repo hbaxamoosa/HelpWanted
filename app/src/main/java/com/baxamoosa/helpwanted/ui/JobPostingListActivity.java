@@ -167,12 +167,20 @@ public class JobPostingListActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
-                            Timber.v("getString(R.string.job_posting: " + getString(R.string.job_posting));
+                            Timber.v("getString(R.string.job_posting): " + getString(R.string.job_posting));
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
-                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
+                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobs.class));
+                        }
+                        if (menuItem.getTitle() == getString(R.string.placepicker)) {
+                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.placepicker));
+                            startActivity(new Intent(getApplicationContext(), PlacePickerExample.class));
+                        }
+                        if (menuItem.getTitle() == getString(R.string.google_account)) {
+                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.google_account));
+                            startActivity(new Intent(getApplicationContext(), GoogleAccount.class));
                         }
                         mDrawerLayout.closeDrawers();
                         return true;

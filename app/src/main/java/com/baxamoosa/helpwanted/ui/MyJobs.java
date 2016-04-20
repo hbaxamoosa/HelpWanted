@@ -126,6 +126,14 @@ public class MyJobs extends AppCompatActivity {
                             Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobs.class));
                         }
+                        if (menuItem.getTitle() == getString(R.string.placepicker)) {
+                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.placepicker));
+                            startActivity(new Intent(getApplicationContext(), PlacePickerExample.class));
+                        }
+                        if (menuItem.getTitle() == getString(R.string.google_account)) {
+                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.google_account));
+                            startActivity(new Intent(getApplicationContext(), GoogleAccount.class));
+                        }
                         mDrawerLayout.closeDrawers();
                         return true;
                     }

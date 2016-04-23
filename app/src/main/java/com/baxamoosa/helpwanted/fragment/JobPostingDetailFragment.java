@@ -1,4 +1,4 @@
-package com.baxamoosa.helpwanted.ui;
+package com.baxamoosa.helpwanted.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.dummy.DummyContent;
+import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
+import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
 
 import timber.log.Timber;
 
@@ -23,8 +25,7 @@ import timber.log.Timber;
  */
 public class JobPostingDetailFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
+     * The fragment argument representing the item ID that this fragment represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
 

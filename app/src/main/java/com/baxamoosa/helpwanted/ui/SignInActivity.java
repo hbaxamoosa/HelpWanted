@@ -3,6 +3,7 @@ package com.baxamoosa.helpwanted.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -30,9 +31,7 @@ import timber.log.Timber;
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class GoogleAccountExample extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+public class SignInActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -51,7 +50,7 @@ public class GoogleAccountExample extends AppCompatActivity implements
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        // findViewById(R.id.disconnect_button).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -88,6 +87,12 @@ public class GoogleAccountExample extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
+        if (BuildConfig.DEBUG) {
+            Timber.v("onStart()");
+        }
+
+        mGoogleApiClient.connect();
+
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
@@ -112,6 +117,33 @@ public class GoogleAccountExample extends AppCompatActivity implements
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onStop()");
+        }
+
+        if (mGoogleApiClient.isConnected()) {
+            if (BuildConfig.DEBUG) {
+                Timber.v("mGoogleApiClient.disconnect()");
+            }
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onResume()");
+        }
+
+        mGoogleApiClient.connect();
+    }
+
     // [START onActivityResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,13 +160,14 @@ public class GoogleAccountExample extends AppCompatActivity implements
     // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
         if (BuildConfig.DEBUG) {
-            Timber.v("handleSignInResult:" + result.isSuccess());
+            Timber.v("handleSignInResult: " + result.isSuccess());
         }
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
+            startActivity(new Intent(this, JobPostingListActivity.class));
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -150,11 +183,14 @@ public class GoogleAccountExample extends AppCompatActivity implements
     // [END signIn]
 
     // [START signOut]
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+    public void signOutAndRevoke() {
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        if (BuildConfig.DEBUG) {
+                            Timber.v("onResult status: " + status);
+                        }
                         // [START_EXCLUDE]
                         updateUI(false);
                         // [END_EXCLUDE]
@@ -164,7 +200,7 @@ public class GoogleAccountExample extends AppCompatActivity implements
     // [END signOut]
 
     // [START revokeAccess]
-    private void revokeAccess() {
+    /*private void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -174,7 +210,7 @@ public class GoogleAccountExample extends AppCompatActivity implements
                         // [END_EXCLUDE]
                     }
                 });
-    }
+    }*/
     // [END revokeAccess]
 
     @Override
@@ -182,7 +218,25 @@ public class GoogleAccountExample extends AppCompatActivity implements
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         if (BuildConfig.DEBUG) {
-            Timber.v("onConnectionFailed:" + connectionResult);
+            Timber.v("onConnectionFailed: " + connectionResult);
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (BuildConfig.DEBUG) {
+            Timber.v("onConnected");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason.
+        // We call connect() to attempt to re-establish the connection or get a
+        // ConnectionResult that we can attempt to resolve.
+        mGoogleApiClient.connect();
+        if (BuildConfig.DEBUG) {
+            Timber.v("onConnectionFailed: " + cause);
         }
     }
 
@@ -221,11 +275,11 @@ public class GoogleAccountExample extends AppCompatActivity implements
                 signIn();
                 break;
             case R.id.sign_out_button:
-                signOut();
+                signOutAndRevoke();
                 break;
-            case R.id.disconnect_button:
+            /*case R.id.disconnect_button:
                 revokeAccess();
-                break;
+                break;*/
         }
     }
 }

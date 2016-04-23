@@ -7,7 +7,7 @@
     android:background="@color/blue_grey_700"
     android:orientation="vertical"
     android:weightSum="4"
-    tools:context=".ui.GoogleAccountExample">
+    tools:context=".ui.SignInActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,13 +91,13 @@
                 android:text="@string/sign_out"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
-            <Button
+            <!--<Button
                 android:id="@+id/disconnect_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/disconnect"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
+                android:theme="@style/ThemeOverlay.MyDarkButton" />-->
         </LinearLayout>
 
     </RelativeLayout>

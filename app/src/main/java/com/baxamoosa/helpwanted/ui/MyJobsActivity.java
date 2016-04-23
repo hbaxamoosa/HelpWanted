@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,7 +27,7 @@ import com.baxamoosa.helpwanted.R;
 
 import timber.log.Timber;
 
-public class MyJobs extends AppCompatActivity {
+public class MyJobsActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments representing
@@ -72,8 +71,7 @@ public class MyJobs extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(getApplicationContext(), AddEditJobActivity.class));
             }
         });
 
@@ -124,7 +122,7 @@ public class MyJobs extends AppCompatActivity {
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
                             Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
-                            startActivity(new Intent(getApplicationContext(), MyJobs.class));
+                            startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
                         }
                         if (menuItem.getTitle() == getString(R.string.placepicker)) {
                             Timber.v("getString(R.string.my_jobs: " + getString(R.string.placepicker));
@@ -132,7 +130,7 @@ public class MyJobs extends AppCompatActivity {
                         }
                         if (menuItem.getTitle() == getString(R.string.google_account)) {
                             Timber.v("getString(R.string.my_jobs: " + getString(R.string.google_account));
-                            startActivity(new Intent(getApplicationContext(), GoogleAccountExample.class));
+                            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                         }
                         mDrawerLayout.closeDrawers();
                         return true;

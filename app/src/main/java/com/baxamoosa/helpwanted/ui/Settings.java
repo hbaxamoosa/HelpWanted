@@ -96,8 +96,7 @@ public class Settings extends PreferenceActivity
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(this);
 
-        // Trigger the listener immediately with the preference's
-        // current value.
+        // Trigger the listener immediately with the preference's current value.
         onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
@@ -189,6 +188,7 @@ public class Settings extends PreferenceActivity
             Timber.v("onActivityResult(int requestCode, int resultCode, Intent data)");
         }
 
+        // TODO: 4/22/16 Replace this Place Picker functionality with a call to determine the user's zipcode 
         // Check to see if the result is from our Place Picker intent
         if (requestCode == PLACE_PICKER_REQUEST) {
             // Make sure the request was successful

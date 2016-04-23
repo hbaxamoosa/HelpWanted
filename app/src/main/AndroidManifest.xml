@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <!-- Permissions required by Place Picker -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -40,7 +42,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${PLACE_PICKER_API_KEY}"/>
-            -->
+        -->
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -50,15 +52,20 @@
             android:value="@string/places_api_key" />
 
         <activity
-            android:name=".ui.JobPostingListActivity"
-            android:label="@string/app_name"
+            android:name=".ui.SignInActivity"
+            android:label="@string/title_activity_google_accounts"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+        <activity
+            android:name=".ui.JobPostingListActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.JobPostingDetailActivity"
             android:label="@string/title_jobposting_detail"
@@ -78,7 +85,7 @@
                 android:value=".ui.JobPostingListActivity" />
         </activity>
         <activity
-            android:name=".ui.MyJobs"
+            android:name=".ui.MyJobsActivity"
             android:label="@string/title_activity_my_jobs"
             android:parentActivityName=".ui.JobPostingListActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -96,13 +103,22 @@
                 android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
         </activity>
         <activity
-            android:name=".ui.GoogleAccountExample"
-            android:label="@string/title_activity_google_accounts"
+            android:name=".ui.ViewJobPostActivity"
+            android:label="@string/title_activity_view_job_post"
             android:parentActivityName=".ui.JobPostingListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
+        </activity>
+        <activity
+            android:name=".ui.AddEditJobActivity"
+            android:label="@string/title_activity_add_edit_job"
+            android:parentActivityName=".ui.MyJobsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MyJobsActivity" />
         </activity>
     </application>
 

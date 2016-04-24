@@ -3,11 +3,8 @@ package com.baxamoosa.helpwanted.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,15 +26,6 @@ import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.dummy.DummyContent;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 import java.util.List;
 
@@ -51,7 +39,7 @@ import timber.log.Timber;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class JobPostingListActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class JobPostingListActivity extends AppCompatActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
@@ -59,7 +47,6 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
     public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
     public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
     private DrawerLayout mDrawerLayout;
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -101,45 +88,16 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
-        // [START configure_signin]
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // [END configure_signin]
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("firstRun", false);
+        editor.commit();
 
-        // [START build_client]
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        // [END build_client]
+        Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
+        Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_email), "no email available"));
+        Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_id), "no ID available"));
+        Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_photo), "no photo available"));
 
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        GoogleSignInResult result = null;
-        if (opr.isDone()) {
-            result = opr.get();
-        }
-        GoogleSignInAccount acct = result.getSignInAccount();
-        String personName = acct.getDisplayName();
-        String personEmail = acct.getEmail();
-        String personId = acct.getId();
-        Uri personPhoto = acct.getPhotoUrl();
-        if (BuildConfig.DEBUG) {
-            Timber.v("personName: " + personName);
-            Timber.v("personEmail: " + personEmail);
-            Timber.v("personId: " + personId);
-            Timber.v("personPhoto: " + personPhoto);
-        }
-
-        // test the app to see if this addition breaks the Settings activity.
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(getString(R.string.person_name), personName);
         if (findViewById(R.id.jobposting_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -167,24 +125,16 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
         if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
-        }
-        if (BuildConfig.DEBUG) {
-            Timber.v("mGoogleApiClient.isConnected(): " + mGoogleApiClient.isConnected());
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         if (BuildConfig.DEBUG) {
             Timber.v("onStop()");
-        }
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
         }
     }
 
@@ -193,10 +143,6 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
         super.onResume();
         if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
-        }
-        mGoogleApiClient.connect();
-        if (BuildConfig.DEBUG) {
-            Timber.v("mGoogleApiClient.isConnected(): " + mGoogleApiClient.isConnected());
         }
     }
 
@@ -218,24 +164,6 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
                 startActivity(new Intent(this, Settings.class));
                 return true;
             case R.id.action_signout:
-                if (BuildConfig.DEBUG) {
-                    Timber.v("user clicked on signout");
-                }
-                if (BuildConfig.DEBUG) {
-                    Timber.v("mGoogleApiClient.isConnected(): " + mGoogleApiClient.isConnected());
-                }
-                Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                if (BuildConfig.DEBUG) {
-                                    Timber.v("onResult status: " + status);
-                                }
-                            }
-                        });
-                if (BuildConfig.DEBUG) {
-                    Timber.v("Since user has logged out, send them back to the first screen");
-                }
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
         }
@@ -274,33 +202,6 @@ public class JobPostingListActivity extends AppCompatActivity implements GoogleA
                         return true;
                     }
                 });
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        if (BuildConfig.DEBUG) {
-            Timber.v("onConnectionFailed: " + connectionResult);
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (BuildConfig.DEBUG) {
-            Timber.v("onConnected");
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection to Google Play services was lost for some reason.
-        // We call connect() to attempt to re-establish the connection or get a
-        // ConnectionResult that we can attempt to resolve.
-        mGoogleApiClient.connect();
-        if (BuildConfig.DEBUG) {
-            Timber.v("onConnectionFailed: " + cause);
-        }
     }
 
     public class SimpleItemRecyclerViewAdapter extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {

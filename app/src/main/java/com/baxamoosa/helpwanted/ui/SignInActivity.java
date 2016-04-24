@@ -1,7 +1,9 @@
 package com.baxamoosa.helpwanted.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -36,21 +38,27 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
+    private boolean firstRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_googleaccountexample);
 
+        if (BuildConfig.DEBUG) {
+            Timber.v("onCreate()");
+        }
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        // findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.cancel_button).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -152,6 +160,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            editor = sharedPref.edit();
+            editor.putString(String.valueOf(R.string.person_name), result.getSignInAccount().getDisplayName());
+            editor.putString(String.valueOf(R.string.person_email), result.getSignInAccount().getEmail());
+            editor.putString(String.valueOf(R.string.person_id), result.getSignInAccount().getId());
+            editor.putString(String.valueOf(R.string.person_photo), String.valueOf(result.getSignInAccount().getPhotoUrl()));
+            editor.commit();
             handleSignInResult(result);
         }
     }
@@ -167,7 +182,22 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
-            startActivity(new Intent(this, JobPostingListActivity.class));
+
+            try {
+                firstRun = sharedPref.getBoolean("firstRun", true);
+            } catch (NullPointerException e) {
+                Timber.v("Error: " + e);
+                sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                editor = sharedPref.edit();
+                editor.putBoolean("firstRun", true);
+                editor.commit();
+            }
+
+            Timber.v("firstRun: " + firstRun);
+
+            if (firstRun) { //only send the user to the Job Listing when this is the firstRun
+                startActivity(new Intent(this, JobPostingListActivity.class));
+            }
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -277,9 +307,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             case R.id.sign_out_button:
                 signOutAndRevoke();
                 break;
-            /*case R.id.disconnect_button:
-                revokeAccess();
-                break;*/
+            case R.id.cancel_button:
+                Timber.v("user is clicking cancel");
+                startActivity(new Intent(this, JobPostingListActivity.class));
+                break;
         }
     }
 }

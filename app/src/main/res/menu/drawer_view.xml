@@ -10,13 +10,5 @@
             android:id="@+id/nav_messages"
             android:icon="@drawable/ic_dashboard"
             android:title="@string/my_jobs" />
-        <item
-            android:id="@+id/placepicker"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/placepicker" />
-        <item
-            android:id="@+id/google_account"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/google_account" />
     </group>
 </menu>

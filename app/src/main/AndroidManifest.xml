@@ -94,7 +94,7 @@
                 android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
         </activity>
         <activity
-            android:name=".ui.PlacePickerExample"
+            android:name=".ui.PlacePickerActivity"
             android:label="@string/title_activity_place_picker"
             android:parentActivityName=".ui.JobPostingListActivity"
             android:theme="@style/AppTheme.NoActionBar">

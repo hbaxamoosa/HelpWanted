@@ -42,12 +42,15 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private SharedPreferences.Editor editor;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
-    private boolean firstRun;
+    private boolean signout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_googleaccountexample);
+
+        signout = false;
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         if (BuildConfig.DEBUG) {
             Timber.v("onCreate()");
@@ -160,7 +163,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             editor = sharedPref.edit();
             editor.putString(String.valueOf(R.string.person_name), result.getSignInAccount().getDisplayName());
             editor.putString(String.valueOf(R.string.person_email), result.getSignInAccount().getEmail());
@@ -184,18 +186,16 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             updateUI(true);
 
             try {
-                firstRun = sharedPref.getBoolean("firstRun", true);
+                signout = sharedPref.getBoolean("signout", false);
+                Timber.v("signout: " + signout);
             } catch (NullPointerException e) {
                 Timber.v("Error: " + e);
-                sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                 editor = sharedPref.edit();
-                editor.putBoolean("firstRun", true);
+                editor.putBoolean("signout", false);
                 editor.commit();
             }
 
-            Timber.v("firstRun: " + firstRun);
-
-            if (firstRun) { //only send the user to the Job Listing when this is the firstRun
+            if (!signout) { //only send the user to the Job Listing when this is the firstRun
                 startActivity(new Intent(this, JobPostingListActivity.class));
             }
         } else {
@@ -226,6 +226,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         // [END_EXCLUDE]
                     }
                 });
+        editor = sharedPref.edit();
+        editor.putBoolean("signout", false);
+        editor.commit();
     }
     // [END signOut]
 

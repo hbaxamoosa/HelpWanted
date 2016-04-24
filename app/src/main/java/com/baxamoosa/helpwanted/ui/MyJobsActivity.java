@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.utility.Utility;
 
 import timber.log.Timber;
 
@@ -71,7 +72,13 @@ public class MyJobsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), AddEditJobActivity.class));
+                // first call PlacePickerActivity to get the Business details
+                if (Utility.isNetworkAvailable(getApplicationContext())) {
+                    startActivity(new Intent(getApplicationContext(), PlacePickerActivity.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_SHORT).show();
+                }
+                // PlacePicker Activity will call AddEditJobActivity to enter remaining details about the job post
             }
         });
 
@@ -123,14 +130,6 @@ public class MyJobsActivity extends AppCompatActivity {
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
                             Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
-                        }
-                        if (menuItem.getTitle() == getString(R.string.placepicker)) {
-                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.placepicker));
-                            startActivity(new Intent(getApplicationContext(), PlacePickerExample.class));
-                        }
-                        if (menuItem.getTitle() == getString(R.string.google_account)) {
-                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.google_account));
-                            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                         }
                         mDrawerLayout.closeDrawers();
                         return true;

@@ -47,6 +47,7 @@ public class JobPostingListActivity extends AppCompatActivity {
     public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
     public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
     private DrawerLayout mDrawerLayout;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -88,10 +89,7 @@ public class JobPostingListActivity extends AppCompatActivity {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean("firstRun", false);
-        editor.commit();
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
         Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_email), "no email available"));
@@ -164,6 +162,9 @@ public class JobPostingListActivity extends AppCompatActivity {
                 startActivity(new Intent(this, Settings.class));
                 return true;
             case R.id.action_signout:
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean("signout", true);
+                editor.commit();
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
         }
@@ -192,7 +193,7 @@ public class JobPostingListActivity extends AppCompatActivity {
                         }
                         if (menuItem.getTitle() == getString(R.string.placepicker)) {
                             Timber.v("getString(R.string.my_jobs): " + getString(R.string.placepicker));
-                            startActivity(new Intent(getApplicationContext(), PlacePickerExample.class));
+                            startActivity(new Intent(getApplicationContext(), PlacePickerActivity.class));
                         }
                         if (menuItem.getTitle() == getString(R.string.google_account)) {
                             Timber.v("getString(R.string.my_jobs): " + getString(R.string.google_account));
@@ -274,4 +275,102 @@ public class JobPostingListActivity extends AppCompatActivity {
             }
         }
     }
+
+    /*private void placePhotosTask(String placeID) {
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("placePhotosTask(String placeID)");
+        }
+        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
+        new PhotoTask(mPhoto.getWidth(), mPhoto.getHeight()) {
+            @Override
+            protected void onPreExecute() {
+                // Display a temporary image to show while bitmap is loading.
+                mPhoto.setImageResource(R.drawable.empty_photo);
+            }
+
+            @Override
+            protected void onPostExecute(AttributedPhoto attributedPhoto) {
+                if (BuildConfig.DEBUG) {
+                    Timber.v("onPostExecute(AttributedPhoto attributedPhoto)");
+                }
+                if (attributedPhoto != null) {
+                    if (BuildConfig.DEBUG) {
+                        Timber.v("(attributedPhoto != null)");
+                    }
+                    // Photo has been loaded, display it.
+                    mPhoto.setImageBitmap(attributedPhoto.bitmap);
+
+                    // Display the attribution as HTML content if set.
+                    if (attributedPhoto.attribution == null) {
+                        mAttribution.setVisibility(View.GONE);
+                    } else {
+                        mAttribution.setVisibility(View.VISIBLE);
+                        mAttribution.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
+                    }
+
+                }
+            }
+        }.execute(placeID);
+    }
+
+    abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPhoto> {
+
+        private int mHeight;
+
+        private int mWidth;
+
+        public PhotoTask(int width, int height) {
+            mHeight = height;
+            mWidth = width;
+        }
+
+        *//**
+     * Loads the first photo for a place id from the Geo Data API.
+     * The place id must be the first (and only) parameter.
+     *//*
+        @Override
+        protected AttributedPhoto doInBackground(String... params) {
+            if (params.length != 1) {
+                return null;
+            }
+            final String placeId = params[0];
+            AttributedPhoto attributedPhoto = null;
+
+            PlacePhotoMetadataResult result = Places.GeoDataApi
+                    .getPlacePhotos(mGoogleApiClient, placeId).await();
+
+            if (result.getStatus().isSuccess()) {
+                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
+                if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
+                    // Get the first bitmap and its attributions.
+                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
+                    CharSequence attribution = photo.getAttributions();
+                    // Load a scaled bitmap for this photo.
+                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
+                            .getBitmap();
+
+                    attributedPhoto = new AttributedPhoto(attribution, image);
+                }
+                // Release the PlacePhotoMetadataBuffer.
+                photoMetadataBuffer.release();
+            }
+            return attributedPhoto;
+        }
+
+        *//**
+     * Holder for an image and its attribution.
+     *//*
+        class AttributedPhoto {
+
+            public final CharSequence attribution;
+
+            public final Bitmap bitmap;
+
+            public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
+                this.attribution = attribution;
+                this.bitmap = bitmap;
+            }
+        }
+    }*/
 }

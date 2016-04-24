@@ -48,7 +48,7 @@ public class Settings extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
 
-        // If we are using a PlacePickerExample location, we need to show attributions.
+        // If we are using a PlacePickerActivity location, we need to show attributions.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mAttribution = new ImageView(this);
             mAttribution.setImageResource(R.drawable.powered_by_google_light);
@@ -155,13 +155,13 @@ public class Settings extends PreferenceActivity
 
         if (key.equals(getString(R.string.pref_location_key))) {
             // we've changed the location
-            // Wipe out any potential PlacePickerExample latlng values so that we can use this text entry.
+            // Wipe out any potential PlacePickerActivity latlng values so that we can use this text entry.
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.pref_location_latitude));
             editor.remove(getString(R.string.pref_location_longitude));
             editor.commit();
 
-            // Remove attributions for our any PlacePickerExample locations.
+            // Remove attributions for our any PlacePickerActivity locations.
             if (mAttribution != null) {
                 mAttribution.setVisibility(View.GONE);
             }
@@ -211,20 +211,18 @@ public class Settings extends PreferenceActivity
                 // Also store the latitude and longitude so that we can use these to get a precise
                 // result from our weather service. We cannot expect the weather service to
                 // understand addresses that Google formats.
-                editor.putFloat(getString(R.string.pref_location_latitude),
-                        (float) latLong.latitude);
-                editor.putFloat(getString(R.string.pref_location_longitude),
-                        (float) latLong.longitude);
+                editor.putFloat(getString(R.string.pref_location_latitude), (float) latLong.latitude);
+                editor.putFloat(getString(R.string.pref_location_longitude), (float) latLong.longitude);
                 editor.commit();
 
                 // Tell the SyncAdapter that we've changed the location, so that we can update
                 // our UI with new values. We need to do this manually because we are respondings
-                // to the PlacePickerExample widget result here instead of allowing the
+                // to the PlacePickerActivity widget result here instead of allowing the
                 // LocationEditTextPreference to handle these changes and invoke our callbacks.
                 Preference locationPreference = findPreference(getString(R.string.pref_location_key));
                 onPreferenceChange(locationPreference, address);
 
-                // Add attributions for our new PlacePickerExample location.
+                // Add attributions for our new PlacePickerActivity location.
                 if (mAttribution != null) {
                     mAttribution.setVisibility(View.VISIBLE);
                 } else {

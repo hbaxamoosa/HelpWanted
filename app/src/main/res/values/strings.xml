@@ -139,12 +139,13 @@
     <string name="title_activity_view_job_post">ViewJobPost</string>
 
     <!-- content_view_job_post -->
+    <string name="business_id">Id</string>
     <string name="business_name">Name</string>
     <string name="business_email">Email</string>
     <string name="business_phone">Phone</string>
     <string name="business_address">Address</string>
     <string name="business_website">Website</string>
-    <string name="business_wage_rate">Wage Rate</string>
+    <string name="business_wage_rate">Wage Rate $</string>
     <string name="business_post_date">Post Date</string>
     <string name="hello_world">Hello World</string>
     <string name="favorite_button">Favorite</string>
@@ -152,4 +153,7 @@
 
     <!-- Shared Prefs -->
     <string name="preference_file_key">com.baxamoosa.helpwanted.PREFERENCE_FILE_KEY</string>
+
+    <!-- No network error message -->
+    <string name="no_network">No network available, please try again later</string>
 </resources>

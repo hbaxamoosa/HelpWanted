@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.R;
@@ -17,13 +18,11 @@ import timber.log.Timber;
 
 public class AddEditJobActivity extends AppCompatActivity {
 
-    private EditText name;
-    private EditText email;
-    private EditText phone;
-    private EditText address;
-    private EditText website;
+    private TextView name;
+    private TextView phone;
+    private TextView address;
+    private TextView website;
     private EditText wageRate;
-    private EditText postDate;
     private Date date;
     private SharedPreferences sharedPref;
 
@@ -37,22 +36,30 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        name = (EditText) findViewById(R.id.edit_business_name);
-        email = (EditText) findViewById(R.id.edit_business_email);
-        phone = (EditText) findViewById(R.id.edit_business_phone);
-        address = (EditText) findViewById(R.id.edit_business_address);
-        website = (EditText) findViewById(R.id.edit_business_website);
+        name = (TextView) findViewById(R.id.business_name);
+        phone = (TextView) findViewById(R.id.business_phone);
+        address = (TextView) findViewById(R.id.business_address);
+        website = (TextView) findViewById(R.id.business_website);
         wageRate = (EditText) findViewById(R.id.edit_business_wage_rate);
-        postDate = (EditText) findViewById(R.id.edit_business_post_date);
         date = new Date();
 
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
-        name.setText(sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
-        email.setText(sharedPref.getString(String.valueOf(R.string.person_email), "no name available"));
-        postDate.setText(date.toString());
+        /*Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
+        name.setText(sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));*/
 
+        if (getIntent().hasExtra(String.valueOf(R.string.business_name))) {
+            name.setText(getIntent().getStringExtra(String.valueOf(R.string.business_name)));
+        }
+        if (getIntent().hasExtra(String.valueOf(R.string.business_phone))) {
+            phone.setText(getIntent().getStringExtra(String.valueOf(R.string.business_phone)));
+        }
+        if (getIntent().hasExtra(String.valueOf(R.string.business_address))) {
+            address.setText(getIntent().getStringExtra(String.valueOf(R.string.business_address)));
+        }
+        if (getIntent().hasExtra(String.valueOf(R.string.business_website))) {
+            website.setText(getIntent().getStringExtra(String.valueOf(R.string.business_website)));
+        }
     }
 
     public void submitToDB(View view) {

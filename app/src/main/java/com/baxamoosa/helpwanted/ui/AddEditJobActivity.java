@@ -2,6 +2,7 @@ package com.baxamoosa.helpwanted.ui;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -46,18 +47,16 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
         wageRate = (EditText) findViewById(R.id.edit_business_wage_rate);
         date = new Date();
 
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        email = sharedPref.getString(String.valueOf(R.string.person_email), "someone@email.com");
-        Timber.v("email: " + email);
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        if (getIntent().hasExtra(String.valueOf(R.string.business_name))) {
-            name.setText(getIntent().getStringExtra(String.valueOf(R.string.business_name)));
+        if (getIntent().hasExtra(getString(R.string.business_name))) {
+            name.setText(getIntent().getStringExtra(getString(R.string.business_name)));
         }
-        if (getIntent().hasExtra(String.valueOf(R.string.business_phone))) {
-            phone.setText(getIntent().getStringExtra(String.valueOf(R.string.business_phone)));
+        if (getIntent().hasExtra(getString(R.string.business_address))) {
+            address.setText(getIntent().getStringExtra(getString(R.string.business_address)));
         }
-        if (getIntent().hasExtra(String.valueOf(R.string.business_address))) {
-            address.setText(getIntent().getStringExtra(String.valueOf(R.string.business_address)));
+        if (getIntent().hasExtra(getString(R.string.business_phone))) {
+            phone.setText(getIntent().getStringExtra(getString(R.string.business_phone)));
         }
     }
 
@@ -68,48 +67,20 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
         ContentValues[] jobPostArr = new ContentValues[1];
 
         jobPostArr[0] = new ContentValues();
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSID, getIntent().getExtras().getShort(String.valueOf(R.string.business_id)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, getIntent().getExtras().getShort(String.valueOf(R.string.business_name)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, getIntent().getExtras().getShort(String.valueOf(R.string.business_address)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, getIntent().getExtras().getShort(String.valueOf(R.string.business_phone)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_WAGERATE, Integer.valueOf(wageRate.getText().toString()));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_POSTDATE, Long.valueOf(getIntent().getExtras().getShort(String.valueOf(R.string.business_post_date))));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_OWNER, email);
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSID, getIntent().getExtras().getString(getString(R.string.business_id)));
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, name.getText().toString());
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, address.getText().toString());
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, phone.getText().toString());
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, getIntent().getExtras().getString(getString(R.string.business_latitude)));
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, getIntent().getExtras().getString(getString(R.string.business_longitude)));
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_WAGERATE, wageRate.getText().toString());
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_POSTDATE, date.getTime());
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_OWNER, sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
 
         getContentResolver().bulkInsert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);
-        // grab the business related details from the bundle
 
-        /*if (!place.getId().isEmpty()) {
-            mBundle.putString(String.valueOf(R.string.business_id), place.getId());
-        }
-        if (!place.getName().toString().isEmpty()) {
-            mBundle.putString(String.valueOf(R.string.business_name), (String) place.getName());
-        }
-        if (!place.getPhoneNumber().toString().isEmpty()) {
-            mBundle.putString(String.valueOf(R.string.business_phone), (String) place.getPhoneNumber());
-        }
-        if (!place.getAddress().toString().isEmpty()) {
-            mBundle.putString(String.valueOf(R.string.business_address), (String) place.getAddress());
-        }
-        if (!place.getLatLng().toString().isEmpty()) {
-            mBundle.putDouble(String.valueOf(R.string.business_latitude), place.getLatLng().latitude);
-        }
-        if (!place.getLatLng().toString().isEmpty()) {
-            mBundle.putDouble(String.valueOf(R.string.business_longitude), place.getLatLng().longitude);
-        }
-        if (!place.getWebsiteUri().toString().isEmpty()) {
-            mBundle.putString(String.valueOf(R.string.business_website), place.getWebsiteUri().toString());
-        }*/
-
-        // grab the user related details from the Shared Prefs
-        
-        /*editor = sharedPref.edit();
-        editor.putString(String.valueOf(R.string.person_name), result.getSignInAccount().getDisplayName());
-        editor.putString(String.valueOf(R.string.person_email), result.getSignInAccount().getEmail());
-        editor.putString(String.valueOf(R.string.person_id), result.getSignInAccount().getId());
-        editor.putString(String.valueOf(R.string.person_photo), String.valueOf(result.getSignInAccount().getPhotoUrl()));*/
-
-        Timber.v("date: " + date.getTime());
+        // job post submitted via content provider, so go back to MyJobsActivity
+        startActivity(new Intent(this, MyJobsActivity.class));
     }
 
     @Override

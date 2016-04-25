@@ -10,8 +10,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.baxamoosa.helpwanted.R;
-
 /**
  * Defines table and column names for the job post database.
  */
@@ -21,7 +19,7 @@ public class JobPostContract {
     // relationship between a domain name and its website.  A convenient string to use for the
     // content authority is the package name for the app, which is guaranteed to be unique on the
     // device.
-    public static final String CONTENT_AUTHORITY = String.valueOf(R.string.content_authority);
+    public static final String CONTENT_AUTHORITY = "com.baxamoosa.helpwanted";
 
     // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
     // the content provider.
@@ -41,10 +39,13 @@ public class JobPostContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_JOBPOST).build();
 
         // Columns for jobposts table
+        public static final String COLUMN_ID = "Id";
         public static final String COLUMN_BUSINESSID = "businessId";
         public static final String COLUMN_BUSINESSNAME = "businessName";
         public static final String COLUMN_BUSINESSADDRESS = "businessAddress";
         public static final String COLUMN_BUSINESSPHONE = "businessPhone";
+        public static final String COLUMN_BUSINESSLATITUDE = "businessLatitude";
+        public static final String COLUMN_BUSINESSLONGITUDE = "businessLongitude";
         public static final String COLUMN_WAGERATE = "wageRate";
         public static final String COLUMN_POSTDATE = "postDate";
         public static final String COLUMN_OWNER = "owner";

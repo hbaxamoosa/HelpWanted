@@ -67,22 +67,22 @@ public class PlacePickerActivity extends AppCompatActivity {
                     Intent mIntent = new Intent(this, AddEditJobActivity.class);
                     Bundle mBundle = new Bundle();
                     if (!place.getId().isEmpty()) {
-                        mBundle.putString(String.valueOf(R.string.business_id), place.getId());
+                        mBundle.putString(getString(R.string.business_id), place.getId());
                     }
                     if (!place.getName().toString().isEmpty()) {
-                        mBundle.putString(String.valueOf(R.string.business_name), (String) place.getName());
+                        mBundle.putString(getString(R.string.business_name), (String) place.getName());
                     }
                     if (!place.getPhoneNumber().toString().isEmpty()) {
-                        mBundle.putString(String.valueOf(R.string.business_phone), (String) place.getPhoneNumber());
+                        mBundle.putString(getString(R.string.business_phone), (String) place.getPhoneNumber());
                     }
                     if (!place.getAddress().toString().isEmpty()) {
-                        mBundle.putString(String.valueOf(R.string.business_address), (String) place.getAddress());
+                        mBundle.putString(getString(R.string.business_address), (String) place.getAddress());
                     }
                     if (!place.getLatLng().toString().isEmpty()) {
-                        mBundle.putDouble(String.valueOf(R.string.business_latitude), place.getLatLng().latitude);
+                        mBundle.putDouble(getString(R.string.business_latitude), place.getLatLng().latitude);
                     }
                     if (!place.getLatLng().toString().isEmpty()) {
-                        mBundle.putDouble(String.valueOf(R.string.business_longitude), place.getLatLng().longitude);
+                        mBundle.putDouble(getString(R.string.business_longitude), place.getLatLng().longitude);
                     }
                     mIntent.putExtras(mBundle);
                     startActivity(mIntent);

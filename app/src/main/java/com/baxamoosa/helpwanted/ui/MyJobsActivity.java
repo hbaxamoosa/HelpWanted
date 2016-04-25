@@ -1,6 +1,9 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +47,9 @@ public class MyJobsActivity extends AppCompatActivity {
      */
     ViewPager mViewPager;
     private DrawerLayout mDrawerLayout;
+    private SharedPreferences sharedPref;
+    private TextView profileName;
+    private ImageView profilePhoto;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +99,7 @@ public class MyJobsActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
     }
 
     @Override
@@ -107,9 +115,19 @@ public class MyJobsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                profileName = (TextView) findViewById(R.id.profileName);
+                profileName.setText(sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
+                profilePhoto = (ImageView) findViewById(R.id.profileImage);
+                profilePhoto.setImageURI(Uri.parse(sharedPref.getString(String.valueOf(R.string.person_name), "no name available")));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));
+                return true;
+            case R.id.action_signout:
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean("signout", true);
+                editor.commit();
+                startActivity(new Intent(this, SignInActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

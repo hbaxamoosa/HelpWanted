@@ -19,7 +19,6 @@ public class ViewJobPostActivity extends AppCompatActivity {
     private TextView mName;
     private TextView mAddress;
     private TextView mPhone;
-    private TextView mWebsite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +30,6 @@ public class ViewJobPostActivity extends AppCompatActivity {
         mName = (TextView) findViewById(R.id.business_name);
         mAddress = (TextView) findViewById(R.id.business_address);
         mPhone = (TextView) findViewById(R.id.business_phone);
-        mWebsite = (TextView) findViewById(R.id.business_website);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -3,6 +3,7 @@ package com.baxamoosa.helpwanted.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,8 @@ public class JobPostingListActivity extends AppCompatActivity {
     public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
     private DrawerLayout mDrawerLayout;
     private SharedPreferences sharedPref;
+    private TextView profileName;
+    private ImageView profilePhoto;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -70,6 +74,8 @@ public class JobPostingListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_jobposting_list_drawer);
 
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
@@ -84,12 +90,11 @@ public class JobPostingListActivity extends AppCompatActivity {
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+        // TODO: 4/24/16 set the image and user's name for navigation header
 
         View recyclerView = findViewById(R.id.jobposting_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
-
-        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
         Timber.v("get value from SharePref: " + sharedPref.getString(String.valueOf(R.string.person_email), "no email available"));
@@ -157,6 +162,10 @@ public class JobPostingListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                profileName = (TextView) findViewById(R.id.profileName);
+                profileName.setText(sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
+                profilePhoto = (ImageView) findViewById(R.id.profileImage);
+                profilePhoto.setImageURI(Uri.parse(sharedPref.getString(String.valueOf(R.string.person_name), "no name available")));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));
@@ -181,7 +190,7 @@ public class JobPostingListActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-                        Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                        // Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
                             Timber.v("getString(R.string.job_posting): " + getString(R.string.job_posting));
@@ -190,14 +199,6 @@ public class JobPostingListActivity extends AppCompatActivity {
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
                             Timber.v("getString(R.string.my_jobs): " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
-                        }
-                        if (menuItem.getTitle() == getString(R.string.placepicker)) {
-                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.placepicker));
-                            startActivity(new Intent(getApplicationContext(), PlacePickerActivity.class));
-                        }
-                        if (menuItem.getTitle() == getString(R.string.google_account)) {
-                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.google_account));
-                            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                         }
                         mDrawerLayout.closeDrawers();
                         return true;

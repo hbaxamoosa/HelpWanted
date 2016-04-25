@@ -33,7 +33,8 @@ import timber.log.Timber;
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class SignInActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -226,7 +227,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         // [END_EXCLUDE]
                     }
                 });
+        // TODO: 4/24/16 Also clear out all other SharePrefs from app
         editor = sharedPref.edit();
+        // first clear all existing Share Prefs
+        editor.clear();
+        editor.commit();
+        // set the new Share Pref value for signout
         editor.putBoolean("signout", false);
         editor.commit();
     }
@@ -311,7 +317,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 signOutAndRevoke();
                 break;
             case R.id.cancel_button:
-                Timber.v("user is clicking cancel");
                 startActivity(new Intent(this, JobPostingListActivity.class));
                 break;
         }

@@ -120,6 +120,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MyJobsActivity" />
         </activity>
+
+        <provider
+            android:name=".data.JobPostsProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
 </manifest>

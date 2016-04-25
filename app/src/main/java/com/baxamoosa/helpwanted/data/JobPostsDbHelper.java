@@ -26,14 +26,14 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold favorite movies.
         final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + JobPostContract.JobPostList.TABLE_NAME + " (" +
-                JobPostContract.JobPostList.COLUMN_ID + " INTEGER PRIMARY KEY," +
-                JobPostContract.JobPostList.COLUMN_THUMBNAIL + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_TITLE + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_SYNOPSIS + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_RATING + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_DATE + " LONG NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_FAVORITE + " BOOLEAN, " +
-                " );";
+                JobPostContract.JobPostList.COLUMN_BUSINESSID + " INTEGER PRIMARY KEY," +
+                JobPostContract.JobPostList.COLUMN_BUSINESSNAME + " TEXT NOT NULL, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS + " TEXT NOT NULL, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSPHONE + " TEXT NOT NULL, " +
+                JobPostContract.JobPostList.COLUMN_WAGERATE + " INT NOT NULL, " +
+                JobPostContract.JobPostList.COLUMN_POSTDATE + " LONG NOT NULL, " +
+                JobPostContract.JobPostList.COLUMN_OWNER + " TEXT NOT NULL" +
+                ");";
 
         // Timber.v(TAG + " SQL_CREATE_FAVORITES_TABLE is " + SQL_CREATE_FAVORITES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);

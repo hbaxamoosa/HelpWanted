@@ -28,7 +28,7 @@ public class JobPostsProvider extends ContentProvider {
         final String authority = JobPostContract.CONTENT_AUTHORITY;
 
         // For each type of URI you want to add, create a corresponding code.
-        matcher.addURI(authority, JobPostContract.PATH_FAVORITES, JOBPOSTS);
+        matcher.addURI(authority, JobPostContract.PATH_JOBPOST, JOBPOSTS);
         return matcher;
     }
 
@@ -41,7 +41,6 @@ public class JobPostsProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
 
-        // Use the Uri Matcher to determine what kind of URI this is.
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
@@ -55,7 +54,6 @@ public class JobPostsProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        // Here's the switch statement that, given a URI, will determine what kind of request it is, and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             case JOBPOSTS: {
@@ -102,13 +100,10 @@ public class JobPostsProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Student: Start by getting a writable database
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
 
-        // Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
-        // handle.  If it doesn't match these, throw an UnsupportedOperationException.
         if (null == selection) selection = "1";
         switch (match) {
             case JOBPOSTS: {
@@ -118,14 +113,10 @@ public class JobPostsProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        // Student: A null value deletes all rows.  In my implementation of this, I only notified
-        // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
-        // is null.
-        // Oh, and you should notify the listeners here.
+
         if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-        // Student: return the actual rows deleted
         return rowsDeleted;
     }
 

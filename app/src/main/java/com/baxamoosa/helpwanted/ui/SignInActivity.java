@@ -165,10 +165,10 @@ public class SignInActivity extends AppCompatActivity
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             editor = sharedPref.edit();
-            editor.putString(String.valueOf(R.string.person_name), result.getSignInAccount().getDisplayName());
-            editor.putString(String.valueOf(R.string.person_email), result.getSignInAccount().getEmail());
-            editor.putString(String.valueOf(R.string.person_id), result.getSignInAccount().getId());
-            editor.putString(String.valueOf(R.string.person_photo), String.valueOf(result.getSignInAccount().getPhotoUrl()));
+            editor.putString(getString(R.string.person_name), result.getSignInAccount().getDisplayName());
+            editor.putString(getString(R.string.person_email), result.getSignInAccount().getEmail());
+            editor.putString(getString(R.string.person_id), result.getSignInAccount().getId());
+            editor.putString(getString(R.string.person_photo), String.valueOf(result.getSignInAccount().getPhotoUrl()));
             editor.commit();
             handleSignInResult(result);
         }

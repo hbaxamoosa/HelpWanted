@@ -3,7 +3,6 @@ package com.baxamoosa.helpwanted.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -29,6 +28,7 @@ import android.widget.Toast;
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.squareup.picasso.Picasso;
 
 import timber.log.Timber;
 
@@ -116,9 +116,10 @@ public class MyJobsActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 profileName = (TextView) findViewById(R.id.profileName);
-                profileName.setText(sharedPref.getString(String.valueOf(R.string.person_name), "no name available"));
+                profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
                 profilePhoto = (ImageView) findViewById(R.id.profileImage);
-                profilePhoto.setImageURI(Uri.parse(sharedPref.getString(String.valueOf(R.string.person_name), "no name available")));
+                Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
+                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));
@@ -142,11 +143,9 @@ public class MyJobsActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
-                            Timber.v("getString(R.string.job_posting: " + getString(R.string.job_posting));
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
-                            Timber.v("getString(R.string.my_jobs: " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
                         }
                         mDrawerLayout.closeDrawers();

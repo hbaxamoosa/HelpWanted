@@ -144,6 +144,7 @@
     <string name="business_email">Email</string>
     <string name="business_phone">Phone</string>
     <string name="business_address">Address</string>
+    <string name="business_website">Website</string>
     <string name="business_latitude">Latitude</string>
     <string name="business_longitude">Longitude</string>
     <string name="business_wage_rate">Wage Rate $</string>
@@ -160,4 +161,7 @@
 
     <!-- For Content Provider -->
     <string name="content_authority">com.baxamoosa.helpwanted</string>
+
+    <!-- Firebase connection string -->
+    <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/</string>
 </resources>

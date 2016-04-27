@@ -16,6 +16,8 @@ import android.widget.EditText;
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
+import com.baxamoosa.helpwanted.model.JobPost;
+import com.firebase.client.Firebase;
 
 import java.util.Date;
 
@@ -71,13 +73,30 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, name.getText().toString());
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, address.getText().toString());
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, phone.getText().toString());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, getIntent().getExtras().getString(getString(R.string.business_latitude)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, getIntent().getExtras().getString(getString(R.string.business_longitude)));
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, getIntent().getExtras().getDouble(getString(R.string.business_latitude)));
+        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, getIntent().getExtras().getDouble(getString(R.string.business_longitude)));
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_WAGERATE, wageRate.getText().toString());
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_POSTDATE, date.getTime());
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_OWNER, sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
 
         getContentResolver().bulkInsert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);
+
+        Timber.v("creating Firebase reference");
+        Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
+        Firebase mJobPost = rootRef.child("jobpost");
+
+        JobPost a = new JobPost("123",
+                name.getText().toString(),
+                address.getText().toString(),
+                phone.getText().toString(),
+                (getIntent().getExtras().getString(getString(R.string.business_website))),
+                (getIntent().getExtras().getDouble(getString(R.string.business_latitude))),
+                (getIntent().getExtras().getDouble(getString(R.string.business_longitude))),
+                date.getTime(),
+                sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
+        Timber.v("attempting to post to Firebase");
+        rootRef.push().setValue(a);
+        Timber.v("successfully posted to Firebase");
 
         // job post submitted via content provider, so go back to MyJobsActivity
         startActivity(new Intent(this, MyJobsActivity.class));

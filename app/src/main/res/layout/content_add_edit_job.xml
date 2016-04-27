@@ -73,7 +73,7 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:text="@string/business_address"
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/abc_text_size_medium_material"/>
+                android:textSize="@dimen/abc_text_size_medium_material" />
 
             <EditText
                 android:id="@+id/edit_business_address"
@@ -81,7 +81,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:ems="10"
-                android:inputType="textPostalAddress" />
+                android:inputType="textPostalAddress"
+                android:minHeight="@dimen/place_autocomplete_prediction_height" />
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

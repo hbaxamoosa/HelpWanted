@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.facebook.stetho.Stetho;
+import com.firebase.client.Firebase;
 
 import timber.log.Timber;
 
@@ -24,6 +25,7 @@ public class HelpWantedApplication extends Application {
         super.onCreate();
 
         HelpWantedApplication.context = getApplicationContext();
+        Firebase.setAndroidContext(this);
 
         //Including Jake Wharton's Timber logging library
         if (BuildConfig.DEBUG) {

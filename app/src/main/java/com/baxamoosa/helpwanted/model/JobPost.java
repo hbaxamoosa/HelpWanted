@@ -3,10 +3,6 @@ package com.baxamoosa.helpwanted.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.baxamoosa.helpwanted.BuildConfig;
-
-import timber.log.Timber;
-
 /**
  * Created by hasnainbaxamoosa on 4/20/16.
  */
@@ -23,18 +19,30 @@ public class JobPost implements Parcelable {
             return new JobPost[size];
         }
     };
-    private String id;
-    private String name;
-    private String address;
-    private String phone;
-    private String website;
-    private boolean favorite;
-    private long date;
+
+    public String id;
+    public String name;
+    public String address;
+    public String phone;
+    public String website;
+    public double latitude;
+    public double longitude;
+    public long date;
+    public String user;
 
     public JobPost() {
-        if (BuildConfig.DEBUG) {
-            Timber.v("JobPost()");
-        }
+    }
+
+    public JobPost(String id, String name, String address, String phone, String website, double latitude, double longitude, long date, String user) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.website = website;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.date = date;
+        this.user = user;
     }
 
     public JobPost(Parcel in) {
@@ -43,6 +51,10 @@ public class JobPost implements Parcelable {
         address = in.readString();
         phone = in.readString();
         website = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        date = in.readLong();
+        user = in.readString();
     }
 
     public String getId() {
@@ -85,12 +97,20 @@ public class JobPost implements Parcelable {
         this.website = website;
     }
 
-    public boolean getFavorite() {
-        return favorite;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public long setDate() {
@@ -99,6 +119,14 @@ public class JobPost implements Parcelable {
 
     public void getDate(long date) {
         this.date = date;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     @Override
@@ -113,5 +141,9 @@ public class JobPost implements Parcelable {
         dest.writeString(address);
         dest.writeString(phone);
         dest.writeString(website);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeLong(date);
+        dest.writeString(user);
     }
 }

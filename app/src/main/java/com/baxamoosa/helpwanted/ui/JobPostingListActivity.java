@@ -10,26 +10,25 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.adapter.JobPostsAdapter;
 import com.baxamoosa.helpwanted.application.HelpWantedApplication;
-import com.baxamoosa.helpwanted.dummy.DummyContent;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
+import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -41,13 +40,15 @@ import timber.log.Timber;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class JobPostingListActivity extends AppCompatActivity {
+public class JobPostingListActivity extends AppCompatActivity implements JobPostsAdapter.Callback {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
      */
     public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
     public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
+    public static JobPost[] mJobPost;
+
     private DrawerLayout mDrawerLayout;
     private SharedPreferences sharedPref;
     private TextView profileName;
@@ -90,7 +91,6 @@ public class JobPostingListActivity extends AppCompatActivity {
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
-        // TODO: 4/24/16 set the image and user's name for navigation header
 
         View recyclerView = findViewById(R.id.jobposting_list);
         assert recyclerView != null;
@@ -177,7 +177,10 @@ public class JobPostingListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(new JobPostsAdapter(mJobPost));
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -202,74 +205,26 @@ public class JobPostingListActivity extends AppCompatActivity {
                 });
     }
 
-    public class SimpleItemRecyclerViewAdapter extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    /**
+     * Callback method from {@link JobPostsAdapter}
+     * indicating that the item with the given ID was selected.
+     */
+    public void onItemSelected(int position, JobPost[] mJobPost) {
+        Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
+        Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
+        if (JobPostingListActivity.mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putString(JobPostingDetailFragment.ARG_ITEM_ID, mJobPost[position].id);
+            JobPostingDetailFragment fragment = new JobPostingDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.jobposting_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, JobPostingDetailActivity.class);
+            intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, mJobPost[position].id);
 
-        private final List<DummyContent.DummyItem> mValues;
-
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.cardview_jobpost, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mOverlayTextView.setText(mValues.get(position).id);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(JobPostingDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        JobPostingDetailFragment fragment = new JobPostingDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.jobposting_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, JobPostingDetailActivity.class);
-                        intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mOverlayTextView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mOverlayTextView = (TextView) view.findViewById(R.id.overlaytext);
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
-            }
+            startActivity(intent);
         }
     }
 }

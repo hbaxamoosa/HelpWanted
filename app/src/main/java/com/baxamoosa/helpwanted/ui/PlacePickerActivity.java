@@ -78,6 +78,13 @@ public class PlacePickerActivity extends AppCompatActivity {
                     if (!place.getAddress().toString().isEmpty()) {
                         mBundle.putString(getString(R.string.business_address), (String) place.getAddress());
                     }
+                    try {
+                        if (!place.getWebsiteUri().toString().isEmpty()) {
+                            mBundle.putString(getString(R.string.business_website), place.getWebsiteUri().toString());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     if (!place.getLatLng().toString().isEmpty()) {
                         mBundle.putDouble(getString(R.string.business_latitude), place.getLatLng().latitude);
                     }

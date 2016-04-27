@@ -39,7 +39,7 @@ public class JobPostContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_JOBPOST).build();
 
         // Columns for jobposts table
-        public static final String COLUMN_ID = "Id";
+        public static final String COLUMN_ID = "_id";
         public static final String COLUMN_BUSINESSID = "businessId";
         public static final String COLUMN_BUSINESSNAME = "businessName";
         public static final String COLUMN_BUSINESSADDRESS = "businessAddress";

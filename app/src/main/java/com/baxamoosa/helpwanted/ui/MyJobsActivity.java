@@ -27,7 +27,12 @@ import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import timber.log.Timber;
@@ -50,6 +55,7 @@ public class MyJobsActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private TextView profileName;
     private ImageView profilePhoto;
+    private Firebase ref;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +106,25 @@ public class MyJobsActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        // Get a reference to our posts
+        Firebase ref = new Firebase(getString(R.string.firebase_connection_string));
+        // Attach an listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    JobPost post = postSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
+                    Timber.v(post.getName() + " - " + post.getAddress());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Timber.v("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
     @Override
@@ -214,7 +239,7 @@ public class MyJobsActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
             Bundle args = getArguments();
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    Integer.toString(args.getInt(ARG_OBJECT)));
+                    "name: ");
             return rootView;
         }
     }

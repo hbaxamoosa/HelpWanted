@@ -26,7 +26,7 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold favorite movies.
         final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + JobPostContract.JobPostList.TABLE_NAME + " (" +
-                JobPostContract.JobPostList.COLUMN_ID + " INTEGER PRIMARY KEY," +
+                JobPostContract.JobPostList.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 JobPostContract.JobPostList.COLUMN_BUSINESSID + " TEXT NOT NULL, " +
                 JobPostContract.JobPostList.COLUMN_BUSINESSNAME + " TEXT NOT NULL, " +
                 JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS + " TEXT NOT NULL, " +

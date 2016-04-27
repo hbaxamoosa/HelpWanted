@@ -113,11 +113,11 @@ public class JobPost implements Parcelable {
         this.longitude = longitude;
     }
 
-    public long setDate() {
+    public long getDate() {
         return date;
     }
 
-    public void getDate(long date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

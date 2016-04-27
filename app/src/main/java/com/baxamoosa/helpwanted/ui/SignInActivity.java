@@ -12,6 +12,12 @@ import android.widget.TextView;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.application.HelpWantedApplication;
+import com.baxamoosa.helpwanted.model.JobPost;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -37,13 +43,14 @@ public class SignInActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
-
+    public static JobPost[] mJobPost;
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
     private boolean signout;
+    private Firebase ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +100,43 @@ public class SignInActivity extends AppCompatActivity
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setScopes(gso.getScopeArray());
         // [END customize_button]
+
+        Timber.v("creating Firebase ref");
+        // Get a reference to our posts
+        ref = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
+        // Attach an listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
+                int i = 0;
+                for (DataSnapshot jobPostSnapshot : snapshot.getChildren()) {
+                    JobPost jobPost = jobPostSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
+                    Timber.v(jobPost.getName() + " - " + jobPost.getAddress());
+                    mJobPost = new JobPost[(int) snapshot.getChildrenCount()];
+                    if (i < snapshot.getChildrenCount()) {
+                        mJobPost[i] = new JobPost();
+                        mJobPost[i].id = jobPost.getId();
+                        mJobPost[i].name = jobPost.getName();
+                        mJobPost[i].address = jobPost.getAddress();
+                        mJobPost[i].phone = jobPost.getPhone();
+                        mJobPost[i].website = jobPost.getWebsite();
+                        mJobPost[i].latitude = jobPost.getLatitude();
+                        mJobPost[i].longitude = jobPost.getLongitude();
+                        mJobPost[i].date = jobPost.getDate();
+                        mJobPost[i].user = jobPost.getUser();
+                        Timber.v("mJobPost[i].name: " + mJobPost[i].name);
+                        i++;
+                    }
+                }
+                Timber.v("mJobPost.length: " + mJobPost.length);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Timber.v("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
     @Override

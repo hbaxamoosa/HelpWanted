@@ -7,32 +7,23 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
-import com.baxamoosa.helpwanted.model.JobPost;
+import com.baxamoosa.helpwanted.adapter.MyJobsPagerAdapter;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import timber.log.Timber;
@@ -55,7 +46,6 @@ public class MyJobsActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private TextView profileName;
     private ImageView profilePhoto;
-    private Firebase ref;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +58,12 @@ public class MyJobsActivity extends AppCompatActivity {
         // Create an adapter that when requested, will return a fragment representing an object in the collection.
         // ViewPager and its adapters use support library fragments, so we must use getSupportFragmentManager.
         mMyJobsPagerAdapter = new MyJobsPagerAdapter(getSupportFragmentManager());
+        // Set up the ViewPager, attaching the adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mMyJobsPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,10 +72,6 @@ public class MyJobsActivity extends AppCompatActivity {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-
-        // Set up the ViewPager, attaching the adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mMyJobsPagerAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -102,29 +94,7 @@ public class MyJobsActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-        // Get a reference to our posts
-        Firebase ref = new Firebase(getString(R.string.firebase_connection_string));
-        // Attach an listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    JobPost post = postSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
-                    Timber.v(post.getName() + " - " + post.getAddress());
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Timber.v("The read failed: " + firebaseError.getMessage());
-            }
-        });
     }
 
     @Override
@@ -165,7 +135,6 @@ public class MyJobsActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-                        Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
@@ -179,68 +148,5 @@ public class MyJobsActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a fragment
-     * representing an object in the collection.
-     */
-    public static class MyJobsPagerAdapter extends FragmentStatePagerAdapter {
 
-        public MyJobsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            Fragment fragment = new DemoObjectFragment();
-            Bundle args = new Bundle();
-            args.putInt(DemoObjectFragment.ARG_OBJECT, i + 1); // Our object is just an integer :-P
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    if (BuildConfig.DEBUG) {
-                        Timber.v("Tab 0");
-                    }
-                    return "Active";
-                case 1:
-                    if (BuildConfig.DEBUG) {
-                        Timber.v("Tab 1");
-                    }
-                    return "Expired";
-                case 2:
-                    if (BuildConfig.DEBUG) {
-                        Timber.v("Tab 2");
-                    }
-                    return "Favorite";
-            }
-            return "No tabs found";
-        }
-    }
-
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DemoObjectFragment extends Fragment {
-
-        public static final String ARG_OBJECT = "object";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    "name: ");
-            return rootView;
-        }
-    }
 }

@@ -40,6 +40,7 @@
                 android:gravity="center"
                 android:padding="@dimen/margin_tiny"
                 android:text="@string/imagetext_cardview_overlay"
+                android:textColor="@color/colorAccent"
                 tools:text="Overlay" />
 
             <TextView
@@ -54,6 +55,7 @@
                 android:paddingRight="@dimen/margin_small"
                 android:paddingTop="@dimen/margin_small"
                 android:text="@string/imagetext_cardview_title"
+                android:textColor="@color/colorAccent"
                 android:transitionName="image"
                 tools:text="Title 1" />
 
@@ -68,6 +70,7 @@
                 android:maxLines="4"
                 android:padding="@dimen/margin_small"
                 android:text="@string/imagetext_cardview_contents"
+                android:textColor="@color/white"
                 tools:text="Description goes here" />
         </RelativeLayout>
 

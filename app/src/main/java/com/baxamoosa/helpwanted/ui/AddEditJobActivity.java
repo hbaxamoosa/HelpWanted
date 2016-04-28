@@ -1,6 +1,5 @@
 package com.baxamoosa.helpwanted.ui;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.widget.EditText;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
-import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.firebase.client.Firebase;
 
@@ -66,7 +64,7 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
 
         Timber.v("submitToDB(View view)");
 
-        ContentValues[] jobPostArr = new ContentValues[1];
+        /*ContentValues[] jobPostArr = new ContentValues[1];
 
         jobPostArr[0] = new ContentValues();
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSID, getIntent().getExtras().getString(getString(R.string.business_id)));
@@ -79,19 +77,19 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_POSTDATE, date.getTime());
         jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_OWNER, sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
 
-        getContentResolver().bulkInsert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);
+        getContentResolver().bulkInsert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);*/
 
         Timber.v("creating Firebase reference");
         Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
         Firebase mJobPost = rootRef.child("jobpost");
 
-        JobPost a = new JobPost("123",
+        JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
                 name.getText().toString(),
                 address.getText().toString(),
                 phone.getText().toString(),
-                (getIntent().getExtras().getString(getString(R.string.business_website))),
-                (getIntent().getExtras().getDouble(getString(R.string.business_latitude))),
-                (getIntent().getExtras().getDouble(getString(R.string.business_longitude))),
+                getIntent().getExtras().getString(getString(R.string.business_website)),
+                getIntent().getExtras().getDouble(getString(R.string.business_latitude)),
+                getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
                 date.getTime(),
                 sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
         Timber.v("attempting to post to Firebase");

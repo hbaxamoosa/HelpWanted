@@ -4,19 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +25,9 @@ import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.baxamoosa.helpwanted.viewholder.JobPostHolder;
+import com.firebase.client.Firebase;
+import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.squareup.picasso.Picasso;
 
 import timber.log.Timber;
@@ -53,6 +53,10 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
     private SharedPreferences sharedPref;
     private TextView profileName;
     private ImageView profilePhoto;
+
+    private Firebase mRef;
+    private FirebaseRecyclerAdapter<JobPost, JobPostHolder> mRecycleViewAdapter;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -92,9 +96,7 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
             setupDrawerContent(navigationView);
         }
 
-        View recyclerView = findViewById(R.id.jobposting_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.jobposting_list);
 
         if (findViewById(R.id.jobposting_detail_container) != null) {
             // The detail container view will be present only in the
@@ -126,6 +128,22 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
         if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
         }
+        mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
+
+        mRecycleViewAdapter = new FirebaseRecyclerAdapter<JobPost, JobPostHolder>(JobPost.class, R.layout.cardview_jobpost, JobPostHolder.class, mRef) {
+            @Override
+            protected void populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i) {
+                Timber.v("populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i)");
+                JobPostHolder.id.setText(jobPost.getName());
+                jobPostHolder.content.setText(jobPost.getAddress());
+            }
+        };
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setReverseLayout(false);
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setAdapter(mRecycleViewAdapter);
     }
 
     @Override
@@ -176,12 +194,12 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    /*private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(new JobPostsAdapter(mJobPost));
-    }
+    }*/
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(

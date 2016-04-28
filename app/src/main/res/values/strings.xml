@@ -163,5 +163,5 @@
     <string name="content_authority">com.baxamoosa.helpwanted</string>
 
     <!-- Firebase connection string -->
-    <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/</string>
+    <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/jobposts</string>
 </resources>

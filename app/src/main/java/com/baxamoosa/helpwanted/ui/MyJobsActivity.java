@@ -114,7 +114,6 @@ public class MyJobsActivity extends AppCompatActivity {
                 profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
                 profilePhoto = (ImageView) findViewById(R.id.profileImage);
                 Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
-                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));
@@ -145,8 +144,7 @@ public class MyJobsActivity extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
-                });
+                }
+        );
     }
-
-
 }

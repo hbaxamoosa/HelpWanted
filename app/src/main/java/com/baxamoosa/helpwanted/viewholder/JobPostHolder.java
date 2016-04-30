@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.R;
-import com.baxamoosa.helpwanted.adapter.JobPostsAdapter;
 
 import timber.log.Timber;
 
@@ -37,6 +36,6 @@ public class JobPostHolder extends RecyclerView.ViewHolder implements View.OnCli
         Context context = itemView.getContext();
 
         Toast.makeText(context, "onClick(View v) from JobPostHolder ViewHolder", Toast.LENGTH_SHORT).show();
-        ((JobPostsAdapter.Callback) context).onItemSelected(position);
+        // ((JobPostsAdapter.Callback) context).onItemSelected(position);
     }
 }

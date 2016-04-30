@@ -1,6 +1,7 @@
 package com.baxamoosa.helpwanted.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -42,6 +46,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
 
     private TextView mTextView1;
     private TextView mTextView2;
+    private String shareContent;
 
     /**
      * The dummy content this fragment is presenting.
@@ -72,6 +77,8 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             Timber.v("onCreate");
         }
 
+        setHasOptionsMenu(true);
+
         arguments = getArguments();
 
         if (arguments != null) {
@@ -92,31 +99,36 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         }
         View rootView = inflater.inflate(R.layout.jobposting_detail, container, false);
 
-        /*ContentResolver resolver = getActivity().getContentResolver();
-        // String[] projection = new String[]{JobPostContract.JobPostList.JOBPOST_COLUMNS};
-        // Timber.v(TAG + " projection is " + projection);
-        Cursor cursor = resolver.query(JobPostContract.JobPostList.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-        // Timber.v(TAG + " cursor.getCount() is " + cursor.getCount());
-        if (cursor.moveToFirst()){
-            do {
-                String movieID = cursor.getString(0);
-                // Timber.v(TAG + " movieID is " + movieID);
-                if (movieID.equals(id)){
-                    // Timber.v(TAG + " (movieID == id)");
-                    favoriteMovie = true;
-                }
-            } while (cursor.moveToNext());
-        }*/
-
         mTextView1 = (TextView) rootView.findViewById(R.id.jobposting_detail);
         mTextView2 = (TextView) rootView.findViewById(R.id.jobposting_detail2);
 
         return rootView;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        if (getActivity() instanceof JobPostingDetailActivity) {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            inflater.inflate(R.menu.menu_detail, menu);
+            finishCreatingMenu(menu);
+        }
+    }
+
+    private void finishCreatingMenu(Menu menu) {
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        menuItem.setIntent(createJobPostShareIntent());
+    }
+
+    private Intent createJobPostShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+        return shareIntent;
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -137,6 +149,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         if (data != null && data.moveToFirst()) {
             Timber.v("data != null && data.moveToFirst()");
             data.move(position);
+            shareContent = data.getString(Utility.COL_BUSINESS_NAME) + " has a job posting!";
             mTextView1.setText(data.getString(Utility.COL_BUSINESS_NAME));
             mTextView2.setText(data.getString(Utility.COL_BUSINESS_ADDRESS));
             if (appBarLayout != null) {

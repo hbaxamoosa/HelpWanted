@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +25,19 @@ import timber.log.Timber;
 /**
  * A job post fragment representing a section of the app.
  */
-public class MyJobFragment extends Fragment {
+public class MyJobActiveFragment extends Fragment {
 
     public static final String ARG_OBJECT = "jobpost";
     private Firebase mRef;
     private FirebaseRecyclerAdapter<JobPost, JobPostHolder> mRecycleViewAdapter;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Timber.v("onCreate(Bundle savedInstanceState)");
+
         mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
         mRecycleViewAdapter = new FirebaseRecyclerAdapter<JobPost, JobPostHolder>(JobPost.class, R.layout.cardview_jobpost, JobPostHolder.class, mRef) {
@@ -54,21 +57,6 @@ public class MyJobFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.activity_content_my_jobs_drawer, container, false);
 
-        /*Bundle arguments = getArguments();
-        if (arguments != null){
-            Timber.v("arguments != null");
-        }
-
-        Parcelable[] mParcelableArray = arguments.getParcelableArray(ARG_OBJECT);
-        Timber.v("mParcelableArray.length " + mParcelableArray.length);
-        JobPost[] mJobPost = new JobPost[mParcelableArray.length];
-        for (int i = 0; i < mParcelableArray.length; i++){
-            mJobPost[i] = (JobPost) mParcelableArray[i];
-        }*/
-
-        // Timber.v("mJobPost[i].getName(): " + mJobPost[0].getName());
-        // Timber.v("mJobPost[i].getName(): " + mJobPost[1].getAddress());
-
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
@@ -85,7 +73,7 @@ public class MyJobFragment extends Fragment {
      */
     public interface Callback {
         /**
-         * MoviesActivity Callback for when an item has been selected.
+         * Job Post Callback for when an item has been selected.
          */
         void onItemSelected(int position);
     }

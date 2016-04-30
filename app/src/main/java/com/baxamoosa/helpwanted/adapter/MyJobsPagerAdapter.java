@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.baxamoosa.helpwanted.fragment.MyJobFragment;
+import com.baxamoosa.helpwanted.fragment.MyJobActiveFragment;
+import com.baxamoosa.helpwanted.fragment.MyJobExpiredFragment;
+import com.baxamoosa.helpwanted.fragment.MyJobFavoriteFragment;
 
 /**
  * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a fragment
@@ -26,23 +28,18 @@ public class MyJobsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        /*Fragment fragment = new MyJobFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArray(MyJobFragment.ARG_OBJECT, SignInActivity.mJobPost);
-        fragment.setArguments(args);
-        return fragment;*/
         switch (i) {
             case 0: // Active
-                Fragment fragmentActive = new MyJobFragment();
+                Fragment fragmentActive = new MyJobActiveFragment();
                 return fragmentActive;
             case 1: // Expired
-                Fragment fragmentExpired = new MyJobFragment();
+                Fragment fragmentExpired = new MyJobExpiredFragment();
                 return fragmentExpired;
             case 2: // Favorites
-                Fragment fragmentFavorites = new MyJobFragment();
+                Fragment fragmentFavorites = new MyJobFavoriteFragment();
                 return fragmentFavorites;
         }
-        return new MyJobFragment(); // execution should never go here!
+        return new MyJobActiveFragment(); // execution should never go here!
     }
 
     @Override

@@ -82,7 +82,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
     private void finishCreatingMenu(Menu menu) {
         // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.menu_item_share);
+        MenuItem menuItem = menu.findItem(R.id.action_share);
         menuItem.setIntent(createShareForecastIntent());
     }
 

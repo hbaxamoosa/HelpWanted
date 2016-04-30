@@ -55,12 +55,15 @@ public class MyJobsActivity extends AppCompatActivity {
             Timber.v("onCreate");
         }
 
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         // Create an adapter that when requested, will return a fragment representing an object in the collection.
         // ViewPager and its adapters use support library fragments, so we must use getSupportFragmentManager.
         mMyJobsPagerAdapter = new MyJobsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager, attaching the adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mMyJobsPagerAdapter);
+        // see https://github.com/droanmalik/Movi/blob/master/app%2Fsrc%2Fmain%2Fjava%2Fme%2Fdroan%2Fmovi%2FMoviActivity.java
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -93,8 +96,6 @@ public class MyJobsActivity extends AppCompatActivity {
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
-
-        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
     }
 
     @Override
@@ -114,6 +115,7 @@ public class MyJobsActivity extends AppCompatActivity {
                 profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
                 profilePhoto = (ImageView) findViewById(R.id.profileImage);
                 Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
+                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));

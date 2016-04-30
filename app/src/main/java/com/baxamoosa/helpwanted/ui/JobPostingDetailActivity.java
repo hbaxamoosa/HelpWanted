@@ -70,8 +70,8 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(JobPostingDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(JobPostingDetailFragment.ARG_ITEM_ID));
+            arguments.putInt(JobPostingDetailFragment.ARG_ITEM_ID, getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID));
+            Timber.v("getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID): " + getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID));
             JobPostingDetailFragment fragment = new JobPostingDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

@@ -1,33 +1,43 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.adapter.JobPostingListAdapter;
 import com.baxamoosa.helpwanted.adapter.JobPostsAdapter;
 import com.baxamoosa.helpwanted.application.HelpWantedApplication;
+import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.baxamoosa.helpwanted.viewholder.JobPostHolder;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import timber.log.Timber;
@@ -40,23 +50,24 @@ import timber.log.Timber;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class JobPostingListActivity extends AppCompatActivity implements JobPostsAdapter.Callback {
+public class JobPostingListActivity extends AppCompatActivity implements /*JobPostingListAdapter.Callback,*/ LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int CURSOR_LOADER_ID = 0;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
      */
-    public static boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
-    public static boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
-    public static JobPost[] mJobPost;
-
+    public boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+    public boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
+    public JobPost[] mJobPost;
     private DrawerLayout mDrawerLayout;
     private SharedPreferences sharedPref;
     private TextView profileName;
     private ImageView profilePhoto;
-
+    private RecyclerView.Adapter mJobPostingListAdapter;
     private Firebase mRef;
-    private FirebaseRecyclerAdapter<JobPost, JobPostHolder> mRecycleViewAdapter;
     private RecyclerView mRecyclerView;
+    private TextView emptyView;
+    private Cursor mCursor;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -79,6 +90,8 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
 
         setContentView(R.layout.activity_jobposting_list_drawer);
 
+        emptyView = (TextView) findViewById(R.id.recyclerview_empty);
+
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,7 +109,20 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
             setupDrawerContent(navigationView);
         }
 
+        getSupportLoaderManager().initLoader(CURSOR_LOADER_ID, null, JobPostingListActivity.this);
+
+        Timber.v("creating Firebase ref");
+        // Get a reference to our posts
+        mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
+
+        grabJobPostsFromFireBase();
+
         mRecyclerView = (RecyclerView) findViewById(R.id.jobposting_list);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        // mRecyclerView.setAdapter(mJobPostingListAdapter);
+        Timber.v("setupRecyclerView() is complete");
 
         if (findViewById(R.id.jobposting_detail_container) != null) {
             // The detail container view will be present only in the
@@ -128,22 +154,6 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
         if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
         }
-        mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
-
-        mRecycleViewAdapter = new FirebaseRecyclerAdapter<JobPost, JobPostHolder>(JobPost.class, R.layout.cardview_jobpost, JobPostHolder.class, mRef) {
-            @Override
-            protected void populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i) {
-                Timber.v("populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i)");
-                JobPostHolder.id.setText(jobPost.getName());
-                jobPostHolder.content.setText(jobPost.getAddress());
-            }
-        };
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setReverseLayout(false);
-
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setAdapter(mRecycleViewAdapter);
     }
 
     @Override
@@ -160,6 +170,58 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
         if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
         }
+    }
+
+    private void grabJobPostsFromFireBase() {
+
+        // start by flushing the existing Content DB
+        getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
+        Timber.v("getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);");
+        // Attach an listener to read the data at our posts reference
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                // Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
+                int i = 0;
+                for (DataSnapshot jobPostSnapshot : snapshot.getChildren()) {
+                    JobPost jobPost = jobPostSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
+
+                    // mJobPost = new JobPost[(int) snapshot.getChildrenCount()];
+                    if (i < snapshot.getChildrenCount()) {
+                        /*mJobPost[i] = new JobPost();
+                        mJobPost[i].id = jobPost.getId();
+                        mJobPost[i].name = jobPost.getName();
+                        mJobPost[i].address = jobPost.getAddress();
+                        mJobPost[i].phone = jobPost.getPhone();
+                        mJobPost[i].website = jobPost.getWebsite();
+                        mJobPost[i].latitude = jobPost.getLatitude();
+                        mJobPost[i].longitude = jobPost.getLongitude();
+                        mJobPost[i].date = jobPost.getDate();
+                        mJobPost[i].user = jobPost.getUser();*/
+
+                        ContentValues jobPostArr = new ContentValues(); // ContentValues[] for local storage
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_ID, jobPost.get_id());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSID, jobPost.getBusinessId());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, jobPost.getbusinessName());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, jobPost.getbusinessAddress());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, jobPost.getbusinessPhone());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, jobPost.getbusinessLatitude());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, jobPost.getbusinessLongitude());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_WAGERATE, jobPost.getWageRate());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_POSTDATE, jobPost.getDate());
+                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_OWNER, jobPost.getUser());
+                        getContentResolver().insert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);
+
+                        i++;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Timber.v("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
     @Override
@@ -194,13 +256,6 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
         return super.onOptionsItemSelected(item);
     }
 
-    /*private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new JobPostsAdapter(mJobPost));
-    }*/
-
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -210,11 +265,9 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
                         // Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
-                            Timber.v("getString(R.string.job_posting): " + getString(R.string.job_posting));
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
-                            Timber.v("getString(R.string.my_jobs): " + getString(R.string.my_jobs));
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
                         }
                         mDrawerLayout.closeDrawers();
@@ -227,12 +280,17 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
      * Callback method from {@link JobPostsAdapter}
      * indicating that the item with the given ID was selected.
      */
-    public void onItemSelected(int position, JobPost[] mJobPost) {
+    public void JobPostingListAdapter(int position) {
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
-        if (JobPostingListActivity.mTwoPane) {
+        if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putString(JobPostingDetailFragment.ARG_ITEM_ID, mJobPost[position].id);
+            arguments.putString(getString(R.string.business_id), mJobPost[position].getBusinessId());
+            arguments.putString(getString(R.string.business_name), mJobPost[position].getbusinessName());
+            arguments.putString(getString(R.string.business_address), mJobPost[position].getbusinessAddress());
+            arguments.putString(getString(R.string.business_phone), mJobPost[position].getbusinessPhone());
+            arguments.putString(getString(R.string.business_website), mJobPost[position].getbusinessWebsite());
+
             JobPostingDetailFragment fragment = new JobPostingDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -240,9 +298,58 @@ public class JobPostingListActivity extends AppCompatActivity implements JobPost
                     .commit();
         } else {
             Intent intent = new Intent(this, JobPostingDetailActivity.class);
-            intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, mJobPost[position].id);
-
+            /*if (mJobPost[position] != null) {
+                Timber.v("mJobPost[position] != null");
+            }
+            Timber.v("mJobPost[position].getId() " + mJobPost[position].getId());
+            intent.putExtra(getString(R.string.business_id), mJobPost[position].getId());
+            intent.putExtra(getString(R.string.business_name), mJobPost[position].getName());
+            intent.putExtra(getString(R.string.business_address), mJobPost[position].getAddress());
+            intent.putExtra(getString(R.string.business_phone), mJobPost[position].getPhone());
+            intent.putExtra(getString(R.string.business_website), mJobPost[position].getWebsite());*/
+            intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (BuildConfig.DEBUG) {
+            Timber.v("Loader<Cursor> onCreateLoader(int id, Bundle args)");
+        }
+        return new CursorLoader(this,
+                JobPostContract.JobPostList.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (BuildConfig.DEBUG) {
+            Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
+        }
+
+        mJobPost = Utility.populateJobPostArray(loader, data);
+
+        if (data.getCount() == 0) {
+            Timber.v("mRecyclerView.setVisibility(View.GONE)");
+            mRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            emptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility((View.VISIBLE));
+            Timber.v("emptyView.setVisibility(View.GONE)");
+        }
+        mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+        mRecyclerView.setAdapter(mJobPostingListAdapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        if (BuildConfig.DEBUG) {
+            Timber.v("onLoaderReset(Loader<Cursor> loader)");
         }
     }
 }

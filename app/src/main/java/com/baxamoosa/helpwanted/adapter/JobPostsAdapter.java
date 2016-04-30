@@ -1,5 +1,6 @@
 package com.baxamoosa.helpwanted.adapter;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.model.JobPost;
+
+import timber.log.Timber;
 
 /**
  * Created by hasnainbaxamoosa on 4/25/16.
@@ -32,14 +35,14 @@ public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mJobPost[position];
-        holder.mOverlayTextView.setText(mJobPost[position].name);
-        holder.mIdView.setText(mJobPost[position].id);
-        holder.mContentView.setText(mJobPost[position].address);
+        holder.mOverlayTextView.setText(mJobPost[position].businessName);
+        holder.mIdView.setText(mJobPost[position].businessId);
+        holder.mContentView.setText(mJobPost[position].businessAddress);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Timber.v("holder.mView.setOnClickListener(new View.OnClickListener()");
             }
         });
     }
@@ -61,7 +64,7 @@ public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHo
         /**
          * MoviesActivity Callback for when an item has been selected.
          */
-        void onItemSelected(int position, JobPost[] mJobPost);
+        void onItemSelected(int position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -70,6 +73,7 @@ public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHo
         public final TextView mOverlayTextView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final CardView mCardView;
         public JobPost mItem;
 
         public ViewHolder(View view) {
@@ -79,6 +83,8 @@ public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHo
             mOverlayTextView = (TextView) view.findViewById(R.id.overlaytext);
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mCardView = (CardView) view.findViewById(R.id.cardview);
+            mCardView.setOnClickListener(this);
         }
 
         @Override
@@ -88,7 +94,7 @@ public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-
+            Timber.v("onClick(View v) inside JobPostsAdapter");
         }
     }
 }

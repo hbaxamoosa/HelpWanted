@@ -72,11 +72,21 @@ public class PlacePickerActivity extends AppCompatActivity {
                     if (!place.getName().toString().isEmpty()) {
                         mBundle.putString(getString(R.string.business_name), (String) place.getName());
                     }
-                    if (!place.getPhoneNumber().toString().isEmpty()) {
-                        mBundle.putString(getString(R.string.business_phone), (String) place.getPhoneNumber());
+                    try {
+                        if (!place.getPhoneNumber().toString().isEmpty()) {
+                            mBundle.putString(getString(R.string.business_phone), (String) place.getPhoneNumber());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        mBundle.putString(getString(R.string.business_phone), "No phone number available."); // make this a string resource
                     }
-                    if (!place.getAddress().toString().isEmpty()) {
-                        mBundle.putString(getString(R.string.business_address), (String) place.getAddress());
+                    try {
+                        if (!place.getAddress().toString().isEmpty()) {
+                            mBundle.putString(getString(R.string.business_address), (String) place.getAddress());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        mBundle.putString(getString(R.string.business_address), "No address available."); // make this a string resource
                     }
                     try {
                         if (!place.getWebsiteUri().toString().isEmpty()) {
@@ -84,6 +94,7 @@ public class PlacePickerActivity extends AppCompatActivity {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        mBundle.putString(getString(R.string.business_website), "No website available.");  // make this a string resource
                     }
                     if (!place.getLatLng().toString().isEmpty()) {
                         mBundle.putDouble(getString(R.string.business_latitude), place.getLatLng().latitude);

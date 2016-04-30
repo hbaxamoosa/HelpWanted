@@ -20,97 +20,119 @@ public class JobPost implements Parcelable {
         }
     };
 
-    public String id;
-    public String name;
-    public String address;
-    public String phone;
-    public String website;
-    public double latitude;
-    public double longitude;
+    public String _id;
+    public String businessId;
+    public String businessName;
+    public String businessAddress;
+    public String businessPhone;
+    public String businessWebsite;
+    public double businessLatitude;
+    public double businessLongitude;
+    public int wageRate;
     public long date;
     public String user;
 
     public JobPost() {
     }
 
-    public JobPost(String id, String name, String address, String phone, String website, double latitude, double longitude, long date, String user) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.website = website;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public JobPost(String _id, String businessId, String businessName, String businessAddress, String businessPhone, String businessWebsite, double businessLatitude, double businessLongitude, int wageRate, long date, String user) {
+        this._id = _id;
+        this.businessId = businessId;
+        this.businessName = businessName;
+        this.businessAddress = businessAddress;
+        this.businessPhone = businessPhone;
+        this.businessWebsite = businessWebsite;
+        this.businessLatitude = businessLatitude;
+        this.businessLongitude = businessLongitude;
+        this.wageRate = wageRate;
         this.date = date;
         this.user = user;
     }
 
     public JobPost(Parcel in) {
-        id = in.readString();
-        name = in.readString();
-        address = in.readString();
-        phone = in.readString();
-        website = in.readString();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
+        _id = in.readString();
+        businessId = in.readString();
+        businessName = in.readString();
+        businessAddress = in.readString();
+        businessPhone = in.readString();
+        businessWebsite = in.readString();
+        businessLatitude = in.readDouble();
+        businessLongitude = in.readDouble();
+        wageRate = in.readInt();
         date = in.readLong();
         user = in.readString();
     }
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public String getName() {
-        return name;
+    public String getBusinessId() {
+        return businessId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
     }
 
-    public String getAddress() {
-        return address;
+    public String getbusinessName() {
+        return businessName;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setbusinessName(String businessName) {
+        this.businessName = businessName;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getbusinessAddress() {
+        return businessAddress;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setbusinessAddress(String businessAddress) {
+        this.businessAddress = businessAddress;
     }
 
-    public String getWebsite() {
-        return website;
+    public String getbusinessPhone() {
+        return businessPhone;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setbusinessPhone(String businessPhone) {
+        this.businessPhone = businessPhone;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getbusinessWebsite() {
+        return businessWebsite;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setbusinessWebsite(String businessWebsite) {
+        this.businessWebsite = businessWebsite;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getbusinessLatitude() {
+        return businessLatitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setbusinessLatitude(double businessLatitude) {
+        this.businessLatitude = businessLatitude;
+    }
+
+    public double getbusinessLongitude() {
+        return businessLongitude;
+    }
+
+    public void setbusinessLongitude(double businessLongitude) {
+        this.businessLongitude = businessLongitude;
+    }
+
+    public int getWageRate() {
+        return wageRate;
+    }
+
+    public void setWageRate(int wageRate) {
+        this.wageRate = wageRate;
     }
 
     public long getDate() {
@@ -136,13 +158,15 @@ public class JobPost implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(address);
-        dest.writeString(phone);
-        dest.writeString(website);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
+        dest.writeString(_id);
+        dest.writeString(businessId);
+        dest.writeString(businessName);
+        dest.writeString(businessAddress);
+        dest.writeString(businessPhone);
+        dest.writeString(businessWebsite);
+        dest.writeDouble(businessLatitude);
+        dest.writeDouble(businessLongitude);
+        dest.writeInt(wageRate);
         dest.writeLong(date);
         dest.writeString(user);
     }

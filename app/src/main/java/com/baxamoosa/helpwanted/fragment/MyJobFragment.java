@@ -41,8 +41,8 @@ public class MyJobFragment extends Fragment {
             @Override
             protected void populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i) {
                 Timber.v("populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i)");
-                JobPostHolder.id.setText(jobPost.getName());
-                jobPostHolder.content.setText(jobPost.getAddress());
+                JobPostHolder.mId.setText(jobPost.getbusinessName());
+                jobPostHolder.mContent.setText(jobPost.getbusinessAddress());
             }
         };
     }
@@ -54,11 +54,24 @@ public class MyJobFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.activity_content_my_jobs_drawer, container, false);
 
+        /*Bundle arguments = getArguments();
+        if (arguments != null){
+            Timber.v("arguments != null");
+        }
+
+        Parcelable[] mParcelableArray = arguments.getParcelableArray(ARG_OBJECT);
+        Timber.v("mParcelableArray.length " + mParcelableArray.length);
+        JobPost[] mJobPost = new JobPost[mParcelableArray.length];
+        for (int i = 0; i < mParcelableArray.length; i++){
+            mJobPost[i] = (JobPost) mParcelableArray[i];
+        }*/
+
+        // Timber.v("mJobPost[i].getName(): " + mJobPost[0].getName());
+        // Timber.v("mJobPost[i].getName(): " + mJobPost[1].getAddress());
+
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        manager.setReverseLayout(false);
-
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mRecycleViewAdapter);
@@ -66,5 +79,14 @@ public class MyJobFragment extends Fragment {
         return rootView;
     }
 
-
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item selections.
+     */
+    public interface Callback {
+        /**
+         * MoviesActivity Callback for when an item has been selected.
+         */
+        void onItemSelected(int position);
+    }
 }

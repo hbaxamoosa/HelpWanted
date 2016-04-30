@@ -164,4 +164,8 @@
 
     <!-- Firebase connection string -->
     <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/jobposts</string>
+
+    <!-- PLacepicker placeholder text -->
+    <string name="placepicker_placeholder_text">Place picker is loading...</string>
+    <string name="empty_jobpost_list">No Job Posts available yet! Go to \'My Job\' and use the \'+\' button to add the first!</string>
 </resources>

@@ -84,12 +84,14 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
         Firebase mJobPost = rootRef.child("jobpost");
 
         JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
+                getIntent().getExtras().getString(getString(R.string.business_id)),
                 name.getText().toString(),
                 address.getText().toString(),
                 phone.getText().toString(),
                 getIntent().getExtras().getString(getString(R.string.business_website)),
                 getIntent().getExtras().getDouble(getString(R.string.business_latitude)),
                 getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
+                Integer.parseInt(wageRate.getText().toString()),
                 date.getTime(),
                 sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
         Timber.v("attempting to post to Firebase");

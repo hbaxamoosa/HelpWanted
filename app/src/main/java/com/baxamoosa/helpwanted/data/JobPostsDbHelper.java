@@ -26,16 +26,17 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold favorite movies.
         final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + JobPostContract.JobPostList.TABLE_NAME + " (" +
-                JobPostContract.JobPostList.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                JobPostContract.JobPostList.COLUMN_BUSINESSID + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_BUSINESSNAME + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_BUSINESSPHONE + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE + " TEXT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_WAGERATE + " INT NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_POSTDATE + " LONG NOT NULL, " +
-                JobPostContract.JobPostList.COLUMN_OWNER + " TEXT NOT NULL" +
+                JobPostContract.JobPostList.COLUMN_ID + " TEXT," +
+                JobPostContract.JobPostList.COLUMN_BUSINESSID + " TEXT, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSNAME + " TEXT, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS + " TEXT, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSPHONE + " TEXT, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSWEBSITE + " TEXT, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE + " DOUBLE, " +
+                JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE + " DOUBLE, " +
+                JobPostContract.JobPostList.COLUMN_WAGERATE + " INT, " +
+                JobPostContract.JobPostList.COLUMN_POSTDATE + " LONG, " +
+                JobPostContract.JobPostList.COLUMN_OWNER + " TEXT" +
                 ");";
 
         // Timber.v(TAG + " SQL_CREATE_FAVORITES_TABLE is " + SQL_CREATE_FAVORITES_TABLE);

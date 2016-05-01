@@ -11,8 +11,15 @@ import android.support.v4.content.Loader;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
+import com.firebase.client.Firebase;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import timber.log.Timber;
 
@@ -33,7 +40,6 @@ public class Utility {
     public static final int COL_WAGERATE = 8;
     public static final int COL_POSTDATE = 9;
     public static final int COL_OWNER = 10;
-
     public static final String[] JOBPOST_COLUMNS = {
             JobPostContract.JobPostList.COLUMN_ID,
             JobPostContract.JobPostList.COLUMN_BUSINESSID,
@@ -47,6 +53,8 @@ public class Utility {
             JobPostContract.JobPostList.COLUMN_POSTDATE,
             JobPostContract.JobPostList.COLUMN_OWNER
     };
+    private static final int LENGTH_OF_VALIDITY = 5; // using a small window for testing purposes. for Production this should be 30
+    public static Firebase mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
     /**
      * Returns true if the network is available or about to become available.
@@ -68,6 +76,9 @@ public class Utility {
                 activeNetwork.isConnectedOrConnecting();
     }
 
+    /**
+     * Returns true if the location is available.
+     */
     public static boolean isLocationAvailable(Context context) {
 
         if (BuildConfig.DEBUG) {
@@ -108,5 +119,20 @@ public class Utility {
         return jobPosts;
     }
 
-
+    public static boolean isValid(long postDate) {
+        boolean bool;
+        Calendar calendar = Calendar.getInstance();
+        GregorianCalendar validDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - LENGTH_OF_VALIDITY));
+        Long validTime = validDate.getTimeInMillis();
+        Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
+        Timber.v("date: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(postDate)));
+        if (validTime < postDate) {
+            Timber.v("result is valid");
+            bool = true;
+        } else {
+            Timber.v("result is invalid");
+            bool = false;
+        }
+        return bool;
+    }
 }

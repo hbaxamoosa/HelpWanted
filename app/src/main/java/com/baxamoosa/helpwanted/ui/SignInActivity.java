@@ -94,8 +94,6 @@ public class SignInActivity extends AppCompatActivity
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setScopes(gso.getScopeArray());
         // [END customize_button]
-
-
     }
 
     @Override

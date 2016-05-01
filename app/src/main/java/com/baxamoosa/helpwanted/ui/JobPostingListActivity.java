@@ -40,6 +40,11 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import timber.log.Timber;
 
 /**
@@ -64,10 +69,9 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     private TextView profileName;
     private ImageView profilePhoto;
     private RecyclerView.Adapter mJobPostingListAdapter;
-    private Firebase mRef;
     private RecyclerView mRecyclerView;
     private TextView emptyView;
-    private Cursor mCursor;
+    // private Cursor mCursor;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -111,10 +115,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
         getSupportLoaderManager().initLoader(CURSOR_LOADER_ID, null, JobPostingListActivity.this);
 
-        Timber.v("creating Firebase ref");
-        // Get a reference to our posts
-        mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
-
         grabJobPostsFromFireBase();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.jobposting_list);
@@ -148,12 +148,42 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
     }
 
+    private void populateTestData() {
+
+        Firebase mJobPost = Utility.mRef.child("jobpost");
+
+        for (int i = 0; i < 10; i++) {
+            String _id = "ChIJkwAWec4yW4YRBWSKMPYdIe0" + i;
+            String businessID = "ChIJkwAWec4yW4YRBWSKMPYdIe0" + i + i;
+            Calendar calendar = Calendar.getInstance();
+            GregorianCalendar postDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - i));
+            Long postTime = postDate.getTimeInMillis();
+            Timber.v("postDate: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(postTime)));
+
+            JobPost a = new JobPost(_id,
+                    businessID,
+                    "Starbucks" + i,
+                    "13450 Research Blvd #238, Austin, TX 78750, United States",
+                    "+1 512-401-6253",
+                    "http://www.starbucks.com/" + i,
+                    -97.79085309999999,
+                    30.4472483,
+                    i,
+                    postTime,
+                    "hbaxamoosa@gmail.com");
+            Utility.mRef.push().setValue(a);
+            Timber.v("successfully posted " + i + " to Firebase");
+            Timber.v("postDate: " + postDate);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
         }
+        populateTestData();  // test data
     }
 
     @Override
@@ -178,7 +208,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
         Timber.v("getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);");
         // Attach an listener to read the data at our posts reference
-        mRef.addValueEventListener(new ValueEventListener() {
+        Utility.mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 // Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
@@ -188,16 +218,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
                     // mJobPost = new JobPost[(int) snapshot.getChildrenCount()];
                     if (i < snapshot.getChildrenCount()) {
-                        /*mJobPost[i] = new JobPost();
-                        mJobPost[i].id = jobPost.getId();
-                        mJobPost[i].name = jobPost.getName();
-                        mJobPost[i].address = jobPost.getAddress();
-                        mJobPost[i].phone = jobPost.getPhone();
-                        mJobPost[i].website = jobPost.getWebsite();
-                        mJobPost[i].latitude = jobPost.getLatitude();
-                        mJobPost[i].longitude = jobPost.getLongitude();
-                        mJobPost[i].date = jobPost.getDate();
-                        mJobPost[i].user = jobPost.getUser();*/
 
                         ContentValues jobPostArr = new ContentValues(); // ContentValues[] for local storage
                         jobPostArr.put(JobPostContract.JobPostList.COLUMN_ID, jobPost.get_id());
@@ -298,15 +318,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                     .commit();
         } else {
             Intent intent = new Intent(this, JobPostingDetailActivity.class);
-            /*if (mJobPost[position] != null) {
-                Timber.v("mJobPost[position] != null");
-            }
-            Timber.v("mJobPost[position].getId() " + mJobPost[position].getId());
-            intent.putExtra(getString(R.string.business_id), mJobPost[position].getId());
-            intent.putExtra(getString(R.string.business_name), mJobPost[position].getName());
-            intent.putExtra(getString(R.string.business_address), mJobPost[position].getAddress());
-            intent.putExtra(getString(R.string.business_phone), mJobPost[position].getPhone());
-            intent.putExtra(getString(R.string.business_website), mJobPost[position].getWebsite());*/
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
             startActivity(intent);
         }

@@ -28,6 +28,11 @@ import timber.log.Timber;
  */
 public class Utility {
 
+    public static final int ALL_JOBPOSTS = 0;
+    public static final int ACTIVE_JOBPOSTS = 1;
+    public static final int EXPIRED_JOBPOSTS = 2;
+    public static final int FAVORITE_JOBPOSTS = 3;
+
     // These indices are tied to JOBPOST_COLUMNS.  If JOBPOST_COLUMNS changes, these must change.
     public static final int COL_ID = 0;
     public static final int COL_BUSINESS_ID = 1;
@@ -53,7 +58,8 @@ public class Utility {
             JobPostContract.JobPostList.COLUMN_POSTDATE,
             JobPostContract.JobPostList.COLUMN_OWNER
     };
-    private static final int LENGTH_OF_VALIDITY = 5; // using a small window for testing purposes. for Production this should be 30
+
+    public static final int LENGTH_OF_VALIDITY = 1; // using a small window for testing purposes. for Production this should be 30
     public static Firebase mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
     /**

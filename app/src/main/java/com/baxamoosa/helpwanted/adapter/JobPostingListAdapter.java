@@ -26,7 +26,7 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
     }
 
     public JobPostingListAdapter(JobPost[] jp) {
-        Timber.v("JobPostingListAdapter(JobPost[] jp)");
+        // Timber.v("JobPostingListAdapter(JobPost[] jp)");
         mJobPost = jp;
     }
 

@@ -1,6 +1,8 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,6 +31,7 @@ import timber.log.Timber;
 public class JobPostingDetailActivity extends AppCompatActivity {
 
     private ShareActionProvider mShareActionProvider;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -88,7 +93,14 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_detail, menu);
+        String email = (sharedPref.getString(getString(R.string.person_email), "no email"));
+        String userEmail = "hbaxamoosa@gmail.com";
+
+        if (email.equals(userEmail)) {
+            inflater.inflate(R.menu.menu_detail_signedin, menu);
+        } else {
+            inflater.inflate(R.menu.menu_detail, menu);
+        }
         finishCreatingMenu(menu);
     }
 
@@ -115,6 +127,12 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+        // see https://thedevelopersinfo.wordpress.com/2009/10/20/dynamically-change-options-menu-items-in-android/
     }
 
     // Call to update the share intent

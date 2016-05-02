@@ -118,6 +118,11 @@
             android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
+        <provider
+            android:name=".data.FavoriteProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
 </manifest>

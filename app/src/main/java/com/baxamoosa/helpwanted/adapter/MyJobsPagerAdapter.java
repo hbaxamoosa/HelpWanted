@@ -28,18 +28,22 @@ public class MyJobsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
+        Fragment returnFragment = null;
         switch (i) {
             case 0: // Active
                 Fragment fragmentActive = new MyJobActiveFragment();
-                return fragmentActive;
+                returnFragment = fragmentActive;
+                break;
             case 1: // Expired
                 Fragment fragmentExpired = new MyJobExpiredFragment();
-                return fragmentExpired;
+                returnFragment = fragmentExpired;
+                break;
             case 2: // Favorites
                 Fragment fragmentFavorites = new MyJobFavoriteFragment();
-                return fragmentFavorites;
+                returnFragment = fragmentFavorites;
+                break;
         }
-        return new MyJobActiveFragment(); // execution should never go here!
+        return returnFragment; // execution should never go here!
     }
 
     @Override

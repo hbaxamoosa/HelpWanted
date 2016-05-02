@@ -57,7 +57,6 @@ import timber.log.Timber;
  */
 public class JobPostingListActivity extends AppCompatActivity implements /*JobPostingListAdapter.Callback,*/ LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int CURSOR_LOADER_ID = 0;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
      */
@@ -113,7 +112,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             setupDrawerContent(navigationView);
         }
 
-        getSupportLoaderManager().initLoader(CURSOR_LOADER_ID, null, JobPostingListActivity.this);
+        getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, JobPostingListActivity.this);
 
         grabJobPostsFromFireBase();
 
@@ -183,7 +182,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
         }
-        populateTestData();  // test data
+        // populateTestData();  // test data
     }
 
     @Override
@@ -204,9 +203,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
     private void grabJobPostsFromFireBase() {
 
-        // start by flushing the existing Content DB
-        getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
-        Timber.v("getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);");
         // Attach an listener to read the data at our posts reference
         Utility.mRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -328,6 +324,11 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         if (BuildConfig.DEBUG) {
             Timber.v("Loader<Cursor> onCreateLoader(int id, Bundle args)");
         }
+
+        // start by flushing the existing Content DB
+        getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
+        Timber.v("getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);");
+
         return new CursorLoader(this,
                 JobPostContract.JobPostList.CONTENT_URI,
                 null,

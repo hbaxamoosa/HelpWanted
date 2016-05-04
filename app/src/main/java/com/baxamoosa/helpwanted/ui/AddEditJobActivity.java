@@ -3,16 +3,12 @@ package com.baxamoosa.helpwanted.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.firebase.client.Firebase;
@@ -21,7 +17,7 @@ import java.util.Date;
 
 import timber.log.Timber;
 
-public class AddEditJobActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddEditJobActivity extends AppCompatActivity {
 
     private EditText name;
     private EditText phone;
@@ -61,23 +57,7 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
     }
 
     public void submitToDB(View view) {
-
         Timber.v("submitToDB(View view)");
-
-        /*ContentValues[] jobPostArr = new ContentValues[1];
-
-        jobPostArr[0] = new ContentValues();
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSID, getIntent().getExtras().getString(getString(R.string.business_id)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, name.getText().toString());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, address.getText().toString());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, phone.getText().toString());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, getIntent().getExtras().getDouble(getString(R.string.business_latitude)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, getIntent().getExtras().getDouble(getString(R.string.business_longitude)));
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_WAGERATE, wageRate.getText().toString());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_POSTDATE, date.getTime());
-        jobPostArr[0].put(JobPostContract.JobPostList.COLUMN_OWNER, sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-
-        getContentResolver().bulkInsert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);*/
 
         Timber.v("creating Firebase reference");
         Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
@@ -100,28 +80,6 @@ public class AddEditJobActivity extends AppCompatActivity implements LoaderManag
 
         // job post submitted via content provider, so go back to MyJobsActivity
         startActivity(new Intent(this, MyJobsActivity.class));
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (BuildConfig.DEBUG) {
-            Timber.v("onCreateLoader(int id, Bundle args)");
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (BuildConfig.DEBUG) {
-            Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        if (BuildConfig.DEBUG) {
-            Timber.v("onLoaderReset(Loader<Cursor> loader)");
-        }
     }
 
     /*private void placePhotosTask(String placeID) {

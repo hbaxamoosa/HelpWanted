@@ -301,11 +301,17 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
         if (mTwoPane) {
             Bundle arguments = new Bundle();
+            arguments.putString(getString(R.string._id), mJobPost[position].get_id());
             arguments.putString(getString(R.string.business_id), mJobPost[position].getBusinessId());
             arguments.putString(getString(R.string.business_name), mJobPost[position].getbusinessName());
             arguments.putString(getString(R.string.business_address), mJobPost[position].getbusinessAddress());
             arguments.putString(getString(R.string.business_phone), mJobPost[position].getbusinessPhone());
             arguments.putString(getString(R.string.business_website), mJobPost[position].getbusinessWebsite());
+            arguments.putDouble(getString(R.string.business_latitude), mJobPost[position].getbusinessLatitude());
+            arguments.putDouble(getString(R.string.business_longitude), mJobPost[position].getbusinessLongitude());
+            arguments.putInt(getString(R.string.business_wage_rate), mJobPost[position].getWageRate());
+            arguments.putDouble(getString(R.string.business_post_date), mJobPost[position].getDate());
+            arguments.putString(getString(R.string.business_owner), mJobPost[position].getUser());
 
             JobPostingDetailFragment fragment = new JobPostingDetailFragment();
             fragment.setArguments(arguments);
@@ -314,6 +320,20 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                     .commit();
         } else {
             Intent intent = new Intent(this, JobPostingDetailActivity.class);
+            /*intent.putExtra(getString(R.string._id), mJobPost[position].get_id());
+            Timber.v("mJobPost[position].get_id(): " +  mJobPost[position].get_id());
+            intent.putExtra(getString(R.string.business_id), mJobPost[position].getBusinessId());
+            Timber.v("mJobPost[position].getBusinessId(): " +  mJobPost[position].getBusinessId());
+            intent.putExtra(getString(R.string.business_name), mJobPost[position].getbusinessName());
+            Timber.v("mJobPost[position].getBusinessName(): " +  mJobPost[position].getbusinessName());
+            intent.putExtra(getString(R.string.business_address), mJobPost[position].getbusinessAddress());
+            intent.putExtra(getString(R.string.business_phone), mJobPost[position].getbusinessPhone());
+            intent.putExtra(getString(R.string.business_website), mJobPost[position].getbusinessWebsite());
+            intent.putExtra(getString(R.string.business_latitude), mJobPost[position].getbusinessLatitude()); // double
+            intent.putExtra(getString(R.string.business_longitude), mJobPost[position].getbusinessLongitude()); // double
+            intent.putExtra(getString(R.string.business_wage_rate), mJobPost[position].getWageRate()); // int
+            intent.putExtra(getString(R.string.business_post_date), mJobPost[position].getDate()); // double
+            intent.putExtra(getString(R.string.business_owner), mJobPost[position].getUser());*/
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
             startActivity(intent);
         }

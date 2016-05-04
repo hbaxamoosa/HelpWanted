@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import timber.log.Timber;
+
 /**
  * Created by hasnainbaxamoosa on 4/20/16.
  */
@@ -24,8 +26,8 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        // Create a table to hold favorite movies.
-        final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + JobPostContract.JobPostList.TABLE_NAME + " (" +
+        // Create a table to hold job post movies.
+        final String SQL_CREATE_JOBPOSTS_TABLE = "CREATE TABLE " + JobPostContract.JobPostList.TABLE_NAME + " (" +
                 JobPostContract.JobPostList.COLUMN_ID + " TEXT," +
                 JobPostContract.JobPostList.COLUMN_BUSINESSID + " TEXT, " +
                 JobPostContract.JobPostList.COLUMN_BUSINESSNAME + " TEXT, " +
@@ -39,7 +41,24 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
                 JobPostContract.JobPostList.COLUMN_OWNER + " TEXT" +
                 ");";
 
-        // Timber.v(TAG + " SQL_CREATE_FAVORITES_TABLE is " + SQL_CREATE_FAVORITES_TABLE);
+        Timber.v("SQL_CREATE_JOBPOSTS_TABLE is " + SQL_CREATE_JOBPOSTS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_JOBPOSTS_TABLE);
+
+        final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + JobPostContract.FavoriteList.TABLE_NAME + " (" +
+                JobPostContract.FavoriteList.COLUMN_ID + " TEXT," +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSID + " TEXT, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSNAME + " TEXT, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSADDRESS + " TEXT, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSPHONE + " TEXT, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSWEBSITE + " TEXT, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSLATITUDE + " DOUBLE, " +
+                JobPostContract.FavoriteList.COLUMN_BUSINESSLONGITUDE + " DOUBLE, " +
+                JobPostContract.FavoriteList.COLUMN_WAGERATE + " INT, " +
+                JobPostContract.FavoriteList.COLUMN_POSTDATE + " LONG, " +
+                JobPostContract.FavoriteList.COLUMN_OWNER + " TEXT" +
+                ");";
+
+        Timber.v("SQL_CREATE_FAVORITES_TABLE is " + SQL_CREATE_FAVORITES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
     }
 
@@ -52,6 +71,7 @@ public class JobPostsDbHelper extends SQLiteOpenHelper {
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + JobPostContract.JobPostList.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + JobPostContract.FavoriteList.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

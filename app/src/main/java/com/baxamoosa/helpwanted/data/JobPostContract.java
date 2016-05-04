@@ -27,6 +27,7 @@ public class JobPostContract {
 
     // Possible paths (appended to base content URI for possible URI's)
     public static final String PATH_JOBPOST = "jobpost";
+    public static final String PATH_FAVORITE = "favorite";
 
     /*
         Inner class that defines the contents of the location table
@@ -52,6 +53,36 @@ public class JobPostContract {
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_JOBPOST;
+
+        public static Uri buildJobPostsUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    /*
+        Inner class that defines the contents of the location table
+     */
+    public static final class FavoriteList implements BaseColumns {
+
+        public static final String TABLE_NAME = "favorite";
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
+
+        // Columns for favorite table
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_BUSINESSID = "businessId";
+        public static final String COLUMN_BUSINESSNAME = "businessName";
+        public static final String COLUMN_BUSINESSADDRESS = "businessAddress";
+        public static final String COLUMN_BUSINESSPHONE = "businessPhone";
+        public static final String COLUMN_BUSINESSWEBSITE = "businessWebsite";
+        public static final String COLUMN_BUSINESSLATITUDE = "businessLatitude";
+        public static final String COLUMN_BUSINESSLONGITUDE = "businessLongitude";
+        public static final String COLUMN_WAGERATE = "wageRate";
+        public static final String COLUMN_POSTDATE = "postDate";
+        public static final String COLUMN_OWNER = "owner";
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
 
         public static Uri buildJobPostsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

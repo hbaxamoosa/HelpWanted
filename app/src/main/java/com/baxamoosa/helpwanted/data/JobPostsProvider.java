@@ -7,12 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import timber.log.Timber;
+
 /**
  * Created by hasnainbaxamoosa on 4/20/16.
  */
 public class JobPostsProvider extends ContentProvider {
 
     static final int JOBPOSTS = 100;
+    static final int FAVORITES = 200;
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -29,6 +32,8 @@ public class JobPostsProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, JobPostContract.PATH_JOBPOST, JOBPOSTS);
+        matcher.addURI(authority, JobPostContract.PATH_FAVORITE, FAVORITES);
+        Timber.v("matcher: " + matcher);
         return matcher;
     }
 
@@ -46,6 +51,8 @@ public class JobPostsProvider extends ContentProvider {
         switch (match) {
             case JOBPOSTS:
                 return JobPostContract.JobPostList.CONTENT_TYPE;
+            case FAVORITES:
+                return JobPostContract.FavoriteList.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -59,6 +66,18 @@ public class JobPostsProvider extends ContentProvider {
             case JOBPOSTS: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         JobPostContract.JobPostList.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            case FAVORITES: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        JobPostContract.FavoriteList.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -91,6 +110,14 @@ public class JobPostsProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case FAVORITES: {
+                long _id = db.insert(JobPostContract.FavoriteList.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = JobPostContract.FavoriteList.buildJobPostsUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -108,6 +135,10 @@ public class JobPostsProvider extends ContentProvider {
         switch (match) {
             case JOBPOSTS: {
                 rowsDeleted = db.delete(JobPostContract.JobPostList.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            case FAVORITES: {
+                rowsDeleted = db.delete(JobPostContract.FavoriteList.TABLE_NAME, selection, selectionArgs);
                 break;
             }
             default:

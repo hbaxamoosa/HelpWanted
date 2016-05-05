@@ -84,6 +84,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
         // set a flag to track whether this is the first time the JobPostingsAdapter is being loaded into the app.
         firstLoad = true;
+        mTwoPane = false;  // // TODO: 5/5/16 remove later
 
         if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
@@ -300,6 +301,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
         if (mTwoPane) {
+            Timber.v("mTwoPane: " + true);
             Bundle arguments = new Bundle();
             arguments.putString(getString(R.string._id), mJobPost[position].get_id());
             arguments.putString(getString(R.string.business_id), mJobPost[position].getBusinessId());
@@ -319,10 +321,13 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                     .replace(R.id.jobposting_detail_container, fragment)
                     .commit();
         } else {
+            Timber.v("mTwoPane: " + false);
             Intent intent = new Intent(this, JobPostingDetailActivity.class);
-            /*intent.putExtra(getString(R.string._id), mJobPost[position].get_id());
+            // intent.putExtra(getString(R.string._id), mJobPost[position].get_id());
+            intent.putExtra("_id", mJobPost[position].get_id());
             Timber.v("mJobPost[position].get_id(): " +  mJobPost[position].get_id());
-            intent.putExtra(getString(R.string.business_id), mJobPost[position].getBusinessId());
+            // intent.putExtra(getString(R.string.business_id), mJobPost[position].getBusinessId());
+            intent.putExtra("business_id", mJobPost[position].getBusinessId());
             Timber.v("mJobPost[position].getBusinessId(): " +  mJobPost[position].getBusinessId());
             intent.putExtra(getString(R.string.business_name), mJobPost[position].getbusinessName());
             Timber.v("mJobPost[position].getBusinessName(): " +  mJobPost[position].getbusinessName());
@@ -333,7 +338,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             intent.putExtra(getString(R.string.business_longitude), mJobPost[position].getbusinessLongitude()); // double
             intent.putExtra(getString(R.string.business_wage_rate), mJobPost[position].getWageRate()); // int
             intent.putExtra(getString(R.string.business_post_date), mJobPost[position].getDate()); // double
-            intent.putExtra(getString(R.string.business_owner), mJobPost[position].getUser());*/
+            intent.putExtra(getString(R.string.business_owner), mJobPost[position].getUser());
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
             startActivity(intent);
         }

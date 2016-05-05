@@ -1,6 +1,7 @@
 package com.baxamoosa.helpwanted.ui;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,53 +57,75 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
+        final ContentResolver resolver = getContentResolver();
+
         intentExtras = getIntent().getExtras();
         if (intentExtras != null) {
             Timber.v("arguments != null");
             position = intentExtras.getInt(JobPostingDetailFragment.ARG_ITEM_ID);
-            /*businessID = new String[]{ intentExtras.getString(getString(R.string.business_id)) };
+            businessID = new String[]{intentExtras.getString(getString(R.string.business_id))};
             Timber.v("position: " + position);
-            Timber.v("businessID: " + businessID[0]);
+            Timber.v("businessID: " + businessID[0].toString());
             Timber.v("_id: " + intentExtras.getString(getString(R.string._id)));
-            Timber.v("businessName: " + intentExtras.getString(getString(R.string.business_name)));*/
+            Timber.v("businessName: " + intentExtras.getString(getString(R.string.business_name)));
         }
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.btn_favorite);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 if (isFavorite == true) {
                     isFavorite = false;
                     fab.setImageResource(R.drawable.ic_star_border_black_24dp);
-                    // TODO: 5/4/16 use the Cursor Resolver to delete the job post from the Favorite table
-                } else {
+                    String deleteSelection = JobPostContract.FavoriteList.COLUMN_ID + "= ?";
+                    String[] deleteSelectionArgs = {intentExtras.getString(getString(R.string._id))};
+                    resolver.delete(JobPostContract.FavoriteList.CONTENT_URI, deleteSelection, deleteSelectionArgs);
+
+                    // notify user
+                    Snackbar.make(view, getString(R.string.remove_favorite), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } else { // isFavorite is false
                     isFavorite = true;
                     fab.setImageResource(R.drawable.ic_star_black_24dp);
-                    // TODO: 5/4/16 use the Cursor Resolver to insert the job post from the Favorite table
+                    ContentValues[] favoriteArr = new ContentValues[1];
+                    favoriteArr[0] = new ContentValues();
+                    Timber.v("intentExtras.getString(getString(R.string._id)): " + intentExtras.getString(getString(R.string._id)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_ID, intentExtras.getString(getString(R.string._id)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSID, intentExtras.getString(getString(R.string.business_id)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSNAME, intentExtras.getString(getString(R.string.business_name)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSADDRESS, intentExtras.getString(getString(R.string.business_address)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSPHONE, intentExtras.getString(getString(R.string.business_phone)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSWEBSITE, intentExtras.getString(getString(R.string.business_website)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSLATITUDE, intentExtras.getDouble(getString(R.string.business_latitude)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSLONGITUDE, intentExtras.getDouble(getString(R.string.business_longitude)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_WAGERATE, intentExtras.getInt(getString(R.string.business_wage_rate)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_POSTDATE, intentExtras.getLong(getString(R.string.business_post_date)));
+                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_OWNER, intentExtras.getString(getString(R.string.business_owner)));
+
+                    resolver.bulkInsert(JobPostContract.FavoriteList.CONTENT_URI, favoriteArr);
+
+                    // notify user
+                    Snackbar.make(view, getString(R.string.add_favorite), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }
         });
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "=?";
-        String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), "no name available")};
+        String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
+        String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
         Timber.v("selection: " + selection);
         Timber.v("selectionArgs: " + selectionArgs[0].toString());
 
-        final ContentResolver resolver = getContentResolver();
         Cursor favoriteCursor = resolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
-        if (favoriteCursor == null) { // cursor returned NULL, therefore is not a favorite
+
+        if (favoriteCursor.getCount() == 0) { // cursor returned 0, therefore is not a favorite
             Timber.v("favoriteCursor == null");
             isFavorite = false;
             fab.setImageResource(R.drawable.ic_star_border_black_24dp);
             // fab.setBackgroundResource(R.drawable.ic_star_border_black_24dp);
-        } else { // is cursor is not NULL, then job post is a favorite
-            Timber.v("isFavorite != null");
+        } else { // cursor returns data, then job post is a favorite
+            Timber.v("favoriteCursor != null"); // TODO: 5/4/16 check this, because this is always being hit 
             isFavorite = true;
             fab.setImageResource(R.drawable.ic_star_black_24dp);
-            // fab.setBackgroundResource(R.drawable.ic_star_black_24dp);
         }
 
         // Show the Up button in the action bar.

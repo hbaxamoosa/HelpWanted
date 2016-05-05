@@ -3,7 +3,6 @@ package com.baxamoosa.helpwanted.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -52,16 +51,14 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
 
         Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
 
-        View rootView = inflater.inflate(R.layout.activity_content_my_jobs_drawer, container, false);
-
-        emptyView = (TextView) rootView.findViewById(R.id.recyclerview_empty);
+        View rootView = inflater.inflate(R.layout.activity_content_my_jobs, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
-        mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+        // mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
@@ -91,42 +88,8 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
             Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
         }
 
-        /*if (data.getCount() == 0) {
-            Timber.v("mRecyclerView.setVisibility(View.GONE)");
-            mRecyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        } else {
-            emptyView.setVisibility(View.GONE);
-            mRecyclerView.setVisibility((View.VISIBLE));
-            Timber.v("emptyView.setVisibility(View.GONE)");
-        }*/
-
         if (data.getCount() != 0) {
-            Cursor mCursor = data;
-            mCursor.moveToFirst();
-            DatabaseUtils.dumpCursor(data);
-
-            Timber.v("mCursor.getCount(): " + mCursor.getCount());
-
-            // Create JobPost objects array
-            JobPost[] jobPosts = new JobPost[mCursor.getCount()];
-            for (int i = 0; i < mCursor.getCount(); i++) {
-                jobPosts[i] = new JobPost();
-                jobPosts[i]._id = mCursor.getString(Utility.COL_ID);
-                Timber.v("jobPosts[i].id: " + jobPosts[i]._id);
-                jobPosts[i].businessId = mCursor.getString(Utility.COL_BUSINESS_ID);
-                jobPosts[i].businessName = mCursor.getString(Utility.COL_BUSINESS_NAME);
-                jobPosts[i].businessAddress = mCursor.getString(Utility.COL_BUSINESS_ADDRESS);
-                jobPosts[i].businessPhone = mCursor.getString(Utility.COL_BUSINESS_PHONE);
-                jobPosts[i].businessWebsite = mCursor.getString(Utility.COL_BUSINESS_WEBSITE);
-                jobPosts[i].businessLatitude = mCursor.getDouble(Utility.COL_BUSINESS_LATITUDE);
-                jobPosts[i].businessLongitude = mCursor.getDouble(Utility.COL_BUSINESS_LONGITUDE);
-                jobPosts[i].wageRate = mCursor.getInt(Utility.COL_WAGERATE);
-                jobPosts[i].date = mCursor.getLong(Utility.COL_POSTDATE);
-                jobPosts[i].user = mCursor.getString(Utility.COL_OWNER);
-
-                mCursor.moveToNext();
-            }
+            mJobPost = Utility.populateJobPostArray(loader, data);
 
             mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
             try {

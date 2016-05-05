@@ -38,8 +38,6 @@ import timber.log.Timber;
 public class MyJobActiveFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public JobPost[] mJobPost;
-    // public static final String ARG_OBJECT = "jobpost";
-    // private FirebaseRecyclerAdapter<JobPost, JobPostHolder> mRecycleViewAdapter;
     private RecyclerView.Adapter mJobPostingListAdapter;
     private RecyclerView mRecyclerView;
     private SharedPreferences sharedPref;
@@ -67,12 +65,13 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
-        mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+
+        /*mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         return rootView;
     }
@@ -91,7 +90,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         Timber.v("validTime: " + validTime);
         Timber.v("validTime String: " + validTime);
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "<?";
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?";
         String[] selectionArgs = {validTime.toString()};
 
         Timber.v("selection: " + selection);
@@ -99,7 +98,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,
-                null,
+                Utility.JOBPOST_COLUMNS,
                 selection,
                 selectionArgs,
                 null);

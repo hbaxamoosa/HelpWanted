@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -236,6 +237,12 @@ public class SignInActivity extends AppCompatActivity
         // set the new Share Pref value for signout
         editor.putBoolean("signout", false);
         editor.commit();
+
+        // since the user is signing out, we need to flush the jobpost table
+        getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
+
+        // since the user is signing out, we need to flush the favorite table
+        getContentResolver().delete(JobPostContract.FavoriteList.CONTENT_URI, null, null);
     }
     // [END signOut]
 

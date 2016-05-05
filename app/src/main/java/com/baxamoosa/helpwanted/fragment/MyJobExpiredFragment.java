@@ -51,23 +51,6 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         getActivity().getSupportLoaderManager().initLoader(Utility.EXPIRED_JOBPOSTS, null, MyJobExpiredFragment.this);
-
-        /*mRecycleViewAdapter = new FirebaseRecyclerAdapter<JobPost, JobPostHolder>(JobPost.class, R.layout.cardview_jobpost, JobPostHolder.class, Utility.mRef) {
-            @Override
-            protected void populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i) {
-                Timber.v("populateViewHolder(JobPostHolder jobPostHolder, JobPost jobPost, int i)");
-
-                String userFromJobPost = jobPost.getUser();
-                String userFromSharedPrefs = sharedPref.getString(getString(R.string.person_email), "unknown");
-
-                if (userFromJobPost.equals(userFromSharedPrefs) && !Utility.isValid(jobPost.getDate())) {
-                    JobPostHolder.mId.setText(jobPost.getbusinessName());
-                    jobPostHolder.mContent.setText(jobPost.getbusinessAddress());
-                } else {
-                    jobPostHolder.mCardView.setVisibility(View.GONE);
-                }
-            }
-        };*/
     }
 
     @Override
@@ -82,13 +65,13 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
-        // mRecyclerView.setAdapter(mRecycleViewAdapter);
-        mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+
+        /*mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         return rootView;
     }
@@ -99,7 +82,6 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
             Timber.v("Loader<Cursor> onCreateLoader(int id, Bundle args)");
         }
 
-        Long time = System.currentTimeMillis();
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar validDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - Utility.LENGTH_OF_VALIDITY));
         Long validTime = validDate.getTimeInMillis();
@@ -108,7 +90,7 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         Timber.v("validTime: " + validTime);
         Timber.v("validTime String: " + validTime);
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?";
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "<?";
         String[] selectionArgs = {validTime.toString()};
 
         Timber.v("selection: " + selection);
@@ -116,7 +98,7 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,
-                null,
+                Utility.JOBPOST_COLUMNS,
                 selection,
                 selectionArgs,
                 null);

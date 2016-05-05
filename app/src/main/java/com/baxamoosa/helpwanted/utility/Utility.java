@@ -59,7 +59,7 @@ public class Utility {
             JobPostContract.JobPostList.COLUMN_OWNER
     };
 
-    public static final int LENGTH_OF_VALIDITY = 1; // using a small window for testing purposes. for Production this should be 30
+    public static final int LENGTH_OF_VALIDITY = 10; // using a small window for testing purposes. for Production this should be 30
     public static Firebase mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
     /**

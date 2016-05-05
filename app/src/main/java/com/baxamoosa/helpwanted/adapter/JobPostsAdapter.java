@@ -18,7 +18,6 @@ import timber.log.Timber;
  */
 public class JobPostsAdapter extends RecyclerView.Adapter<JobPostsAdapter.ViewHolder> {
 
-    // private final List<DummyContent.DummyItem> mValues;
     private final JobPost[] mJobPost;
 
     public JobPostsAdapter(JobPost[] items) {

@@ -155,6 +155,9 @@
     <string name="favorite_button">Favorite</string>
     <string name="title_activity_add_edit_job">AddEditJobActivity</string>
 
+    <string name="add_favorite">Job Post was added to favorites</string>
+    <string name="remove_favorite">Job Post was removed from favorites</string>
+
     <!-- Shared Prefs -->
     <string name="preference_file_key">com.baxamoosa.helpwanted.PREFERENCE_FILE_KEY</string>
 
@@ -163,6 +166,9 @@
 
     <!-- For Content Provider -->
     <string name="content_authority">com.baxamoosa.helpwanted</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">com.baxamoosa.helpwanted.sync</string>
 
     <!-- Firebase connection string -->
     <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/jobposts</string>

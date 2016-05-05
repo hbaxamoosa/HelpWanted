@@ -19,7 +19,7 @@ import timber.log.Timber;
  */
 public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAdapter.JobPostingListAdapterViewHolder> {
 
-    public JobPost[] mJobPost;
+    public static JobPost[] mJobPost;
 
     public JobPostingListAdapter() {
         Timber.v("JobPostingListAdapter()");
@@ -75,6 +75,22 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
             Timber.v("adapterPosition is " + adapterPosition + " and layoutPosition is " + layoutPosition);
             Intent intent = new Intent(v.getContext(), JobPostingDetailActivity.class);
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, adapterPosition);
+
+            intent.putExtra(v.getContext().getResources().getString(R.string._id), mJobPost[adapterPosition].get_id());
+            Timber.v("mJobPost[position].get_id(): " + mJobPost[adapterPosition].get_id());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_id), mJobPost[adapterPosition].getBusinessId());
+            Timber.v("mJobPost[position].getBusinessId(): " + mJobPost[adapterPosition].getBusinessId());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_name), mJobPost[adapterPosition].getbusinessName());
+            Timber.v("mJobPost[position].getBusinessName(): " + mJobPost[adapterPosition].getbusinessName());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_address), mJobPost[adapterPosition].getbusinessAddress());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_phone), mJobPost[adapterPosition].getbusinessPhone());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_website), mJobPost[adapterPosition].getbusinessWebsite());
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_latitude), mJobPost[adapterPosition].getbusinessLatitude()); // double
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_longitude), mJobPost[adapterPosition].getbusinessLongitude()); // double
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_wage_rate), mJobPost[adapterPosition].getWageRate()); // int
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_post_date), mJobPost[adapterPosition].getDate()); // double
+            intent.putExtra(v.getContext().getResources().getString(R.string.business_owner), mJobPost[adapterPosition].getUser());
+
             v.getContext().startActivity(intent);
         }
     }

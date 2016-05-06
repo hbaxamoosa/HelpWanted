@@ -69,6 +69,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     private RecyclerView.Adapter mJobPostingListAdapter;
     private RecyclerView mRecyclerView;
     private TextView emptyView;
+    private ValueEventListener jobPostsListener;
     // private Cursor mCursor;
 
     @Override
@@ -191,6 +192,9 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         if (BuildConfig.DEBUG) {
             Timber.v("onStop()");
         }
+
+        // remove Firebase event listener
+        Utility.mRef.removeEventListener(jobPostsListener);
     }
 
     @Override
@@ -204,7 +208,8 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     private void grabJobPostsFromFireBase() {
 
         // Attach an listener to read the data at our posts reference
-        Utility.mRef.addValueEventListener(new ValueEventListener() {
+
+        jobPostsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 // Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
@@ -237,7 +242,10 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             public void onCancelled(FirebaseError firebaseError) {
                 Timber.v("The read failed: " + firebaseError.getMessage());
             }
-        });
+        };
+
+        Utility.mRef.addValueEventListener(jobPostsListener);
+
     }
 
     @Override

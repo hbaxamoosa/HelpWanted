@@ -25,6 +25,9 @@ import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import timber.log.Timber;
 
@@ -229,14 +232,34 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     }
 
     private void deleteJobPost() {
+        Timber.v("deleteJobPost()");
+
+
+        // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
+        Utility.mRef
+                .orderByChild("_id")
+                .equalTo(intentExtras.getString(getString(R.string.business_id)))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()) {
+                            Timber.v("dataSnapshot.hasChildren()");
+                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+                            firstChild.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        Timber.v("onCancelled(FirebaseError firebaseError)");
+                    }
+                });
+
         String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
         String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
         Timber.v("selection: " + selection);
         Timber.v("selectionArgs: " + selectionArgs[0].toString());
-
-        // delete job post from Firebase (cloud)
-        // // TODO: 5/6/16 delete job post here
 
         ContentResolver resolverJobPosts = getContentResolver();
         // delete job post from jobpost table (local)

@@ -176,4 +176,8 @@
     <!-- PLacepicker placeholder text -->
     <string name="placepicker_placeholder_text">Place picker is loading...</string>
     <string name="empty_jobpost_list">No Job Posts available yet! Go to \'My Job\' and use the \'+\' button to add the first!</string>
+
+    <!-- menu_detail.xml -->
+    <string name="action_share">Share</string>
+    <string name="action_delete_favorite">Delete</string>
 </resources>

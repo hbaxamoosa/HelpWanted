@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
@@ -35,6 +36,8 @@ import timber.log.Timber;
  */
 public class JobPostingDetailActivity extends AppCompatActivity {
 
+    private static final int MENUITEM_SHARE = Menu.FIRST;
+    private static final int MENUITEM_DELETE = Menu.FIRST + 1;
     private ShareActionProvider mShareActionProvider;
     private SharedPreferences sharedPref;
     private String[] businessID;
@@ -175,7 +178,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     private void finishCreatingMenu(Menu menu) {
         // Retrieve the share menu item
         MenuItem menuItem = menu.findItem(R.id.action_share);
-        menuItem.setIntent(createShareForecastIntent());
+        menuItem.setIntent(createShareIntent());
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -191,7 +194,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         finishCreatingMenu(menu);
     }
 
-    private Intent createShareForecastIntent() {
+    private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
@@ -202,24 +205,83 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
-            return true;
+        switch (id) {
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                //
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                //
+                NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
+                return true;
+            case R.id.action_delete_favorite:
+                Timber.v("user clicked on delete");
+                Toast.makeText(this, "Job Post deleted", Toast.LENGTH_SHORT).show();
+                deleteJobPost();
+                return true;
+            case R.id.action_share:
+                Timber.v("user clicked share");
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void deleteJobPost() {
+        String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
+        String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
+
+        Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+
+        // delete job post from Firebase (cloud)
+        // // TODO: 5/6/16 delete job post here
+
+        ContentResolver resolverJobPosts = getContentResolver();
+        // delete job post from jobpost table (local)
+        resolverJobPosts.delete(JobPostContract.JobPostList.CONTENT_URI, selection, selectionArgs);
+
+        ContentResolver resolverFavorites = getContentResolver();
+        // delete job post from favorites table (local)
+        resolverFavorites.delete(JobPostContract.FavoriteList.CONTENT_URI, selection, selectionArgs);
+        Timber.v("Job post for business ID " + intentExtras.getString(getString(R.string.business_id)) + " deleted");
+
+        startActivity(new Intent(this, JobPostingListActivity.class));
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        Timber.v("onPrepareOptionsMenu(Menu menu)");
+        MenuItem menuItem = menu.findItem(R.id.action_delete_favorite);
+        menuItem.setVisible(checkIfOwner());
+
+        /*menu.clear();
+        menu.add(0, MENUITEM_DELETE, 0, R.string.action_delete_favorite);*/
         return super.onPrepareOptionsMenu(menu);
-        // see https://thedevelopersinfo.wordpress.com/2009/10/20/dynamically-change-options-menu-items-in-android/
+    }
+
+    private boolean checkIfOwner() {
+        Timber.v("checkIfOwner()");
+        boolean isOwner;
+        String selection = JobPostContract.FavoriteList.COLUMN_OWNER + "=?";
+        String[] selectionArgs = {intentExtras.getString(getString(R.string.business_owner))};
+
+        Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+
+        ContentResolver resolver = getContentResolver();
+        Cursor ownerCursor = resolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
+
+        if (ownerCursor.getCount() > 0) {
+            Timber.v("ownerCursor.getCount() > 0");
+            isOwner = false;
+        } else {
+            Timber.v("ownerCursor.getCount() == 0");
+            isOwner = true;
+        }
+        Timber.v("isOwner: " + isOwner);
+        return isOwner;
     }
 
     // Call to update the share intent

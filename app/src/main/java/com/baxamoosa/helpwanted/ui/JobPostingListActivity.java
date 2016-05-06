@@ -31,7 +31,6 @@ import com.baxamoosa.helpwanted.adapter.JobPostingListAdapter;
 import com.baxamoosa.helpwanted.adapter.JobPostsAdapter;
 import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.data.JobPostContract;
-import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.DataSnapshot;
@@ -298,7 +297,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
      * indicating that the item with the given ID was selected.
      */
     public void JobPostingListAdapter(int position) {
-        Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
+        /*Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
         Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
         if (mTwoPane) {
             Timber.v("mTwoPane: " + true);
@@ -341,7 +340,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             intent.putExtra(getString(R.string.business_owner), mJobPost[position].getUser());
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
             startActivity(intent);
-        }
+        }*/
     }
 
     @Override

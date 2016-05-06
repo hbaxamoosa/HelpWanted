@@ -6,6 +6,12 @@
     <item
         android:id="@+id/action_share"
         android:actionProviderClass="android.widget.ShareActionProvider"
-        android:title="Share"
+        android:icon="@drawable/ic_share_white_18dp"
+        android:title="@string/action_share"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_delete_favorite"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/action_delete_favorite"
         app:showAsAction="always" />
 </menu>

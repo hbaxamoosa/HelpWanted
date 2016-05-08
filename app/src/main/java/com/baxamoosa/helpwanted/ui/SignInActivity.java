@@ -14,6 +14,7 @@ import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
+import com.baxamoosa.helpwanted.sync.HelpWantedSyncAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -199,6 +200,8 @@ public class SignInActivity extends AppCompatActivity
             }
 
             if (!signout) { //only send the user to the Job Listing when this is the firstRun
+                // use SyncAdapter to manage the job posts in the jobposts db
+                HelpWantedSyncAdapter.initializeSyncAdapter(this);
                 startActivity(new Intent(this, JobPostingListActivity.class));
             }
         } else {

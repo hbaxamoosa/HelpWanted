@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -178,31 +177,15 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void finishCreatingMenu(Menu menu) {
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-        menuItem.setIntent(createShareIntent());
-    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Timber.v("onPrepareOptionsMenu(Menu menu)");
+        MenuItem menuItemDelete = menu.findItem(R.id.action_delete_favorite);
+        menuItemDelete.setVisible(checkIfOwner());
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        String email = (sharedPref.getString(getString(R.string.person_email), "no email"));
-        String userEmail = "hbaxamoosa@gmail.com";
-
-        if (email.equals(userEmail)) {
-            inflater.inflate(R.menu.menu_detail_signedin, menu);
-        } else {
-            inflater.inflate(R.menu.menu_detail, menu);
-        }
-        finishCreatingMenu(menu);
-    }
-
-    private Intent createShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "something");
-        return shareIntent;
+        MenuItem menuItemEdit = menu.findItem(R.id.action_edit);
+        menuItemEdit.setVisible(checkIfOwner());
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -224,8 +207,21 @@ public class JobPostingDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Job Post deleted", Toast.LENGTH_SHORT).show();
                 deleteJobPost();
                 return true;
-            case R.id.action_share:
-                Timber.v("user clicked share");
+            case R.id.action_edit:
+                Timber.v("user clicked on edit");
+                Intent mIntent = new Intent(this, AddEditJobActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.getString(getString(R.string.editJob), getString(R.string.editJob));
+                mBundle.putString(getString(R.string.business_id), intentExtras.getString(getString(R.string._id)));
+                /*mBundle.putString(getString(R.string.business_name), intentExtras.getString(getString(R.string.business_name)));
+                mBundle.putString(getString(R.string.business_phone), intentExtras.getString(getString(R.string.business_phone)));
+                mBundle.putString(getString(R.string.business_address), intentExtras.getString(getString(R.string.business_address)));
+                mBundle.putString(getString(R.string.business_website), intentExtras.getString(getString(R.string.business_website)));
+                mBundle.putDouble(getString(R.string.business_latitude), intentExtras.getDouble(getString(R.string.business_latitude)));
+                mBundle.putDouble(getString(R.string.business_longitude), intentExtras.getDouble(getString(R.string.business_longitude)));*/
+
+                mIntent.putExtras(mBundle);
+                startActivity(mIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -259,7 +255,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+        Timber.v("selectionArgs: " + selectionArgs[0].toString() + selectionArgs[1].toString());
 
         ContentResolver resolverJobPosts = getContentResolver();
         // delete job post from jobpost table (local)
@@ -273,35 +269,26 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         startActivity(new Intent(this, JobPostingListActivity.class));
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Timber.v("onPrepareOptionsMenu(Menu menu)");
-        MenuItem menuItem = menu.findItem(R.id.action_delete_favorite);
-        menuItem.setVisible(checkIfOwner());
-
-        /*menu.clear();
-        menu.add(0, MENUITEM_DELETE, 0, R.string.action_delete_favorite);*/
-        return super.onPrepareOptionsMenu(menu);
-    }
-
     private boolean checkIfOwner() {
         Timber.v("checkIfOwner()");
         boolean isOwner;
-        String selection = JobPostContract.FavoriteList.COLUMN_OWNER + "=?";
-        String[] selectionArgs = {intentExtras.getString(getString(R.string.business_owner))};
+        String selection = JobPostContract.JobPostList.COLUMN_OWNER + "=? AND " + JobPostContract.JobPostList.COLUMN_BUSINESSID + "=?";
+        String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), "no@one.com"), intentExtras.getString(getString(R.string.business_id))};
+
 
         Timber.v("selection: " + selection);
         Timber.v("selectionArgs: " + selectionArgs[0].toString());
 
         ContentResolver resolver = getContentResolver();
-        Cursor ownerCursor = resolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
+        Timber.v("resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null): " + resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null).toString());
+        Cursor ownerCursor = resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
 
         if (ownerCursor.getCount() > 0) {
             Timber.v("ownerCursor.getCount() > 0");
-            isOwner = false;
+            isOwner = true;
         } else {
             Timber.v("ownerCursor.getCount() == 0");
-            isOwner = true;
+            isOwner = false;
         }
         Timber.v("isOwner: " + isOwner);
         return isOwner;

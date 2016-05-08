@@ -51,6 +51,9 @@
     <string name="pref_enable_notifications_false">Not Enabled</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
 
+    <!-- Strings related to Notification preference -->
+    <string name="pref_last_notification">last_notification</string>
+
     <!-- For Google Places API Attributions -->
     <string name="attribution_text" translatable="true">Powered by Google</string>
 
@@ -168,7 +171,7 @@
     <string name="content_authority">com.baxamoosa.helpwanted</string>
 
     <!-- SyncAdapter related -->
-    <string name="sync_account_type">com.baxamoosa.helpwanted.sync</string>
+    <string name="sync_account_type">com.baxamoosa.helpwanted</string>
 
     <!-- Firebase connection string -->
     <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/jobposts</string>
@@ -180,4 +183,13 @@
     <!-- menu_detail.xml -->
     <string name="action_share">Share</string>
     <string name="action_delete_favorite">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="post_job">Post Job</string>
+    <string name="placepickerNewPlace">Pick a different place</string>
+
+    <!-- PlacePickerActivity.java -->
+    <string name="addJob">addJob</string>
+
+    <!-- JobPostingDetailActivity.java -->
+    <string name="editJob">editJob</string>
 </resources>

@@ -9,6 +9,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="notification_large_icon_default">48dp</dimen>
+
     <!-- Placepicker -->
 
     <dimen name="margin_tiny">4dp</dimen>

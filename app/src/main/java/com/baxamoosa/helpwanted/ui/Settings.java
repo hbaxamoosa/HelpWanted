@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.sync.HelpWantedSyncAdapter;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -233,7 +234,7 @@ public class Settings extends PreferenceActivity
                 }
 
                 // Utility.resetLocationStatus(this);
-                // SunshineSyncAdapter.syncImmediately(this);
+                HelpWantedSyncAdapter.syncImmediately(this);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

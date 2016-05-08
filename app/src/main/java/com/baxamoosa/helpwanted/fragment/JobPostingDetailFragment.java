@@ -46,9 +46,10 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     private CollapsingToolbarLayout appBarLayout;
     private int position;
 
-    private TextView mTextView1;
-    private TextView mTextView2;
-    private String shareContent;
+    private TextView phoneOfBusiness;
+    private TextView emailOfBusiness;
+    private TextView wageRateOfBusiness;
+    private TextView addressOfBusiness;
 
     private String _id;
     private String businessId;
@@ -69,6 +70,20 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     public JobPostingDetailFragment() {
     }
 
+    public static void finishCreatingMenu(Menu menu) {
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        menuItem.setIntent(createShareIntent());
+    }
+
+    private static Intent createShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "something");
+        return shareIntent;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -76,7 +91,6 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             Timber.v("onActivityCreated(@Nullable Bundle savedInstanceState)");
         }
         getActivity().getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, this);
-        // getActivity().getSupportLoaderManager().initLoader(Utility.FAVORITE_JOBPOSTS, null, this);
     }
 
     @Override
@@ -112,41 +126,10 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         }
         View rootView = inflater.inflate(R.layout.jobposting_detail, container, false); // // TODO: 5/3/16 bug here, with the layout
 
-        mTextView1 = (TextView) rootView.findViewById(R.id.jobposting_detail);
-        mTextView2 = (TextView) rootView.findViewById(R.id.jobposting_detail2);
-        // final FloatingActionButton favorite = (FloatingActionButton) rootView.findViewById(R.id.btn_favorite);
-
-        /*favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isFavorite == true){ // job post is a favorite, but now switching it
-                    isFavorite = false; // switch boolean value
-                    favorite.setBackgroundResource(R.drawable.ic_star_border_black_24dp);
-                    resolver.delete(JobPostContract.FavoriteList.CONTENT_URI,
-                            JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?",
-                            businessID);
-                } else { // job post is not a favorite
-                    isFavorite = true; // switch boolean value
-                    favorite.setBackgroundResource(R.drawable.ic_star_border_black_24dp);
-
-                    // use the arguments from the Fragment to insert into the Content Provider
-                    ContentValues[] favoriteArr = new ContentValues[1];
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_ID, _id);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSID, businessId);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSNAME, businessName);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSADDRESS, businessAddress);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSPHONE, businessPhone);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSWEBSITE, businessWebsite);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSLATITUDE, businessLatitude);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSLONGITUDE, businessLongitude);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_WAGERATE, wageRate);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_POSTDATE, postDate);
-                    favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_OWNER, user);
-
-                    resolver.bulkInsert(JobPostContract.FavoriteList.CONTENT_URI, favoriteArr);
-                }
-            }
-        });*/
+        phoneOfBusiness = (TextView) rootView.findViewById(R.id.phoneOfBusiness);
+        emailOfBusiness = (TextView) rootView.findViewById(R.id.emailOfBusiness);
+        wageRateOfBusiness = (TextView) rootView.findViewById(R.id.wageRateOfBusiness);
+        addressOfBusiness = (TextView) rootView.findViewById(R.id.addressOfBusiness);
 
         return rootView;
     }
@@ -161,96 +144,58 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         }
     }
 
-    private void finishCreatingMenu(Menu menu) {
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-        menuItem.setIntent(createJobPostShareIntent());
-    }
-
-    private Intent createJobPostShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-        return shareIntent;
-    }
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Timber.v("onCreateLoader(int id, Bundle args)");
-        Loader<Cursor> mCursor = null;
-        switch (id) {
-            case Utility.ALL_JOBPOSTS:
-                mCursor = new CursorLoader(
-                        getActivity(),
-                        JobPostContract.JobPostList.CONTENT_URI,
-                        Utility.JOBPOST_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-                break;
-            case Utility.FAVORITE_JOBPOSTS:
-                mCursor = new CursorLoader(
-                        getActivity(),
-                        JobPostContract.FavoriteList.CONTENT_URI,
-                        Utility.JOBPOST_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-                break;
-        }
-        return mCursor;
+        return new CursorLoader(
+                getActivity(),
+                JobPostContract.JobPostList.CONTENT_URI,
+                Utility.JOBPOST_COLUMNS,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
-        switch (loader.getId()) {
-            case Utility.ALL_JOBPOSTS:
-                if (data != null && data.moveToFirst()) {
-                    Timber.v("data != null && data.moveToFirst()");
-                    data.move(position);
 
-                    _id = data.getString(Utility.COL_ID);
-                    Timber.v("_id: " + _id);
-                    businessId = data.getString(Utility.COL_BUSINESS_ID);
-                    Timber.v("businessID: " + businessId);
-                    businessName = data.getString(Utility.COL_BUSINESS_NAME);
-                    Timber.v("businessName: " + businessName);
-                    businessAddress = data.getString(Utility.COL_BUSINESS_ADDRESS);
-                    Timber.v("businessAddress: " + businessAddress);
-                    businessPhone = data.getString(Utility.COL_BUSINESS_PHONE);
-                    Timber.v("businessPhone: " + businessPhone);
-                    businessWebsite = data.getString(Utility.COL_BUSINESS_WEBSITE);
-                    Timber.v("businessWebsite: " + businessWebsite);
-                    businessLatitude = data.getDouble(Utility.COL_BUSINESS_LONGITUDE);
-                    Timber.v("businessLatitude: " + businessLatitude);
-                    businessLongitude = data.getDouble(Utility.COL_BUSINESS_LATITUDE);
-                    Timber.v("businessLongitude: " + businessLongitude);
-                    wageRate = data.getInt(Utility.COL_WAGERATE);
-                    Timber.v("wageRate: " + wageRate);
-                    postDate = data.getDouble(Utility.COL_POSTDATE);
-                    Timber.v("postDate: " + postDate);
-                    user = data.getString(Utility.COL_OWNER);
-                    Timber.v("user: " + user);
+        if (data != null && data.moveToFirst()) {
+            Timber.v("data != null && data.moveToFirst()");
+            data.move(position);
 
-                    if (appBarLayout != null) {
-                        appBarLayout.setTitle(businessName);
-                    }
+            _id = data.getString(Utility.COL_ID);
+            Timber.v("_id: " + _id);
+            businessId = data.getString(Utility.COL_BUSINESS_ID);
+            Timber.v("businessID: " + businessId);
+            businessName = data.getString(Utility.COL_BUSINESS_NAME);
+            Timber.v("businessName: " + businessName);
+            businessAddress = data.getString(Utility.COL_BUSINESS_ADDRESS);
+            Timber.v("businessAddress: " + businessAddress);
+            businessPhone = data.getString(Utility.COL_BUSINESS_PHONE);
+            Timber.v("businessPhone: " + businessPhone);
+            businessWebsite = data.getString(Utility.COL_BUSINESS_WEBSITE);
+            Timber.v("businessWebsite: " + businessWebsite);
+            businessLatitude = data.getDouble(Utility.COL_BUSINESS_LONGITUDE);
+            Timber.v("businessLatitude: " + businessLatitude);
+            businessLongitude = data.getDouble(Utility.COL_BUSINESS_LATITUDE);
+            Timber.v("businessLongitude: " + businessLongitude);
+            wageRate = data.getInt(Utility.COL_WAGERATE);
+            Timber.v("wageRate: " + wageRate);
+            postDate = data.getDouble(Utility.COL_POSTDATE);
+            Timber.v("postDate: " + postDate);
+            user = data.getString(Utility.COL_OWNER);
+            Timber.v("user: " + user);
 
-                    shareContent = businessName + " has a job posting!";
-                    mTextView1.setText(businessName);
-                    mTextView2.setText(businessAddress);
-                }
-                break;
-            case Utility.FAVORITE_JOBPOSTS:
-                if (data != null && data.moveToFirst()) {
-                    // something
-                }
-                break;
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(businessName);
+            }
+
+            phoneOfBusiness.setText(businessPhone);
+            emailOfBusiness.setText(user);
+            wageRateOfBusiness.setText("This job pays $" + Integer.toString(wageRate) + " per hour.");
+            addressOfBusiness.setText(businessAddress);
         }
     }
 

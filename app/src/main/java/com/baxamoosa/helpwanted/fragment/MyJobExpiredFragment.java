@@ -66,12 +66,12 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
 
-        /*mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+        /*mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);*/
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
         return rootView;
     }
@@ -90,11 +90,11 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         Timber.v("validTime: " + validTime);
         Timber.v("validTime String: " + validTime);
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "<?";
-        String[] selectionArgs = {validTime.toString()};
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "<?" + JobPostContract.JobPostList.COLUMN_OWNER + "=?";
+        String[] selectionArgs = {validTime.toString(), sharedPref.getString(getString(R.string.person_email), "no@one.com")};
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0]);
+        Timber.v("selectionArgs: " + selectionArgs[0] + " " + selectionArgs[1]);
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,

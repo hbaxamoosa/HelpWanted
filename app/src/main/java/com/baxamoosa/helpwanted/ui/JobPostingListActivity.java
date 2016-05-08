@@ -113,9 +113,11 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             setupDrawerContent(navigationView);
         }
 
+        // HelpWantedSyncAdapter.syncImmediately(this);
+
         getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, JobPostingListActivity.this);
 
-        grabJobPostsFromFireBase();
+        // grabJobPostsFromFireBase();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.jobposting_list);
         mRecyclerView.setHasFixedSize(true);
@@ -194,7 +196,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
 
         // remove Firebase event listener
-        Utility.mRef.removeEventListener(jobPostsListener);
+        // Utility.mRef.removeEventListener(jobPostsListener);
     }
 
     @Override
@@ -203,6 +205,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
         }
+        // HelpWantedSyncAdapter.syncImmediately(this);
     }
 
     private void grabJobPostsFromFireBase() {
@@ -286,13 +289,15 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-                        // Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
+                            Timber.v("menuItem.getTitle() == getString(R.string.job_posting))");
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
+                            Timber.v("menuItem.getTitle() == getString(R.string.my_jobs)");
                         }
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -358,7 +363,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
 
         // start by flushing the existing Content DB
-        getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
+        // getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
         Timber.v("getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);");
 
         return new CursorLoader(this,

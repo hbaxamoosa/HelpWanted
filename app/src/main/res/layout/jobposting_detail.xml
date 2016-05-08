@@ -6,24 +6,49 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/jobposting_detail"
+        android:id="@+id/phoneOfBusiness"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:autoLink="phone"
         android:padding="16dp"
-        android:text="lskajf;slfkjs;lgks;lgas;lskf;lskfj lksfj s;lfjs;a lfj;lsfj s;lfj"
-        android:textIsSelectable="true"
-        tools:context=".fragment.JobPostingDetailFragment" />
+        android:textIsSelectable="false"
+        tools:context=".fragment.JobPostingDetailFragment"
+        tools:text="something" />
 
     <TextView
-        android:id="@+id/jobposting_detail2"
+        android:id="@+id/emailOfBusiness"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:autoLink="email"
+        android:padding="16dp"
+        android:textIsSelectable="false"
+        tools:context=".fragment.JobPostingDetailFragment"
+        tools:text="something" />
+
+    <TextView
+        android:id="@+id/wageRateOfBusiness"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:padding="16dp"
-        android:text="lskajf;slfkjs;lgks;lgas;lskf;lskfj lksfj s;lfjs;a lfj;lsfj s;lfj"
-        android:textIsSelectable="true"
-        tools:context=".fragment.JobPostingDetailFragment" />
+        android:textIsSelectable="false"
+        tools:context=".fragment.JobPostingDetailFragment"
+        tools:text="something" />
+
+    <TextView
+        android:id="@+id/addressOfBusiness"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:autoLink="map"
+        android:padding="16dp"
+        android:textIsSelectable="false"
+        tools:context=".fragment.JobPostingDetailFragment"
+        tools:text="something" />
 </LinearLayout>

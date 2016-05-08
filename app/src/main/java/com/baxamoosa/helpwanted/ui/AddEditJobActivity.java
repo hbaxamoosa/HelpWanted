@@ -21,11 +21,11 @@ public class AddEditJobActivity extends AppCompatActivity {
 
     private EditText name;
     private EditText phone;
+    private EditText email;
     private EditText address;
     private EditText wageRate;
     private Date date;
     private SharedPreferences sharedPref;
-    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +39,24 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         name = (EditText) findViewById(R.id.edit_business_name);
         phone = (EditText) findViewById(R.id.edit_business_phone);
+        email = (EditText) findViewById(R.id.edit_business_email);
         address = (EditText) findViewById(R.id.edit_business_address);
         wageRate = (EditText) findViewById(R.id.edit_business_wage_rate);
         date = new Date();
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        if (getIntent().hasExtra(getString(R.string.addJob))) {
+            addJob();
+        } else if (getIntent().hasExtra(getString(R.string.editJob))) {
+            editJob();
+            // TODO: 5/8/16 JobPostingDetailActivity.java provides the _id in the intent extras. Use this to create a Content Resolver to populate the properties of the Job Post
+        } else {
+            Timber.v("this should NEVER happen");
+        }
+    }
+
+    private void addJob() {
         if (getIntent().hasExtra(getString(R.string.business_name))) {
             name.setText(getIntent().getStringExtra(getString(R.string.business_name)));
         }
@@ -54,6 +66,13 @@ public class AddEditJobActivity extends AppCompatActivity {
         if (getIntent().hasExtra(getString(R.string.business_phone))) {
             phone.setText(getIntent().getStringExtra(getString(R.string.business_phone)));
         }
+        if (getIntent().hasExtra(getString(R.string.business_email))) {
+            email.setText(sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
+        }
+    }
+
+    private void editJob() {
+        getIntent().hasExtra(getString(R.string.business_id));
     }
 
     public void submitToDB(View view) {
@@ -80,6 +99,10 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         // job post submitted via content provider, so go back to MyJobsActivity
         startActivity(new Intent(this, MyJobsActivity.class));
+    }
+
+    public void selectNewPlace(View view) {
+
     }
 
     /*private void placePhotosTask(String placeID) {

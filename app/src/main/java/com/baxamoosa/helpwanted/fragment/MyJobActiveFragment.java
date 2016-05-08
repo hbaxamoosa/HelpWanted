@@ -54,6 +54,21 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
@@ -66,12 +81,11 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
 
-        /*mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
 
         return rootView;
     }
@@ -90,11 +104,11 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         Timber.v("validTime: " + validTime);
         Timber.v("validTime String: " + validTime);
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?";
-        String[] selectionArgs = {validTime.toString()};
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?" + JobPostContract.JobPostList.COLUMN_OWNER + "=?";
+        String[] selectionArgs = {validTime.toString(), sharedPref.getString(getString(R.string.person_email), "no@one.com")};
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0]);
+        Timber.v("selectionArgs: " + selectionArgs[0] + " " + selectionArgs[1]);
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,

@@ -66,6 +66,7 @@ public class PlacePickerActivity extends AppCompatActivity {
                     Place place = PlacePicker.getPlace(data, this);
                     Intent mIntent = new Intent(this, AddEditJobActivity.class);
                     Bundle mBundle = new Bundle();
+                    mBundle.getString(getString(R.string.addJob), getString(R.string.addJob));
                     if (!place.getId().isEmpty()) {
                         mBundle.putString(getString(R.string.business_id), place.getId());
                     }

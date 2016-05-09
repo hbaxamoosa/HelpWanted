@@ -51,5 +51,4 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.firebase:firebase-client-android:2.3.1'
-    compile 'com.firebaseui:firebase-ui:0.3.1'
 }

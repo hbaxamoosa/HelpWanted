@@ -1,8 +1,10 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,7 +12,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
+import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.Firebase;
 
 import java.util.Date;
@@ -47,10 +51,11 @@ public class AddEditJobActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         if (getIntent().hasExtra(getString(R.string.addJob))) {
+            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
             addJob();
         } else if (getIntent().hasExtra(getString(R.string.editJob))) {
+            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
             editJob();
-            // TODO: 5/8/16 JobPostingDetailActivity.java provides the _id in the intent extras. Use this to create a Content Resolver to populate the properties of the Job Post
         } else {
             Timber.v("this should NEVER happen");
         }
@@ -72,7 +77,21 @@ public class AddEditJobActivity extends AppCompatActivity {
     }
 
     private void editJob() {
-        getIntent().hasExtra(getString(R.string.business_id));
+        ContentResolver mResolver = getContentResolver();
+        String selection = JobPostContract.FavoriteList.COLUMN_ID + "=?";
+        String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string._id))};
+
+        Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+        Cursor mCursor = mResolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
+        Timber.v("mCursor.getCount" + mCursor.getCount());
+        mCursor.moveToFirst();
+
+        // set text values into view
+        name.setText(mCursor.getString(Utility.COL_BUSINESS_NAME));
+        address.setText(mCursor.getString(Utility.COL_BUSINESS_ADDRESS));
+        phone.setText(mCursor.getString(Utility.COL_BUSINESS_PHONE));
+        email.setText(mCursor.getString(Utility.COL_OWNER));
     }
 
     public void submitToDB(View view) {

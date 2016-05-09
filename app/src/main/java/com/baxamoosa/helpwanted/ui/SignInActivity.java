@@ -232,7 +232,7 @@ public class SignInActivity extends AppCompatActivity
                         // [END_EXCLUDE]
                     }
                 });
-        // TODO: 4/24/16 Also clear out all other SharePrefs from app
+
         editor = sharedPref.edit();
         // first clear all existing Share Prefs
         editor.clear();

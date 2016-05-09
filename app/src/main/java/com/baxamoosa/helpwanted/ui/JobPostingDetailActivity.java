@@ -56,6 +56,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_jobposting_detail);
+        // TODO: 5/8/16 need to include a banner ad here 
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -128,7 +129,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             fab.setImageResource(R.drawable.ic_star_border_black_24dp);
             // fab.setBackgroundResource(R.drawable.ic_star_border_black_24dp);
         } else { // cursor returns data, then job post is a favorite
-            Timber.v("favoriteCursor != null"); // TODO: 5/4/16 check this, because this is always being hit 
+            Timber.v("favoriteCursor != null");
             isFavorite = true;
             fab.setImageResource(R.drawable.ic_star_black_24dp);
         }
@@ -277,7 +278,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+        Timber.v("selectionArgs: " + selectionArgs[0].toString() + " " + selectionArgs[1].toString());
 
         ContentResolver resolver = getContentResolver();
         Timber.v("resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null): " + resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null).toString());

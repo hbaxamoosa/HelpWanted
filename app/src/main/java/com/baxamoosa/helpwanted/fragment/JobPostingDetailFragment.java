@@ -124,7 +124,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         if (BuildConfig.DEBUG) {
             Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
         }
-        View rootView = inflater.inflate(R.layout.jobposting_detail, container, false); // // TODO: 5/3/16 bug here, with the layout
+        View rootView = inflater.inflate(R.layout.jobposting_detail, container, false);
 
         phoneOfBusiness = (TextView) rootView.findViewById(R.id.phoneOfBusiness);
         emailOfBusiness = (TextView) rootView.findViewById(R.id.emailOfBusiness);

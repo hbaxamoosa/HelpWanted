@@ -104,7 +104,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         Timber.v("validTime: " + validTime);
         Timber.v("validTime String: " + validTime);
 
-        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?" + JobPostContract.JobPostList.COLUMN_OWNER + "=?";
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">? AND " + JobPostContract.JobPostList.COLUMN_OWNER + "=?";
         String[] selectionArgs = {validTime.toString(), sharedPref.getString(getString(R.string.person_email), "no@one.com")};
 
         Timber.v("selection: " + selection);

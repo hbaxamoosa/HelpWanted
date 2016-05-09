@@ -61,8 +61,6 @@
     <!-- Navigation drawer labels -->
     <string name="job_posting">Job Postings</string>
     <string name="my_jobs">My Jobs</string>
-    <string name="placepicker">Place Picker</string>
-    <string name="google_account">Google Account</string>
 
     <!-- Placepicker -->
     <string name="selected_place">Last Selected Place:</string>

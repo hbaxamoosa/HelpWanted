@@ -42,6 +42,7 @@ public class Settings extends PreferenceActivity
             Timber.v("onCreate");
         }
 
+
         // Add 'general' preferences, defined in the XML file
         addPreferencesFromResource(R.xml.pref_general);
 
@@ -64,7 +65,8 @@ public class Settings extends PreferenceActivity
 
     // Registers a shared preference change listener that gets notified when preferences change
     @Override
-    protected void onResume() {
+    public void onResume() {
+        super.onResume();
 
         if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
@@ -88,6 +90,24 @@ public class Settings extends PreferenceActivity
         super.onPause();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onStart()");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onStop()");
+        }
+    }
+
     private void bindPreferenceSummaryToValue(Preference preference) {
 
         if (BuildConfig.DEBUG) {
@@ -108,6 +128,7 @@ public class Settings extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
 
+        // TODO: 5/9/16 replace the zip code with a location in meters
         if (BuildConfig.DEBUG) {
             Timber.v("onPreferenceChange(Preference preference, Object value)");
         }
@@ -240,5 +261,4 @@ public class Settings extends PreferenceActivity
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
 }

@@ -61,7 +61,7 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:ems="10"
                 android:hint="enter email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress|textMultiLine" />
         </LinearLayout>
 
         <LinearLayout
@@ -107,10 +107,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_medium"
+                android:autoText="false"
                 android:ems="10"
                 android:hint="enter address"
-                android:inputType="textPostalAddress"
-                android:minHeight="@dimen/place_autocomplete_prediction_height" />
+                android:inputType="textPostalAddress|textMultiLine"
+                android:minHeight="@dimen/place_autocomplete_prediction_height"
+                android:scrollHorizontally="false" />
         </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -139,25 +141,24 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:background="@color/colorPrimaryDark"
+            android:onClick="submitToDB"
+            android:text="@string/post_job"
+            android:textColor="@android:color/white" />
+        <Button
             android:id="@+id/btn_placepicker"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_medium"
             android:background="@color/colorPrimary"
             android:onClick="selectNewPlace"
             android:text="@string/placepickerNewPlace"
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/btn_submit"
-            android:layout_width="125dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:background="@color/colorPrimary"
-            android:onClick="submitToDB"
-            android:text="@string/post_job"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -110,6 +111,16 @@ public class MyJobsActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                //
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                //
+                NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
+                return true;
+            case R.id.my_jobs:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 profileName = (TextView) findViewById(R.id.profileName);
                 profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));

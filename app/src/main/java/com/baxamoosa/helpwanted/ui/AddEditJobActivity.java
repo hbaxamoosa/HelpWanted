@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
@@ -34,7 +35,7 @@ public class AddEditJobActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_edit_job);
+        setContentView(R.layout.activity_add_edit_job); // TODO: 5/8/16 verify that changes to the layout view ids are correct 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Edit Job Post");
@@ -54,7 +55,7 @@ public class AddEditJobActivity extends AppCompatActivity {
             Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
             addJob();
         } else if (getIntent().hasExtra(getString(R.string.editJob))) {
-            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
+            Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
             editJob();
         } else {
             Timber.v("this should NEVER happen");
@@ -71,9 +72,7 @@ public class AddEditJobActivity extends AppCompatActivity {
         if (getIntent().hasExtra(getString(R.string.business_phone))) {
             phone.setText(getIntent().getStringExtra(getString(R.string.business_phone)));
         }
-        if (getIntent().hasExtra(getString(R.string.business_email))) {
-            email.setText(sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-        }
+        email.setText(sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
     }
 
     private void editJob() {
@@ -82,9 +81,9 @@ public class AddEditJobActivity extends AppCompatActivity {
         String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string._id))};
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString());
-        Cursor mCursor = mResolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
-        Timber.v("mCursor.getCount" + mCursor.getCount());
+        Timber.v("selectionArgs: " + selectionArgs[0]);
+        Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
+        Timber.v("mCursor.getCount: " + mCursor.getCount());
         mCursor.moveToFirst();
 
         // set text values into view
@@ -92,36 +91,52 @@ public class AddEditJobActivity extends AppCompatActivity {
         address.setText(mCursor.getString(Utility.COL_BUSINESS_ADDRESS));
         phone.setText(mCursor.getString(Utility.COL_BUSINESS_PHONE));
         email.setText(mCursor.getString(Utility.COL_OWNER));
+        wageRate.setText(mCursor.getString(Utility.COL_WAGERATE));
     }
 
     public void submitToDB(View view) {
         Timber.v("submitToDB(View view)");
 
-        Timber.v("creating Firebase reference");
-        Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
-        Firebase mJobPost = rootRef.child("jobpost");
+        if (getIntent().hasExtra(getString(R.string.addJob))) {
+            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
+            Timber.v("creating Firebase reference");
+            Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
+            Firebase mJobPost = rootRef.child("jobpost");
 
-        JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
-                getIntent().getExtras().getString(getString(R.string.business_id)),
-                name.getText().toString(),
-                address.getText().toString(),
-                phone.getText().toString(),
-                getIntent().getExtras().getString(getString(R.string.business_website)),
-                getIntent().getExtras().getDouble(getString(R.string.business_latitude)),
-                getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
-                Integer.parseInt(wageRate.getText().toString()),
-                date.getTime(),
-                sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-        Timber.v("attempting to post to Firebase");
-        rootRef.push().setValue(a);
-        Timber.v("successfully posted to Firebase");
+            JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
+                    getIntent().getExtras().getString(getString(R.string.business_id)),
+                    name.getText().toString(),
+                    address.getText().toString(),
+                    phone.getText().toString(),
+                    getIntent().getExtras().getString(getString(R.string.business_website)),
+                    getIntent().getExtras().getDouble(getString(R.string.business_latitude)),
+                    getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
+                    Integer.parseInt(wageRate.getText().toString()),
+                    date.getTime(),
+                    sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
+            Timber.v("attempting to post to Firebase");
+            rootRef.push().setValue(a);
+            Timber.v("successfully posted to Firebase");
 
-        // job post submitted via content provider, so go back to MyJobsActivity
-        startActivity(new Intent(this, MyJobsActivity.class));
+            // job post submitted via to Firebase, so go back to JobPostingListActivity
+            startActivity(new Intent(this, JobPostingListActivity.class));
+        } else if (getIntent().hasExtra(getString(R.string.editJob))) {
+            Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
+            // update the job post record in Firebase
+        } else {
+            Timber.v("this should NEVER happen");
+        }
+
     }
 
     public void selectNewPlace(View view) {
-
+        // first call PlacePickerActivity to get the Business details
+        if (Utility.isNetworkAvailable(getApplicationContext())) {
+            startActivity(new Intent(getApplicationContext(), PlacePickerActivity.class));
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_SHORT).show();
+        }
+        // PlacePicker Activity will call AddEditJobActivity to enter remaining details about the job post
     }
 
     /*private void placePhotosTask(String placeID) {

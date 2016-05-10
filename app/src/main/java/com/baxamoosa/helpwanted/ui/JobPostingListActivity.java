@@ -1,12 +1,18 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -34,15 +40,12 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.squareup.picasso.Picasso;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import timber.log.Timber;
 
@@ -54,8 +57,9 @@ import timber.log.Timber;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class JobPostingListActivity extends AppCompatActivity implements /*JobPostingListAdapter.Callback,*/ LoaderManager.LoaderCallbacks<Cursor> {
+public class JobPostingListActivity extends AppCompatActivity implements /*JobPostingListAdapter.Callback,*/ LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final int REQUEST_LOCATION = 1;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
      */
@@ -64,12 +68,17 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     public JobPost[] mJobPost;
     private DrawerLayout mDrawerLayout;
     private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     private TextView profileName;
     private ImageView profilePhoto;
     private RecyclerView.Adapter mJobPostingListAdapter;
     private RecyclerView mRecyclerView;
     private TextView emptyView;
     private ValueEventListener jobPostsListener;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private boolean mResolvingError;
+    private int REQUEST_RESOLVE_ERROR;
     // private Cursor mCursor;
 
     @Override
@@ -98,6 +107,15 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
@@ -113,17 +131,12 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             setupDrawerContent(navigationView);
         }
 
-        // HelpWantedSyncAdapter.syncImmediately(this);
-
         getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, JobPostingListActivity.this);
-
-        // grabJobPostsFromFireBase();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.jobposting_list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        // mRecyclerView.setAdapter(mJobPostingListAdapter);
         Timber.v("setupRecyclerView() is complete");
 
         if (findViewById(R.id.jobposting_detail_container) != null) {
@@ -150,35 +163,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
     }
 
-    private void populateTestData() {
-
-        Firebase mJobPost = Utility.mRef.child("jobpost");
-
-        for (int i = 0; i < 10; i++) {
-            String _id = "ChIJkwAWec4yW4YRBWSKMPYdIe0" + i;
-            String businessID = "ChIJkwAWec4yW4YRBWSKMPYdIe0" + i + i;
-            Calendar calendar = Calendar.getInstance();
-            GregorianCalendar postDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - i));
-            Long postTime = postDate.getTimeInMillis();
-            Timber.v("postDate: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(postTime)));
-
-            JobPost a = new JobPost(_id,
-                    businessID,
-                    "Starbucks" + i,
-                    "13450 Research Blvd #238, Austin, TX 78750, United States",
-                    "+1 512-401-6253",
-                    "http://www.starbucks.com/" + i,
-                    -97.79085309999999,
-                    30.4472483,
-                    i,
-                    postTime,
-                    "hbaxamoosa@gmail.com");
-            Utility.mRef.push().setValue(a);
-            Timber.v("successfully posted " + i + " to Firebase");
-            Timber.v("postDate: " + postDate);
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -186,6 +170,8 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             Timber.v("onStart()");
         }
         // populateTestData();  // test data
+
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -195,8 +181,12 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             Timber.v("onStop()");
         }
 
-        // remove Firebase event listener
-        // Utility.mRef.removeEventListener(jobPostsListener);
+        if (mGoogleApiClient.isConnected()) {
+            if (BuildConfig.DEBUG) {
+                Timber.v("mGoogleApiClient.disconnect()");
+            }
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -206,6 +196,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             Timber.v("onResume()");
         }
         // HelpWantedSyncAdapter.syncImmediately(this);
+        mGoogleApiClient.connect();
     }
 
     private void grabJobPostsFromFireBase() {
@@ -270,6 +261,14 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                 Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
                 // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
                 return true;
+            /*case R.id.my_jobs:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                profileName = (TextView) findViewById(R.id.profileName);
+                profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
+                profilePhoto = (ImageView) findViewById(R.id.profileImage);
+                Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
+                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
+                return true;*/
             case R.id.action_settings:
                 startActivity(new Intent(this, Settings.class));
                 return true;
@@ -289,15 +288,12 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-                        Toast.makeText(getApplicationContext(), "menuItem: " + menuItem.getTitle(), Toast.LENGTH_LONG).show();
 
                         if (menuItem.getTitle() == getString(R.string.job_posting)) {
                             startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
-                            Timber.v("menuItem.getTitle() == getString(R.string.job_posting))");
                         }
                         if (menuItem.getTitle() == getString(R.string.my_jobs)) {
                             startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
-                            Timber.v("menuItem.getTitle() == getString(R.string.my_jobs)");
                         }
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -399,6 +395,66 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     public void onLoaderReset(Loader<Cursor> loader) {
         if (BuildConfig.DEBUG) {
             Timber.v("onLoaderReset(Loader<Cursor> loader)");
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        // see Android RuntimePermissions Sample at https://github.com/googlesamples/android-RuntimePermissions
+        Timber.v("onConnected(@Nullable Bundle bundle)");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+            Toast.makeText(this, "permissions not available", Toast.LENGTH_LONG).show();
+        } else {
+            // permission has been granted, continue as usual
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                Timber.v("Latitude: " + String.valueOf(mLastLocation.getLatitude()));
+                Timber.v("Longtitude: " + String.valueOf(mLastLocation.getLongitude()));
+                String location =
+                        "Latitude: "
+                                + String.valueOf(mLastLocation.getLatitude())
+                                + " Longitude: "
+                                + String.valueOf(mLastLocation.getLongitude());
+                // Toast.makeText(this, location, Toast.LENGTH_LONG).show();
+                editor = sharedPref.edit();
+                editor.putFloat(getString(R.string.person_latitude), (float) mLastLocation.getLatitude());
+                editor.putFloat(getString(R.string.person_longitude), (float) mLastLocation.getLongitude());
+                editor.commit();
+            } else {
+                Toast.makeText(this, "no location available", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Timber.v("onConnectionSuspended(int i)");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Timber.v("onConnectionFailed(ConnectionResult result)");
+        if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (result.hasResolution()) {
+            try {
+                mResolvingError = true;
+
+                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
+            }
+        } else {
+            // Show dialog using GooglePlayServicesUtil.getErrorDialog()
+            // showErrorDialog(result.getErrorCode());
+            mResolvingError = true;
         }
     }
 }

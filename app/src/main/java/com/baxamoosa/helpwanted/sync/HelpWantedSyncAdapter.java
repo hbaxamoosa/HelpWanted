@@ -41,7 +41,7 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
     // Interval at which to sync job posts, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
     // public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_INTERVAL = 60;  // TODO: 5/8/16 increase this short interval after testing is complete 
+    public static final int SYNC_INTERVAL = 10;  // TODO: 5/8/16 increase this short interval after testing is complete
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     private static final int NOTIFICATION_ID = 999;
 
@@ -206,8 +206,13 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
         //checking the last update and notify if it' the first of the day
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
-        boolean displayNotifications = prefs.getBoolean(displayNotificationsKey,
-                Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
+        boolean displayNotifications = prefs.getBoolean(displayNotificationsKey, Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
+        float latitude = prefs.getFloat(context.getString(R.string.person_latitude), (float) 0.0);
+        float longitude = prefs.getFloat(context.getString(R.string.person_longitude), (float) 0.0);
+
+        Timber.v("latitude: " + latitude + " longitude: " + longitude);
+
+        // consider utilizing the user's location to see if jobs were added within a certain distance before generating notification.
 
         if (displayNotifications) {
             String lastNotificationKey = context.getString(R.string.pref_last_notification);
@@ -215,7 +220,6 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
             ContentResolver mResolver = context.getContentResolver();
             Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, null, null, null);
-
 
             int iconId = R.drawable.ic_launcher_big;
             Resources resources = context.getResources();

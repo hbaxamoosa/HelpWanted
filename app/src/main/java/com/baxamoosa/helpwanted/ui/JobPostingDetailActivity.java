@@ -212,8 +212,8 @@ public class JobPostingDetailActivity extends AppCompatActivity {
                 Timber.v("user clicked on edit");
                 Intent mIntent = new Intent(this, AddEditJobActivity.class);
                 Bundle mBundle = new Bundle();
-                mBundle.getString(getString(R.string.editJob), getString(R.string.editJob));
-                mBundle.putString(getString(R.string.business_id), intentExtras.getString(getString(R.string._id)));
+                mBundle.putString(getString(R.string.editJob), getString(R.string.editJob));
+                mBundle.putString(getString(R.string._id), intentExtras.getString(getString(R.string._id)));
                 /*mBundle.putString(getString(R.string.business_name), intentExtras.getString(getString(R.string.business_name)));
                 mBundle.putString(getString(R.string.business_phone), intentExtras.getString(getString(R.string.business_phone)));
                 mBundle.putString(getString(R.string.business_address), intentExtras.getString(getString(R.string.business_address)));
@@ -256,7 +256,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
         Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString() + selectionArgs[1].toString());
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());
 
         ContentResolver resolverJobPosts = getContentResolver();
         // delete job post from jobpost table (local)

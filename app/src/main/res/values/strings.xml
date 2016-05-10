@@ -15,6 +15,8 @@
     <string name="person_email">PersonEmail</string>
     <string name="person_id">PersonId</string>
     <string name="person_photo">PersonPhoto</string>
+    <string name="person_latitude">PersonLatitude</string>
+    <string name="person_longitude">PersonLongitude</string>
 
     <!-- Key name for storing location in SharedPreferences -->
     <string name="default_zipcode">zipcode</string>

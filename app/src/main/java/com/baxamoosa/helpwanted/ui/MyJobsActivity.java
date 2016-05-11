@@ -21,13 +21,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.adapter.MyJobsPagerAdapter;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.squareup.picasso.Picasso;
-
-import timber.log.Timber;
 
 public class MyJobsActivity extends AppCompatActivity {
 
@@ -52,9 +49,9 @@ public class MyJobsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content_my_jobs_drawer);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
-        }
+        }*/
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 

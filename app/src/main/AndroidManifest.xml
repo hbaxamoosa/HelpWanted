@@ -95,15 +95,6 @@
                 android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
         </activity>
         <activity
-            android:name=".ui.ViewJobPostActivity"
-            android:label="@string/title_activity_view_job_post"
-            android:parentActivityName=".ui.JobPostingListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.baxamoosa.helpwanted.ui.JobPostingListActivity" />
-        </activity>
-        <activity
             android:name=".ui.AddEditJobActivity"
             android:label="@string/title_activity_add_edit_job"
             android:parentActivityName=".ui.MyJobsActivity"

@@ -21,12 +21,9 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
 
     public static JobPost[] mJobPost;
 
-    public JobPostingListAdapter() {
-        Timber.v("JobPostingListAdapter()");
-    }
+    public JobPostingListAdapter() {}
 
     public JobPostingListAdapter(JobPost[] jp) {
-        // Timber.v("JobPostingListAdapter(JobPost[] jp)");
         mJobPost = jp;
     }
 
@@ -40,8 +37,9 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
     @Override
     public void onBindViewHolder(JobPostingListAdapter.JobPostingListAdapterViewHolder holder, int position) {
         Timber.v("onBindViewHolder(JobPostingListAdapter.JobPostingListAdapterViewHolder holder, int position)");
-        holder.mID.setText(mJobPost[position].getbusinessName());
-        holder.mContent.setText(mJobPost[position].getbusinessAddress());
+        holder.mWageRate.setText("$" + Integer.toString(mJobPost[position].getWageRate()));
+        holder.mName.setText(mJobPost[position].getbusinessName());
+        holder.mAddress.setText(mJobPost[position].getbusinessAddress());
     }
 
     @Override
@@ -56,13 +54,15 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
 
     public static class JobPostingListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView mID;
-        TextView mContent;
+        private TextView mWageRate;
+        private TextView mName;
+        private TextView mAddress;
 
         public JobPostingListAdapterViewHolder(View itemView) {
             super(itemView);
-            mID = (TextView) itemView.findViewById(R.id.id);
-            mContent = (TextView) itemView.findViewById(R.id.content);
+            mWageRate = (TextView) itemView.findViewById(R.id.wagerate);
+            mName = (TextView) itemView.findViewById(R.id.name);
+            mAddress = (TextView) itemView.findViewById(R.id.address);
             itemView.setOnClickListener(this);
         }
 

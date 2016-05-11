@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -14,8 +13,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
-
-import timber.log.Timber;
 
 /**
  * Created by hasnainbaxamoosa on 4/18/16.
@@ -54,13 +51,13 @@ public class PlacePickerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onActivityResult(int requestCode, int resultCode, Intent data)");
-        }
+        }*/
         if (resultCode == RESULT_OK) {
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 Timber.v("resultCode == RESULT_OK");
-            }
+            }*/
             switch (requestCode) {
                 case PLACE_PICKER_FLAG:
                     Place place = PlacePicker.getPlace(data, this);

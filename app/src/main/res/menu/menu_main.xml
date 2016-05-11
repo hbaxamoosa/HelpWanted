@@ -5,6 +5,7 @@
     tools:context=".ui.JobPostingListActivity">
     <item
         android:id="@+id/action_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="1"
         android:title="@string/action_settings"
         app:showAsAction="never" />

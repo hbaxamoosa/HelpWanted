@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
@@ -25,8 +24,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-
-import timber.log.Timber;
 
 /**
  * Created by hasnainbaxamoosa on 4/18/16.
@@ -56,9 +53,9 @@ public class SignInActivity extends AppCompatActivity
         signout = false;
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate()");
-        }
+        }*/
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
 
@@ -102,9 +99,9 @@ public class SignInActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
-        }
+        }*/
 
         mGoogleApiClient.connect();
 
@@ -112,9 +109,9 @@ public class SignInActivity extends AppCompatActivity
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 Timber.v("Got cached sign-in");
-            }
+            }*/
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
@@ -136,14 +133,14 @@ public class SignInActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onStop()");
-        }
+        }*/
 
         if (mGoogleApiClient.isConnected()) {
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 Timber.v("mGoogleApiClient.disconnect()");
-            }
+            }*/
             mGoogleApiClient.disconnect();
         }
     }
@@ -152,9 +149,9 @@ public class SignInActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
-        }
+        }*/
 
         mGoogleApiClient.connect();
     }
@@ -180,9 +177,9 @@ public class SignInActivity extends AppCompatActivity
 
     // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("handleSignInResult: " + result.isSuccess());
-        }
+        }*/
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
@@ -191,9 +188,9 @@ public class SignInActivity extends AppCompatActivity
 
             try {
                 signout = sharedPref.getBoolean("signout", false);
-                Timber.v("signout: " + signout);
+                /*Timber.v("signout: " + signout);*/
             } catch (NullPointerException e) {
-                Timber.v("Error: " + e);
+                /*Timber.v("Error: " + e);*/
                 editor = sharedPref.edit();
                 editor.putBoolean("signout", false);
                 editor.commit();
@@ -224,9 +221,9 @@ public class SignInActivity extends AppCompatActivity
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        if (BuildConfig.DEBUG) {
+                        /*if (BuildConfig.DEBUG) {
                             Timber.v("onResult status: " + status);
-                        }
+                        }*/
                         // [START_EXCLUDE]
                         updateUI(false);
                         // [END_EXCLUDE]
@@ -267,16 +264,16 @@ public class SignInActivity extends AppCompatActivity
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onConnectionFailed: " + connectionResult);
-        }
+        }*/
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onConnected");
-        }
+        }*/
     }
 
     @Override
@@ -285,9 +282,9 @@ public class SignInActivity extends AppCompatActivity
         // We call connect() to attempt to re-establish the connection or get a
         // ConnectionResult that we can attempt to resolve.
         mGoogleApiClient.connect();
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onConnectionFailed: " + cause);
-        }
+        }*/
     }
 
     private void showProgressDialog() {

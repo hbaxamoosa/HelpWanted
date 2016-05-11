@@ -1,7 +1,6 @@
 package com.baxamoosa.helpwanted.ui;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -34,13 +33,10 @@ import android.widget.Toast;
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.adapter.JobPostingListAdapter;
-import com.baxamoosa.helpwanted.adapter.JobPostsAdapter;
 import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -83,6 +79,7 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArray("jobposts", mJobPost);
         super.onSaveInstanceState(outState);
         firstLoad = true;
     }
@@ -93,7 +90,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
 
         // set a flag to track whether this is the first time the JobPostingsAdapter is being loaded into the app.
         firstLoad = true;
-        mTwoPane = false;  // // TODO: 5/5/16 remove later
 
         if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
@@ -139,27 +135,34 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         Timber.v("setupRecyclerView() is complete");
 
-        if (findViewById(R.id.jobposting_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
-
         if (savedInstanceState != null) {
-            // TODO: 4/14/16 do something
+            Timber.v("savedInstanceState != null");
+            mJobPost = (JobPost[]) savedInstanceState.getParcelableArray("jobposts");
         }
 
         if (savedInstanceState == null) {
-            if (isConnected) {
-                // TODO: 4/14/16 do something here
+            Timber.v("savedInstanceState == null");
+
+            View jobPostDetails = findViewById(R.id.fragment_detail_container);
+            if (jobPostDetails != null && jobPostDetails.getVisibility() == View.VISIBLE) {
+
+                Timber.v("if (jobPostDetails != null && jobPostDetails.getVisibility() == View.VISIBLE)");
+                // The detail container view will be present only in the
+                // large-screen layouts (res/values-large and
+                // res/values-sw600dp). If this view is present, then the
+                // activity should be in two-pane mode.
+                mTwoPane = true;
+
+                // In two-pane mode, list items should be given the 'activated' state when touched.
+                /*FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+                JobPostingDetailFragment mFragment = new JobPostingDetailFragment();
+                mTransaction.replace(R.id.fragment_detail_container, mFragment);
+                mTransaction.commit();*/
             }
-        } else {
-            if (BuildConfig.DEBUG) {
-                Timber.v("(inside else) isConnected: " + isConnected);
-            }
-            Toast.makeText(this, "No network connection.", Toast.LENGTH_LONG).show();
+
+            // TODO: 5/10/16 verify that this is working
+            String s = sharedPref.getString(getString(R.string.range), "no range value");
+            Timber.v("this is the range value from sharedPrefs: " + s);
         }
     }
 
@@ -197,49 +200,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
         // HelpWantedSyncAdapter.syncImmediately(this);
         mGoogleApiClient.connect();
-    }
-
-    private void grabJobPostsFromFireBase() {
-
-        // Attach an listener to read the data at our posts reference
-
-        jobPostsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                // Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
-                int i = 0;
-                for (DataSnapshot jobPostSnapshot : snapshot.getChildren()) {
-                    JobPost jobPost = jobPostSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
-
-                    // mJobPost = new JobPost[(int) snapshot.getChildrenCount()];
-                    if (i < snapshot.getChildrenCount()) {
-
-                        ContentValues jobPostArr = new ContentValues(); // ContentValues[] for local storage
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_ID, jobPost.get_id());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSID, jobPost.getBusinessId());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSNAME, jobPost.getbusinessName());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSADDRESS, jobPost.getbusinessAddress());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSPHONE, jobPost.getbusinessPhone());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSLATITUDE, jobPost.getbusinessLatitude());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_BUSINESSLONGITUDE, jobPost.getbusinessLongitude());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_WAGERATE, jobPost.getWageRate());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_POSTDATE, jobPost.getDate());
-                        jobPostArr.put(JobPostContract.JobPostList.COLUMN_OWNER, jobPost.getUser());
-                        getContentResolver().insert(JobPostContract.JobPostList.CONTENT_URI, jobPostArr);
-
-                        i++;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Timber.v("The read failed: " + firebaseError.getMessage());
-            }
-        };
-
-        Utility.mRef.addValueEventListener(jobPostsListener);
-
     }
 
     @Override
@@ -299,57 +259,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
                         return true;
                     }
                 });
-    }
-
-    /**
-     * Callback method from {@link JobPostsAdapter}
-     * indicating that the item with the given ID was selected.
-     */
-    public void JobPostingListAdapter(int position) {
-        /*Timber.v("onItemSelected(int position, JobPost[] mJobPost) position is " + position);
-        Timber.v("onItemSelected(int position, JobPost[] mJobPost) mJobPost.length is " + mJobPost.length);
-        if (mTwoPane) {
-            Timber.v("mTwoPane: " + true);
-            Bundle arguments = new Bundle();
-            arguments.putString(getString(R.string._id), mJobPost[position].get_id());
-            arguments.putString(getString(R.string.business_id), mJobPost[position].getBusinessId());
-            arguments.putString(getString(R.string.business_name), mJobPost[position].getbusinessName());
-            arguments.putString(getString(R.string.business_address), mJobPost[position].getbusinessAddress());
-            arguments.putString(getString(R.string.business_phone), mJobPost[position].getbusinessPhone());
-            arguments.putString(getString(R.string.business_website), mJobPost[position].getbusinessWebsite());
-            arguments.putDouble(getString(R.string.business_latitude), mJobPost[position].getbusinessLatitude());
-            arguments.putDouble(getString(R.string.business_longitude), mJobPost[position].getbusinessLongitude());
-            arguments.putInt(getString(R.string.business_wage_rate), mJobPost[position].getWageRate());
-            arguments.putDouble(getString(R.string.business_post_date), mJobPost[position].getDate());
-            arguments.putString(getString(R.string.business_owner), mJobPost[position].getUser());
-
-            JobPostingDetailFragment fragment = new JobPostingDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.jobposting_detail_container, fragment)
-                    .commit();
-        } else {
-            Timber.v("mTwoPane: " + false);
-            Intent intent = new Intent(this, JobPostingDetailActivity.class);
-            // intent.putExtra(getString(R.string._id), mJobPost[position].get_id());
-            intent.putExtra("_id", mJobPost[position].get_id());
-            Timber.v("mJobPost[position].get_id(): " +  mJobPost[position].get_id());
-            // intent.putExtra(getString(R.string.business_id), mJobPost[position].getBusinessId());
-            intent.putExtra("business_id", mJobPost[position].getBusinessId());
-            Timber.v("mJobPost[position].getBusinessId(): " +  mJobPost[position].getBusinessId());
-            intent.putExtra(getString(R.string.business_name), mJobPost[position].getbusinessName());
-            Timber.v("mJobPost[position].getBusinessName(): " +  mJobPost[position].getbusinessName());
-            intent.putExtra(getString(R.string.business_address), mJobPost[position].getbusinessAddress());
-            intent.putExtra(getString(R.string.business_phone), mJobPost[position].getbusinessPhone());
-            intent.putExtra(getString(R.string.business_website), mJobPost[position].getbusinessWebsite());
-            intent.putExtra(getString(R.string.business_latitude), mJobPost[position].getbusinessLatitude()); // double
-            intent.putExtra(getString(R.string.business_longitude), mJobPost[position].getbusinessLongitude()); // double
-            intent.putExtra(getString(R.string.business_wage_rate), mJobPost[position].getWageRate()); // int
-            intent.putExtra(getString(R.string.business_post_date), mJobPost[position].getDate()); // double
-            intent.putExtra(getString(R.string.business_owner), mJobPost[position].getUser());
-            intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, position);
-            startActivity(intent);
-        }*/
     }
 
     @Override

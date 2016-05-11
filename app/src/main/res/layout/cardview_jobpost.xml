@@ -20,48 +20,43 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_size">
+            android:layout_height="@dimen/cardview_height">
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="@dimen/image_size"
+            <TextView
+                android:id="@+id/wagerate"
+                android:layout_width="@dimen/cardview_height"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/empty_photo"
-                android:transitionName="image" />
-
-            <TextView
-                android:id="@+id/overlaytext"
-                style="?android:textAppearanceSmallInverse"
-                android:layout_width="@dimen/image_size"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/icon"
-                android:background="@color/text_background"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
-                android:padding="@dimen/margin_tiny"
-                android:textColor="@color/colorAccent" />
+                android:text="2"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/white"
+                android:textSize="50dp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/id"
+                android:id="@+id/name"
                 style="?android:textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/icon"
+                android:layout_toEndOf="@+id/wagerate"
+                android:layout_toRightOf="@+id/wagerate"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingLeft="@dimen/margin_small"
                 android:paddingRight="@dimen/margin_small"
                 android:paddingTop="@dimen/margin_small"
-                android:textColor="@color/colorAccent"
-                android:transitionName="image" />
+                android:textColor="@color/colorAccent" />
 
             <TextView
-                android:id="@+id/content"
+                android:id="@+id/address"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/id"
-                android:layout_toRightOf="@+id/icon"
+                android:layout_below="@+id/name"
+                android:layout_toEndOf="@+id/wagerate"
+                android:layout_toRightOf="@+id/wagerate"
                 android:ellipsize="end"
                 android:maxLines="4"
                 android:padding="@dimen/margin_small"

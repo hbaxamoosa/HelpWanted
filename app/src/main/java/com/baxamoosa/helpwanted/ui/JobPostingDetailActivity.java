@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
@@ -27,8 +26,7 @@ import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-
-import timber.log.Timber;
+import com.google.android.gms.ads.AdView;
 
 /**
  * An activity representing a single JobPosting detail screen. This
@@ -38,25 +36,23 @@ import timber.log.Timber;
  */
 public class JobPostingDetailActivity extends AppCompatActivity {
 
-    private static final int MENUITEM_SHARE = Menu.FIRST;
-    private static final int MENUITEM_DELETE = Menu.FIRST + 1;
     private ShareActionProvider mShareActionProvider;
     private SharedPreferences sharedPref;
     private String[] businessID;
     private boolean isFavorite;
     private Bundle intentExtras;
     private int position;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
-        }
+        }*/
 
         setContentView(R.layout.activity_jobposting_detail);
-        // TODO: 5/8/16 need to include a banner ad here 
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -67,13 +63,13 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
         intentExtras = getIntent().getExtras();
         if (intentExtras != null) {
-            Timber.v("arguments != null");
+            /*Timber.v("arguments != null");*/
             position = intentExtras.getInt(JobPostingDetailFragment.ARG_ITEM_ID);
             businessID = new String[]{intentExtras.getString(getString(R.string.business_id))};
-            Timber.v("position: " + position);
+            /*Timber.v("position: " + position);
             Timber.v("businessID: " + businessID[0].toString());
             Timber.v("_id: " + intentExtras.getString(getString(R.string._id)));
-            Timber.v("businessName: " + intentExtras.getString(getString(R.string.business_name)));
+            Timber.v("businessName: " + intentExtras.getString(getString(R.string.business_name)));*/
         }
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.btn_favorite);
@@ -94,7 +90,6 @@ public class JobPostingDetailActivity extends AppCompatActivity {
                     fab.setImageResource(R.drawable.ic_star_black_24dp);
                     ContentValues[] favoriteArr = new ContentValues[1];
                     favoriteArr[0] = new ContentValues();
-                    Timber.v("intentExtras.getString(getString(R.string._id)): " + intentExtras.getString(getString(R.string._id)));
                     favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_ID, intentExtras.getString(getString(R.string._id)));
                     favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSID, intentExtras.getString(getString(R.string.business_id)));
                     favoriteArr[0].put(JobPostContract.FavoriteList.COLUMN_BUSINESSNAME, intentExtras.getString(getString(R.string.business_name)));
@@ -118,18 +113,18 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
         String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
-        Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+        /*Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());*/
 
         Cursor favoriteCursor = resolver.query(JobPostContract.FavoriteList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
 
         if (favoriteCursor.getCount() == 0) { // cursor returned 0, therefore is not a favorite
-            Timber.v("favoriteCursor == null");
+            /*Timber.v("favoriteCursor == null");*/
             isFavorite = false;
             fab.setImageResource(R.drawable.ic_star_border_black_24dp);
             // fab.setBackgroundResource(R.drawable.ic_star_border_black_24dp);
         } else { // cursor returns data, then job post is a favorite
-            Timber.v("favoriteCursor != null");
+            /*Timber.v("favoriteCursor != null");*/
             isFavorite = true;
             fab.setImageResource(R.drawable.ic_star_black_24dp);
         }
@@ -153,7 +148,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            Timber.v("getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID): " + getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID));
+            /*Timber.v("getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID): " + getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID));*/
             arguments.putInt(JobPostingDetailFragment.ARG_ITEM_ID, getIntent().getExtras().getInt(JobPostingDetailFragment.ARG_ITEM_ID));
             arguments.putString(getString(R.string._id), getIntent().getExtras().getString(getString(R.string._id)));
 
@@ -173,14 +168,14 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             JobPostingDetailFragment fragment = new JobPostingDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.jobposting_detail_container, fragment)
+                    .add(R.id.fragment_detail_container, fragment)
                     .commit();
         }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Timber.v("onPrepareOptionsMenu(Menu menu)");
+        /*Timber.v("onPrepareOptionsMenu(Menu menu)");*/
         MenuItem menuItemDelete = menu.findItem(R.id.action_delete_favorite);
         menuItemDelete.setVisible(checkIfOwner());
 
@@ -204,12 +199,12 @@ public class JobPostingDetailActivity extends AppCompatActivity {
                 NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
                 return true;
             case R.id.action_delete_favorite:
-                Timber.v("user clicked on delete");
+                /*Timber.v("user clicked on delete");*/
                 Toast.makeText(this, "Job Post deleted", Toast.LENGTH_SHORT).show();
                 deleteJobPost();
                 return true;
             case R.id.action_edit:
-                Timber.v("user clicked on edit");
+                /*Timber.v("user clicked on edit");*/
                 Intent mIntent = new Intent(this, AddEditJobActivity.class);
                 Bundle mBundle = new Bundle();
                 mBundle.putString(getString(R.string.editJob), getString(R.string.editJob));
@@ -229,8 +224,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     }
 
     private void deleteJobPost() {
-        Timber.v("deleteJobPost()");
-
+        /*Timber.v("deleteJobPost()");*/
 
         // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
         Utility.mRef
@@ -240,7 +234,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren()) {
-                            Timber.v("dataSnapshot.hasChildren()");
+                            /*Timber.v("dataSnapshot.hasChildren()");*/
                             DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
                             firstChild.getRef().removeValue();
                         }
@@ -248,15 +242,15 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
-                        Timber.v("onCancelled(FirebaseError firebaseError)");
+                        /*Timber.v("onCancelled(FirebaseError firebaseError)");*/
                     }
                 });
 
         String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
         String[] selectionArgs = {intentExtras.getString(getString(R.string.business_id))};
 
-        Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString());
+        /*Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString());*/
 
         ContentResolver resolverJobPosts = getContentResolver();
         // delete job post from jobpost table (local)
@@ -265,33 +259,28 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         ContentResolver resolverFavorites = getContentResolver();
         // delete job post from favorites table (local)
         resolverFavorites.delete(JobPostContract.FavoriteList.CONTENT_URI, selection, selectionArgs);
-        Timber.v("Job post for business ID " + intentExtras.getString(getString(R.string.business_id)) + " deleted");
+        /*Timber.v("Job post for business ID " + intentExtras.getString(getString(R.string.business_id)) + " deleted");*/
 
         startActivity(new Intent(this, JobPostingListActivity.class));
     }
 
     private boolean checkIfOwner() {
-        Timber.v("checkIfOwner()");
+        /*Timber.v("checkIfOwner()");*/
         boolean isOwner;
         String selection = JobPostContract.JobPostList.COLUMN_OWNER + "=? AND " + JobPostContract.JobPostList.COLUMN_BUSINESSID + "=?";
         String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), "no@one.com"), intentExtras.getString(getString(R.string.business_id))};
 
 
-        Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0].toString() + " " + selectionArgs[1].toString());
+        /*Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0].toString() + " " + selectionArgs[1].toString());*/
 
         ContentResolver resolver = getContentResolver();
-        Timber.v("resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null): " + resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null).toString());
+        /*Timber.v("resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null): " + resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null).toString());*/
         Cursor ownerCursor = resolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
 
-        if (ownerCursor.getCount() > 0) {
-            Timber.v("ownerCursor.getCount() > 0");
-            isOwner = true;
-        } else {
-            Timber.v("ownerCursor.getCount() == 0");
-            isOwner = false;
-        }
-        Timber.v("isOwner: " + isOwner);
+        /*Timber.v("ownerCursor.getCount() > 0");*//*Timber.v("ownerCursor.getCount() == 0");*/
+        isOwner = ownerCursor.getCount() > 0;
+        /*Timber.v("isOwner: " + isOwner);*/
         return isOwner;
     }
 

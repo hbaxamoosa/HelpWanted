@@ -192,4 +192,10 @@
 
     <!-- JobPostingDetailActivity.java -->
     <string name="editJob">editJob</string>
+
+    <!-- banner ad -->
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="range">Range</string>
+    <string name="range_summary">Distance (in meters) to monitor job posts</string>
+    <string name="default_range">500</string>
 </resources>

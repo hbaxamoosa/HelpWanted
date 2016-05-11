@@ -34,11 +34,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/jobposting_detail_container"
+    <fragment
+        android:id="@+id/fragment_detail_container"
+        android:name="com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".ui.JobPostingDetailActivity"
+        tools:layout="@layout/jobposting_detail" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_favorite"
@@ -47,7 +52,7 @@
         android:layout_gravity="center_vertical|start"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_star_border_black_24dp"
-        app:layout_anchor="@+id/jobposting_detail_container"
+        app:layout_anchor="@+id/fragment_detail_container"
         app:layout_anchorGravity="top|end" />
 
 </android.support.design.widget.CoordinatorLayout>

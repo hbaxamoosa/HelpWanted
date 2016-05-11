@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/com.baxamoosa.helpwanted"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.baxamoosa.helpwanted.ui.LocationEditTextPreference
-        android:defaultValue="@string/pref_location_default"
-        android:inputType="text"
-        android:key="@string/pref_location_key"
-        android:singleLine="true"
-        android:title="@string/pref_location_label"
-        custom:minLength="3" />
+    <EditTextPreference
+        android:defaultValue="@string/default_range"
+        android:key="range"
+        android:summary="@string/range_summary"
+        android:title="@string/range" />
 
     <CheckBoxPreference
         android:defaultValue="@string/pref_enable_notifications_default"

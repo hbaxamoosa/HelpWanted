@@ -211,9 +211,16 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
         float longitude = prefs.getFloat(context.getString(R.string.person_longitude), (float) 0.0);
 
         Timber.v("latitude: " + latitude + " longitude: " + longitude);
+        // see http://developer.android.com/reference/android/location/Location.html#distanceTo(android.location.Location)
 
         // consider utilizing the user's location to see if jobs were added within a certain distance before generating notification.
+        /*Location targetLocation = new Location("");//provider name is unecessary
+        targetLocation.setLatitude(0.0d);//your coords of course
+        targetLocation.setLongitude(0.0d);
 
+        float distanceInMeters =  targetLocation.distanceTo(myLocation);*/
+
+        // another tutorial here: http://www.tutorialspoint.com/android/android_location_based_services.htm
         if (displayNotifications) {
             String lastNotificationKey = context.getString(R.string.pref_last_notification);
             long lastSync = prefs.getLong(lastNotificationKey, 0);

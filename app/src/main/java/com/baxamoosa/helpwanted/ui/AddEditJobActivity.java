@@ -16,7 +16,10 @@ import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.Date;
 
@@ -35,7 +38,7 @@ public class AddEditJobActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_edit_job); // TODO: 5/8/16 verify that changes to the layout view ids are correct 
+        setContentView(R.layout.activity_add_edit_job);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Edit Job Post");
@@ -52,13 +55,13 @@ public class AddEditJobActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         if (getIntent().hasExtra(getString(R.string.addJob))) {
-            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
+            /*Timber.v("getIntent().hasExtra(getString(R.string.addJob))");*/
             addJob();
         } else if (getIntent().hasExtra(getString(R.string.editJob))) {
-            Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
+            /*Timber.v("getIntent().hasExtra(getString(R.string.editJob))");*/
             editJob();
         } else {
-            Timber.v("this should NEVER happen");
+            /*Timber.v("this should NEVER happen");*/
         }
     }
 
@@ -80,10 +83,11 @@ public class AddEditJobActivity extends AppCompatActivity {
         String selection = JobPostContract.FavoriteList.COLUMN_ID + "=?";
         String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string._id))};
 
-        Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0]);
+        /*Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0]);*/
+
         Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
-        Timber.v("mCursor.getCount: " + mCursor.getCount());
+        /*Timber.v("mCursor.getCount: " + mCursor.getCount());*/
         mCursor.moveToFirst();
 
         // set text values into view
@@ -95,11 +99,10 @@ public class AddEditJobActivity extends AppCompatActivity {
     }
 
     public void submitToDB(View view) {
-        Timber.v("submitToDB(View view)");
+        /*Timber.v("submitToDB(View view)");*/
 
-        if (getIntent().hasExtra(getString(R.string.addJob))) {
+        if (getIntent().hasExtra(getString(R.string.addJob))) { // adding a new job post
             Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
-            Timber.v("creating Firebase reference");
             Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
             Firebase mJobPost = rootRef.child("jobpost");
 
@@ -114,17 +117,69 @@ public class AddEditJobActivity extends AppCompatActivity {
                     Integer.parseInt(wageRate.getText().toString()),
                     date.getTime(),
                     sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-            Timber.v("attempting to post to Firebase");
             rootRef.push().setValue(a);
-            Timber.v("successfully posted to Firebase");
 
             // job post submitted via to Firebase, so go back to JobPostingListActivity
             startActivity(new Intent(this, JobPostingListActivity.class));
-        } else if (getIntent().hasExtra(getString(R.string.editJob))) {
+        } else if (getIntent().hasExtra(getString(R.string.editJob))) { // editing an existing job post
             Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
-            // update the job post record in Firebase
+            // TODO: 5/9/16 delete the existing post and create a new job post Timber.v("deleteJobPost()");
+
+            // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
+            Utility.mRef
+                    .orderByChild("_id")
+                    .equalTo(getIntent().getExtras().getString(getString(R.string.business_id)))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChildren()) {
+                                /*Timber.v("dataSnapshot.hasChildren()");*/
+                                DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+                                firstChild.getRef().removeValue();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            /*Timber.v("onCancelled(FirebaseError firebaseError)");*/
+                        }
+                    });
+
+            String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
+            String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string.business_id))};
+
+            /*Timber.v("selection: " + selection);
+            Timber.v("selectionArgs: " + selectionArgs[0].toString());*/
+
+            ContentResolver resolverJobPosts = getContentResolver();
+            // delete job post from jobpost table (local)
+            resolverJobPosts.delete(JobPostContract.JobPostList.CONTENT_URI, selection, selectionArgs);
+
+            ContentResolver resolverFavorites = getContentResolver();
+            // delete job post from favorites table (local)
+            resolverFavorites.delete(JobPostContract.FavoriteList.CONTENT_URI, selection, selectionArgs);
+            /*Timber.v("Job post for business ID " + getIntent().getExtras().getString(getString(R.string.business_id)) + " deleted");*/
+
+            Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
+            Firebase mJobPost = rootRef.child("jobpost");
+
+            JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
+                    getIntent().getExtras().getString(getString(R.string.business_id)),
+                    name.getText().toString(),
+                    address.getText().toString(),
+                    phone.getText().toString(),
+                    getIntent().getExtras().getString(getString(R.string.business_website)),
+                    getIntent().getExtras().getDouble(getString(R.string.business_latitude)),
+                    getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
+                    Integer.parseInt(wageRate.getText().toString()),
+                    date.getTime(),
+                    sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
+            rootRef.push().setValue(a);
+
+            // job post submitted via to Firebase, so go back to JobPostingListActivity
+            startActivity(new Intent(this, JobPostingListActivity.class));
         } else {
-            Timber.v("this should NEVER happen");
+            /*Timber.v("this should NEVER happen");*/
         }
 
     }
@@ -138,102 +193,4 @@ public class AddEditJobActivity extends AppCompatActivity {
         }
         // PlacePicker Activity will call AddEditJobActivity to enter remaining details about the job post
     }
-
-    /*private void placePhotosTask(String placeID) {
-
-        if (BuildConfig.DEBUG) {
-            Timber.v("placePhotosTask(String placeID)");
-        }
-        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
-        new PhotoTask(mPhoto.getWidth(), mPhoto.getHeight()) {
-            @Override
-            protected void onPreExecute() {
-                // Display a temporary image to show while bitmap is loading.
-                mPhoto.setImageResource(R.drawable.empty_photo);
-            }
-
-            @Override
-            protected void onPostExecute(AttributedPhoto attributedPhoto) {
-                if (BuildConfig.DEBUG) {
-                    Timber.v("onPostExecute(AttributedPhoto attributedPhoto)");
-                }
-                if (attributedPhoto != null) {
-                    if (BuildConfig.DEBUG) {
-                        Timber.v("(attributedPhoto != null)");
-                    }
-                    // Photo has been loaded, display it.
-                    mPhoto.setImageBitmap(attributedPhoto.bitmap);
-
-                    // Display the attribution as HTML content if set.
-                    if (attributedPhoto.attribution == null) {
-                        mAttribution.setVisibility(View.GONE);
-                    } else {
-                        mAttribution.setVisibility(View.VISIBLE);
-                        mAttribution.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
-                    }
-
-                }
-            }
-        }.execute(placeID);
-    }
-
-    abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPhoto> {
-
-        private int mHeight;
-
-        private int mWidth;
-
-        public PhotoTask(int width, int height) {
-            mHeight = height;
-            mWidth = width;
-        }
-
-        *//**
-     * Loads the first photo for a place id from the Geo Data API.
-     * The place id must be the first (and only) parameter.
-     *//*
-        @Override
-        protected AttributedPhoto doInBackground(String... params) {
-            if (params.length != 1) {
-                return null;
-            }
-            final String placeId = params[0];
-            AttributedPhoto attributedPhoto = null;
-
-            PlacePhotoMetadataResult result = Places.GeoDataApi
-                    .getPlacePhotos(mGoogleApiClient, placeId).await();
-
-            if (result.getStatus().isSuccess()) {
-                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
-                if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
-                    // Get the first bitmap and its attributions.
-                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
-                    CharSequence attribution = photo.getAttributions();
-                    // Load a scaled bitmap for this photo.
-                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
-                            .getBitmap();
-
-                    attributedPhoto = new AttributedPhoto(attribution, image);
-                }
-                // Release the PlacePhotoMetadataBuffer.
-                photoMetadataBuffer.release();
-            }
-            return attributedPhoto;
-        }
-
-        *//**
-     * Holder for an image and its attribution.
-     *//*
-        class AttributedPhoto {
-
-            public final CharSequence attribution;
-
-            public final Bitmap bitmap;
-
-            public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
-                this.attribution = attribution;
-                this.bitmap = bitmap;
-            }
-        }
-    }*/
 }

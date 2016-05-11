@@ -27,5 +27,5 @@
     <dimen name="g_top_margin">100dp</dimen>
 
     <!-- CardView -->
-    <dimen name="image_size">120dp</dimen>
+    <dimen name="cardview_height">120dp</dimen>
 </resources>

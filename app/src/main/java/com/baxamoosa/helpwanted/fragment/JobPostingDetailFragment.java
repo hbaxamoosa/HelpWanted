@@ -26,6 +26,8 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import timber.log.Timber;
 
@@ -45,6 +47,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     private Bundle arguments;
     private CollapsingToolbarLayout appBarLayout;
     private int position;
+    private AdView mAdView;
 
     private TextView phoneOfBusiness;
     private TextView emailOfBusiness;
@@ -130,6 +133,12 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         emailOfBusiness = (TextView) rootView.findViewById(R.id.emailOfBusiness);
         wageRateOfBusiness = (TextView) rootView.findViewById(R.id.wageRateOfBusiness);
         addressOfBusiness = (TextView) rootView.findViewById(R.id.addressOfBusiness);
+
+        mAdView = (AdView) rootView.findViewById(R.id.adView);
+        // mAdView.setAdListener(new ToastAdListener(this));
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(adRequest);
 
         return rootView;
     }

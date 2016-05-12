@@ -3,12 +3,11 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/job_postings"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/job_posting" />
+            android:id="@+id/action_settings"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="@string/action_settings" />
         <item
-            android:id="@+id/my_jobs"
-            android:icon="@drawable/ic_dashboard"
-            android:title="@string/my_jobs" />
+            android:id="@+id/action_signout"
+            android:title="@string/action_signout" />
     </group>
 </menu>

@@ -51,21 +51,19 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
 
         Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
 
-        View rootView = inflater.inflate(R.layout.activity_content_my_jobs, container, false);
-
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_jobs, container, false);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(manager);
-        // mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+
         try {
             mRecyclerView.setAdapter(mJobPostingListAdapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return rootView;
+        return mRecyclerView;
     }
 
     @Override
@@ -106,6 +104,15 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         if (BuildConfig.DEBUG) {
             Timber.v("onLoaderReset(Loader<Cursor> loader)");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getSupportLoaderManager().restartLoader(Utility.FAVORITE_JOBPOSTS, null, MyJobFavoriteFragment.this);
+        if (mJobPostingListAdapter != null) {
+            mJobPostingListAdapter.notifyDataSetChanged();
         }
     }
 

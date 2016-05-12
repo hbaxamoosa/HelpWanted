@@ -9,8 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +24,10 @@ import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import timber.log.Timber;
 
 /**
  * An activity representing a single JobPosting detail screen. This
@@ -56,8 +57,18 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        /*CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("something");*/
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        // mAdView.setAdListener(new ToastAdListener(this));
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         final ContentResolver resolver = getContentResolver();
 
@@ -129,12 +140,6 @@ public class JobPostingDetailActivity extends AppCompatActivity {
             fab.setImageResource(R.drawable.ic_star_black_24dp);
         }
 
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -174,6 +179,12 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        return true;
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         /*Timber.v("onPrepareOptionsMenu(Menu menu)");*/
         MenuItem menuItemDelete = menu.findItem(R.id.action_delete_favorite);
@@ -186,35 +197,24 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
-                NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
-                return true;
+        switch (item.getItemId()) {
             case R.id.action_delete_favorite:
-                /*Timber.v("user clicked on delete");*/
+                Timber.v("user clicked on delete");
                 Toast.makeText(this, "Job Post deleted", Toast.LENGTH_SHORT).show();
                 deleteJobPost();
                 return true;
             case R.id.action_edit:
-                /*Timber.v("user clicked on edit");*/
+                Timber.v("user clicked on edit");
                 Intent mIntent = new Intent(this, AddEditJobActivity.class);
                 Bundle mBundle = new Bundle();
                 mBundle.putString(getString(R.string.editJob), getString(R.string.editJob));
                 mBundle.putString(getString(R.string._id), intentExtras.getString(getString(R.string._id)));
-                /*mBundle.putString(getString(R.string.business_name), intentExtras.getString(getString(R.string.business_name)));
+                mBundle.putString(getString(R.string.business_name), intentExtras.getString(getString(R.string.business_name)));
                 mBundle.putString(getString(R.string.business_phone), intentExtras.getString(getString(R.string.business_phone)));
                 mBundle.putString(getString(R.string.business_address), intentExtras.getString(getString(R.string.business_address)));
                 mBundle.putString(getString(R.string.business_website), intentExtras.getString(getString(R.string.business_website)));
                 mBundle.putDouble(getString(R.string.business_latitude), intentExtras.getDouble(getString(R.string.business_latitude)));
-                mBundle.putDouble(getString(R.string.business_longitude), intentExtras.getDouble(getString(R.string.business_longitude)));*/
+                mBundle.putDouble(getString(R.string.business_longitude), intentExtras.getDouble(getString(R.string.business_longitude)));
 
                 mIntent.putExtras(mBundle);
                 startActivity(mIntent);
@@ -223,7 +223,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void deleteJobPost() {
+    public void deleteJobPost() {
         /*Timber.v("deleteJobPost()");*/
 
         // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
@@ -264,12 +264,11 @@ public class JobPostingDetailActivity extends AppCompatActivity {
         startActivity(new Intent(this, JobPostingListActivity.class));
     }
 
-    private boolean checkIfOwner() {
+    public boolean checkIfOwner() {
         /*Timber.v("checkIfOwner()");*/
         boolean isOwner;
         String selection = JobPostContract.JobPostList.COLUMN_OWNER + "=? AND " + JobPostContract.JobPostList.COLUMN_BUSINESSID + "=?";
         String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), "no@one.com"), intentExtras.getString(getString(R.string.business_id))};
-
 
         /*Timber.v("selection: " + selection);
         Timber.v("selectionArgs: " + selectionArgs[0].toString() + " " + selectionArgs[1].toString());*/

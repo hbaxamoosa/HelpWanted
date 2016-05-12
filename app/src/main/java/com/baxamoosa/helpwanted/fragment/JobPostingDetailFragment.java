@@ -26,8 +26,6 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import timber.log.Timber;
 
@@ -47,8 +45,8 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     private Bundle arguments;
     private CollapsingToolbarLayout appBarLayout;
     private int position;
-    private AdView mAdView;
 
+    private View rootView;
     private TextView phoneOfBusiness;
     private TextView emailOfBusiness;
     private TextView wageRateOfBusiness;
@@ -104,8 +102,6 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             Timber.v("onCreate");
         }
 
-        setHasOptionsMenu(true);
-
         arguments = getArguments();
         sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -117,28 +113,21 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             // Timber.v("businessID: " + businessID[0]);
         }
         Activity activity = this.getActivity();
-        appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+        appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.collapsing_toolbar);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         if (BuildConfig.DEBUG) {
             Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
         }
-        View rootView = inflater.inflate(R.layout.jobposting_detail, container, false);
+        rootView = inflater.inflate(R.layout.activity_detail2, container, false);
 
-        phoneOfBusiness = (TextView) rootView.findViewById(R.id.phoneOfBusiness);
-        emailOfBusiness = (TextView) rootView.findViewById(R.id.emailOfBusiness);
-        wageRateOfBusiness = (TextView) rootView.findViewById(R.id.wageRateOfBusiness);
-        addressOfBusiness = (TextView) rootView.findViewById(R.id.addressOfBusiness);
-
-        mAdView = (AdView) rootView.findViewById(R.id.adView);
-        // mAdView.setAdListener(new ToastAdListener(this));
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-        mAdView.loadAd(adRequest);
+        phoneOfBusiness = (TextView) rootView.findViewById(R.id.tvPhone);
+        emailOfBusiness = (TextView) rootView.findViewById(R.id.tvEmail);
+        wageRateOfBusiness = (TextView) rootView.findViewById(R.id.tvWageRate);
+        addressOfBusiness = (TextView) rootView.findViewById(R.id.tvAddress);
 
         return rootView;
     }

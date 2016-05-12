@@ -198,4 +198,6 @@
     <string name="range">Range</string>
     <string name="range_summary">Distance (in meters) to monitor job posts</string>
     <string name="default_range">500</string>
+
+    <string name="cheese_ipsum">Jarlsberg lancashire edam.</string>
 </resources>

@@ -7,14 +7,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,17 +39,32 @@ public class MyJobsActivity extends AppCompatActivity {
      */
     ViewPager mViewPager;
     private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
     private SharedPreferences sharedPref;
     private TextView profileName;
     private ImageView profilePhoto;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_content_my_jobs_drawer);
-
         /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
         }*/
+        setContentView(R.layout.activity_content_my_jobs_drawer);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
+
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (mNavigationView != null) {
+            setupDrawerContent(mNavigationView);
+        }
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -66,14 +79,6 @@ public class MyJobsActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
-
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,53 +92,22 @@ public class MyJobsActivity extends AppCompatActivity {
                 // PlacePicker Activity will call AddEditJobActivity to enter remaining details about the job post
             }
         });
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
-                NavUtils.navigateUpTo(this, new Intent(this, JobPostingListActivity.class));
-                return true;
-            case R.id.my_jobs:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 profileName = (TextView) findViewById(R.id.profileName);
                 profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
                 profilePhoto = (ImageView) findViewById(R.id.profileImage);
                 Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
                 // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
-                return true;
-            case R.id.action_settings:
-                startActivity(new Intent(this, Settings.class));
-                return true;
-            case R.id.action_signout:
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean("signout", true);
-                editor.commit();
-                startActivity(new Intent(this, SignInActivity.class));
-                return true;
+                break;
+            case R.id.settings:
+
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

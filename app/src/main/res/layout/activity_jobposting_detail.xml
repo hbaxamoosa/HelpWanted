@@ -1,9 +1,11 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.JobPostingDetailActivity"
     tools:ignore="MergeRootFrame">
 
@@ -15,7 +17,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
@@ -34,25 +36,30 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/fragment_detail_container"
-        android:name="com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".ui.JobPostingDetailActivity"
-        tools:layout="@layout/jobposting_detail" />
+        tools:layout="@layout/activity_detail2" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="16dp"
         android:src="@drawable/ic_star_border_black_24dp"
         app:layout_anchor="@+id/fragment_detail_container"
         app:layout_anchorGravity="top|end" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
 </android.support.design.widget.CoordinatorLayout>

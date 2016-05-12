@@ -23,7 +23,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -53,7 +52,7 @@ import timber.log.Timber;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class JobPostingListActivity extends AppCompatActivity implements /*JobPostingListAdapter.Callback,*/ LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class JobPostingListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_LOCATION = 1;
     /**
@@ -62,11 +61,8 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     public boolean mTwoPane;  // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
     public boolean firstLoad;  // Whether or not the activity is in two-pane mode and whether this is the first load or not.
     public JobPost[] mJobPost;
-    private DrawerLayout mDrawerLayout;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private TextView profileName;
-    private ImageView profilePhoto;
     private RecyclerView.Adapter mJobPostingListAdapter;
     private RecyclerView mRecyclerView;
     private TextView emptyView;
@@ -75,6 +71,10 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     private Location mLastLocation;
     private boolean mResolvingError;
     private int REQUEST_RESOLVE_ERROR;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+    private TextView profileName;
+    private ImageView profilePhoto;
     // private Cursor mCursor;
 
     @Override
@@ -96,21 +96,11 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
 
         boolean isConnected = Utility.isNetworkAvailable(HelpWantedApplication.getAppContext());
+        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         setContentView(R.layout.activity_jobposting_list_drawer);
 
-        emptyView = (TextView) findViewById(R.id.recyclerview_empty);
-
-        sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -120,11 +110,20 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (mNavigationView != null) {
+            setupDrawerContent(mNavigationView);
+        }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
+        emptyView = (TextView) findViewById(R.id.recyclerview_empty);
+
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
         }
 
         getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, JobPostingListActivity.this);
@@ -167,6 +166,30 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                profileName = (TextView) findViewById(R.id.profileName);
+                profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
+                profilePhoto = (ImageView) findViewById(R.id.profileImage);
+                Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
+                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
+                break;
+            case R.id.action_settings:
+                startActivity(new Intent(this, Settings.class));
+                break;
+            case R.id.action_signout:
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean("signout", true);
+                editor.commit();
+                startActivity(new Intent(this, SignInActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         if (BuildConfig.DEBUG) {
@@ -200,65 +223,6 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
         }
         // HelpWantedSyncAdapter.syncImmediately(this);
         mGoogleApiClient.connect();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                profileName = (TextView) findViewById(R.id.profileName);
-                profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
-                profilePhoto = (ImageView) findViewById(R.id.profileImage);
-                Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
-                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
-                return true;
-            /*case R.id.my_jobs:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                profileName = (TextView) findViewById(R.id.profileName);
-                profileName.setText(sharedPref.getString(getString(R.string.person_name), "no name available"));
-                profilePhoto = (ImageView) findViewById(R.id.profileImage);
-                Picasso.with(getApplicationContext()).load(sharedPref.getString(getString(R.string.person_photo), "http://square.github.io/picasso/static/sample.png")).into(profilePhoto);
-                // profilePhoto.setImageURI(Uri.parse(sharedPref.getString(getString(R.string.person_photo), "no photo available")));
-                return true;*/
-            case R.id.action_settings:
-                startActivity(new Intent(this, Settings.class));
-                return true;
-            case R.id.action_signout:
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean("signout", true);
-                editor.commit();
-                startActivity(new Intent(this, SignInActivity.class));
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-
-                        if (menuItem.getTitle() == getString(R.string.job_posting)) {
-                            startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
-                        }
-                        if (menuItem.getTitle() == getString(R.string.my_jobs)) {
-                            startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
-                        }
-                        mDrawerLayout.closeDrawers();
-                        return true;
-                    }
-                });
     }
 
     @Override
@@ -365,5 +329,25 @@ public class JobPostingListActivity extends AppCompatActivity implements /*JobPo
             // showErrorDialog(result.getErrorCode());
             mResolvingError = true;
         }
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        Timber.v("setupDrawerContent(NavigationView navigationView)");
+                        menuItem.setChecked(true);
+
+                        if (menuItem.getTitle() == getString(R.string.job_posting)) {
+                            startActivity(new Intent(getApplicationContext(), JobPostingListActivity.class));
+                        }
+                        if (menuItem.getTitle() == getString(R.string.my_jobs)) {
+                            startActivity(new Intent(getApplicationContext(), MyJobsActivity.class));
+                        }
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
     }
 }

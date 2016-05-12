@@ -1,15 +1,12 @@
 package com.baxamoosa.helpwanted.utility;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.support.v4.content.Loader;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.data.JobPostContract;
@@ -70,9 +67,9 @@ public class Utility {
      */
     public static boolean isNetworkAvailable(Context c) {
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("isNetworkAvailable(Context c)");
-        }
+        }*/
 
         ConnectivityManager cm =
                 (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -82,33 +79,19 @@ public class Utility {
                 activeNetwork.isConnectedOrConnecting();
     }
 
-    /**
-     * Returns true if the location is available.
-     */
-    public static boolean isLocationAvailable(Context context) {
-
-        if (BuildConfig.DEBUG) {
-            Timber.v("isLocationAvailable(Context context)");
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.contains(context.getString(R.string.pref_location_latitude))
-                && prefs.contains(context.getString(R.string.pref_location_longitude));
-    }
-
     public static JobPost[] populateJobPostArray(Loader<Cursor> loader, Cursor data) {
         Cursor mCursor = data;
         mCursor.moveToFirst();
         DatabaseUtils.dumpCursor(data);
 
-        Timber.v("mCursor.getCount(): " + mCursor.getCount());
+        // Timber.v("mCursor.getCount(): " + mCursor.getCount());
 
         // Create JobPost objects array
         JobPost[] jobPosts = new JobPost[mCursor.getCount()];
         for (int i = 0; i < mCursor.getCount(); i++) {
             jobPosts[i] = new JobPost();
             jobPosts[i]._id = mCursor.getString(Utility.COL_ID);
-            Timber.v("jobPosts[i].id: " + jobPosts[i]._id);
+            // Timber.v("jobPosts[i].id: " + jobPosts[i]._id);
             jobPosts[i].businessId = mCursor.getString(Utility.COL_BUSINESS_ID);
             jobPosts[i].businessName = mCursor.getString(Utility.COL_BUSINESS_NAME);
             jobPosts[i].businessAddress = mCursor.getString(Utility.COL_BUSINESS_ADDRESS);

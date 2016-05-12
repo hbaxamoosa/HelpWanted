@@ -54,28 +54,11 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
 
-        View rootView = inflater.inflate(R.layout.activity_content_my_jobs_drawer, container, false);
-
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_jobs, container, false);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
@@ -87,7 +70,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
             e.printStackTrace();
         }
 
-        return rootView;
+        return mRecyclerView;
     }
 
     @Override
@@ -142,6 +125,15 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader<Cursor> loader) {
         if (BuildConfig.DEBUG) {
             Timber.v("onLoaderReset(Loader<Cursor> loader)");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getSupportLoaderManager().restartLoader(Utility.ACTIVE_JOBPOSTS, null, MyJobActiveFragment.this);
+        if (mJobPostingListAdapter != null) {
+            mJobPostingListAdapter.notifyDataSetChanged();
         }
     }
 

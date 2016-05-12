@@ -199,7 +199,7 @@ public class SignInActivity extends AppCompatActivity
             if (!signout) { //only send the user to the Job Listing when this is the firstRun
                 // use SyncAdapter to manage the job posts in the jobposts db
                 HelpWantedSyncAdapter.initializeSyncAdapter(this);
-                startActivity(new Intent(this, JobPostingListActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
             }
         } else {
             // Signed out, show unauthenticated UI.

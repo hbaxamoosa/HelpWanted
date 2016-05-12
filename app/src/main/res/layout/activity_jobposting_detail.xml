@@ -43,7 +43,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/activity_detail2" />
+        tools:layout="@layout/activity_detail" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_favorite"

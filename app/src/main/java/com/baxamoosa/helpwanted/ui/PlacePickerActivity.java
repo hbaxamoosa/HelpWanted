@@ -61,7 +61,7 @@ public class PlacePickerActivity extends AppCompatActivity {
             switch (requestCode) {
                 case PLACE_PICKER_FLAG:
                     Place place = PlacePicker.getPlace(data, this);
-                    Intent mIntent = new Intent(this, AddEditJobActivity.class);
+                    Intent mIntent = new Intent(this, MainActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putString(getString(R.string.addJob), getString(R.string.addJob));
                     if (!place.getId().isEmpty()) {

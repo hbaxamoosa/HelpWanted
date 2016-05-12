@@ -26,6 +26,12 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.LatLng;
 
 import timber.log.Timber;
 
@@ -64,6 +70,9 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     private double postDate;
     private String user;
 
+    private MapView mapView;
+    private GoogleMap map;
+    private boolean tablet;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -122,7 +131,22 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         if (BuildConfig.DEBUG) {
             Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
         }
-        rootView = inflater.inflate(R.layout.activity_detail2, container, false);
+        rootView = inflater.inflate(R.layout.activity_detail, container, false);
+
+        // Gets the MapView from the XML layout and creates it
+        mapView = (MapView) rootView.findViewById(R.id.mapview);
+        if (mapView != null && mapView.getVisibility() == View.VISIBLE) {  // tablet
+            tablet = true;
+            mapView.onCreate(savedInstanceState);
+            // Gets to GoogleMap from the MapView and does initialization stuff
+            map = mapView.getMap();
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+
+            // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+            MapsInitializer.initialize(this.getActivity());
+        }
+
+
 
         phoneOfBusiness = (TextView) rootView.findViewById(R.id.tvPhone);
         emailOfBusiness = (TextView) rootView.findViewById(R.id.tvEmail);
@@ -175,9 +199,9 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             Timber.v("businessPhone: " + businessPhone);
             businessWebsite = data.getString(Utility.COL_BUSINESS_WEBSITE);
             Timber.v("businessWebsite: " + businessWebsite);
-            businessLatitude = data.getDouble(Utility.COL_BUSINESS_LONGITUDE);
+            businessLatitude = data.getDouble(Utility.COL_BUSINESS_LATITUDE);
             Timber.v("businessLatitude: " + businessLatitude);
-            businessLongitude = data.getDouble(Utility.COL_BUSINESS_LATITUDE);
+            businessLongitude = data.getDouble(Utility.COL_BUSINESS_LONGITUDE);
             Timber.v("businessLongitude: " + businessLongitude);
             wageRate = data.getInt(Utility.COL_WAGERATE);
             Timber.v("wageRate: " + wageRate);
@@ -194,11 +218,41 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             emailOfBusiness.setText(user);
             wageRateOfBusiness.setText("This job pays $" + Integer.toString(wageRate) + " per hour.");
             addressOfBusiness.setText(businessAddress);
+
+            if (tablet) {
+                // Updates the location and zoom of the MapView
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(businessLatitude, businessLongitude), 15);
+                map.animateCamera(cameraUpdate);
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Timber.v("onLoaderReset(Loader<Cursor> loader)");
+    }
+
+    @Override
+    public void onResume() {
+        if (tablet) {
+            mapView.onResume();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (tablet) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (tablet) {
+            mapView.onLowMemory();
+        }
     }
 }

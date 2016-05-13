@@ -117,7 +117,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
         } else {
             Timber.v("nothing returned");
         }
-        data.close();
+        /*data.close();*/
     }
 
     @Override

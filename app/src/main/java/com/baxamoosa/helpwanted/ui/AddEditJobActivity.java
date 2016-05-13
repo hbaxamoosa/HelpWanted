@@ -122,7 +122,6 @@ public class AddEditJobActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
         } else if (getIntent().hasExtra(getString(R.string.editJob))) { // editing an existing job post
             Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
-            // TODO: 5/9/16 delete the existing post and create a new job post Timber.v("deleteJobPost()");
 
             // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
             Utility.mRef

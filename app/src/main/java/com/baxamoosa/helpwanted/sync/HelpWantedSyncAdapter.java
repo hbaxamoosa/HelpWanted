@@ -41,8 +41,7 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Interval at which to sync job posts, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    // public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_INTERVAL = 10;  // TODO: 5/8/16 increase this short interval after testing is complete
+    public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     private static final int NOTIFICATION_ID = 999;
 

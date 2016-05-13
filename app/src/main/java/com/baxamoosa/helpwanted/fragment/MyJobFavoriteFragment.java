@@ -97,7 +97,7 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
         } else {
             Timber.v("nothing returned");
         }
-        data.close();
+        /*data.close();*/
     }
 
     @Override

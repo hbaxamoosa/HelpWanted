@@ -117,7 +117,7 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         } else {
             Timber.v("nothing returned");
         }
-        data.close();
+        /*data.close();*/
     }
 
     @Override

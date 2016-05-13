@@ -16,6 +16,7 @@ import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,7 +26,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
-import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
+import com.baxamoosa.helpwanted.ui.MainActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
@@ -47,9 +48,20 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private ValueEventListener jobPostsListener;
 
+    private Context mContext;
+    private SharedPreferences sharedPrefs;
+    private SharedPreferences settingsPrefs;
+    private SharedPreferences.Editor editor;
+    private String mDisplayNotificationsKey;
+    private boolean mDisplayNotfication;
+    private String mUserLatitudeKey;
+    private float mUserLatitude;
+    private String mUserLongitudeKey;
+    private float mUserLongitude;
+    private int notifCount;
+
     public HelpWantedSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        Timber.v("HelpWantedSyncAdapter(Context context, boolean autoInitialize)");
     }
 
     /**
@@ -93,7 +105,7 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
      * @return a fake account.
      */
     public static Account getSyncAccount(Context context) {
-        Timber.v("getSyncAccount(Context context)");
+        /*Timber.v("getSyncAccount(Context context)");*/
         // Get an instance of the Android account manager
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
@@ -148,7 +160,7 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 
-        Timber.v("onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)");
+        /*Timber.v("onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)");*/
 
         // since the user is signing out, we need to flush the jobpost table
         getContext().getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
@@ -156,7 +168,6 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
         jobPostsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Timber.v("There are " + snapshot.getChildrenCount() + " job posts");
                 int i = 0;
                 for (DataSnapshot jobPostSnapshot : snapshot.getChildren()) {
                     JobPost jobPost = jobPostSnapshot.getValue(JobPost.class); // Firebase is returning JobPost objects from the Cloud
@@ -192,44 +203,65 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
         ContentResolver mResolver = getContext().getContentResolver();
         Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, null, null, null);
-        // create notification
+
+        // notify user
         if (mCursor.getCount() > 0) {
-            Timber.v("there are " + mCursor.getCount() + " new job posts for notification");
             notifyJobPosts();
         } else {
-            Timber.v("no job posts for notification");
+            Timber.v("no new job posts for notification");
         }
     }
 
     private void notifyJobPosts() {
-        Context context = getContext();
-        //checking the last update and notify if it' the first of the day
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
-        boolean displayNotifications = prefs.getBoolean(displayNotificationsKey, Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
-        float latitude = prefs.getFloat(context.getString(R.string.person_latitude), (float) 0.0);
-        float longitude = prefs.getFloat(context.getString(R.string.person_longitude), (float) 0.0);
 
-        Timber.v("latitude: " + latitude + " longitude: " + longitude);
+        mContext = getContext();
+
+        sharedPrefs = mContext.getSharedPreferences(mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        settingsPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        String range = settingsPrefs.getString((mContext.getString(R.string.range)), "0.0");
+        Float rangeInFloat = Float.parseFloat(range);
+
+        mDisplayNotificationsKey = mContext.getString(R.string.pref_enable_notifications_key);
+        mDisplayNotfication = settingsPrefs.getBoolean(mDisplayNotificationsKey, Boolean.parseBoolean(mContext.getString(R.string.pref_enable_notifications_default)));
+
+        mUserLatitudeKey = mContext.getString(R.string.person_latitude);
+        mUserLatitude = sharedPrefs.getFloat(mUserLatitudeKey, (float) 0.0);
+
+        mUserLongitudeKey = mContext.getString(R.string.person_longitude);
+        mUserLongitude = sharedPrefs.getFloat(mUserLongitudeKey, (float) 0.0);
+
+        Location userLocation = new Location("hasnain");
+        userLocation.setLatitude(mUserLatitude);
+        userLocation.setLongitude(mUserLongitude);
         // see http://developer.android.com/reference/android/location/Location.html#distanceTo(android.location.Location)
 
-        // consider utilizing the user's location to see if jobs were added within a certain distance before generating notification.
-        /*Location targetLocation = new Location("");//provider name is unecessary
-        targetLocation.setLatitude(0.0d);//your coords of course
-        targetLocation.setLongitude(0.0d);
+        // tutorial here: http://www.tutorialspoint.com/android/android_location_based_services.htm
+        if (mDisplayNotfication) {
+            String lastNotificationKey = mContext.getString(R.string.pref_last_notification);
 
-        float distanceInMeters =  targetLocation.distanceTo(myLocation);*/
-
-        // another tutorial here: http://www.tutorialspoint.com/android/android_location_based_services.htm
-        if (displayNotifications) {
-            String lastNotificationKey = context.getString(R.string.pref_last_notification);
-            long lastSync = prefs.getLong(lastNotificationKey, 0);
-
-            ContentResolver mResolver = context.getContentResolver();
+            ContentResolver mResolver = mContext.getContentResolver();
             Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, null, null, null);
 
+            if (mCursor != null) {
+                mCursor.moveToFirst();
+                for (int i = 0; i < mCursor.getCount(); i++) {
+
+                    Location jobpostLocation = new Location("jobpost" + i);
+                    jobpostLocation.setLatitude(mCursor.getDouble(Utility.COL_BUSINESS_LATITUDE));
+                    jobpostLocation.setLongitude(mCursor.getDouble(Utility.COL_BUSINESS_LONGITUDE));
+
+                    float distanceInMeters = jobpostLocation.distanceTo(userLocation);
+                    Timber.v("distanceInMeters for " + i + " is: " + distanceInMeters);
+                    if (distanceInMeters < rangeInFloat) {
+                        notifCount++;
+                    }
+                    mCursor.moveToNext();
+                }
+            }
+
             int iconId = R.drawable.ic_launcher_big;
-            Resources resources = context.getResources();
+            Resources resources = mContext.getResources();
 
             // On Honeycomb and higher devices, we can retrieve the size of the large icon
             // Prior to that, we use a fixed size
@@ -242,48 +274,52 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
                     ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
                     : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
 
-            String title = context.getString(R.string.app_name);
+            String title = mContext.getString(R.string.app_name);
 
             // Define the text of the forecast.
-            String contentText = String.format("There are " + mCursor.getCount() + " new job posts.");
+            String contentText = null;
+            if (notifCount > 0) {
+                contentText = String.format("There are " + notifCount + " new job posts in your area.");
 
-            // NotificationCompatBuilder is a very convenient way to build backward-compatible
-            // notifications.  Just throw in some data.
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(getContext())
-                            .setColor(resources.getColor(R.color.colorPrimary))
-                            .setSmallIcon(iconId)
-                            .setContentTitle(title)
-                            .setContentText(contentText);
 
-            // Make something interesting happen when the user clicks on the notification.
-            // In this case, opening the app is sufficient.
-            Intent resultIntent = new Intent(context, JobPostingListActivity.class);
+                // NotificationCompatBuilder is a very convenient way to build backward-compatible
+                // notifications.  Just throw in some data.
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(getContext())
+                                .setColor(resources.getColor(R.color.colorPrimary))
+                                .setSmallIcon(iconId)
+                                .setContentTitle(title)
+                                .setContentText(contentText);
 
-            // The stack builder object will contain an artificial back stack for the
-            // started Activity.
-            // This ensures that navigating backward from the Activity leads out of
-            // your application to the Home screen.
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-            mBuilder.setContentIntent(resultPendingIntent);
+                // Make something interesting happen when the user clicks on the notification.
+                // In this case, opening the app is sufficient.
+                Intent resultIntent = new Intent(mContext, MainActivity.class);
 
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                // The stack builder object will contain an artificial back stack for the
+                // started Activity.
+                // This ensures that navigating backward from the Activity leads out of
+                // your application to the Home screen.
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent =
+                        stackBuilder.getPendingIntent(
+                                0,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+                mBuilder.setContentIntent(resultPendingIntent);
 
-            //refreshing last sync
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putLong(lastNotificationKey, System.currentTimeMillis());
-            editor.commit();
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
+                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
-            mCursor.close();
+                //refreshing last sync
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                editor.commit();
+
+                mCursor.close();
+            }
         }
     }
 }

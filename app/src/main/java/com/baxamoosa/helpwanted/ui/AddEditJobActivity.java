@@ -127,7 +127,7 @@ public class AddEditJobActivity extends AppCompatActivity {
             // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
             Utility.mRef
                     .orderByChild("_id")
-                    .equalTo(getIntent().getExtras().getString(getString(R.string.business_id)))
+                    .equalTo(getIntent().getExtras().getString(getString(R.string._id)))
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -162,7 +162,7 @@ public class AddEditJobActivity extends AppCompatActivity {
             Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
             Firebase mJobPost = rootRef.child("jobpost");
 
-            JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
+            JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string._id)),
                     getIntent().getExtras().getString(getString(R.string.business_id)),
                     name.getText().toString(),
                     address.getText().toString(),

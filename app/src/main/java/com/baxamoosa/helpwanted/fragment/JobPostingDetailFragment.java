@@ -20,11 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
-import com.baxamoosa.helpwanted.ui.JobPostingListActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,14 +31,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 
-import timber.log.Timber;
-
-/**
- * A fragment representing a single JobPosting detail screen.
- * This fragment is either contained in a {@link JobPostingListActivity}
- * in two-pane mode (on tablets) or a {@link JobPostingDetailActivity}
- * on handsets.
- */
 public class JobPostingDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment argument representing the item ID that this fragment represents.
@@ -90,16 +80,16 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "something");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out HelpWanted to see job posts.");
         return shareIntent;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onActivityCreated(@Nullable Bundle savedInstanceState)");
-        }
+        }*/
         getActivity().getSupportLoaderManager().initLoader(Utility.ALL_JOBPOSTS, null, this);
     }
 
@@ -107,18 +97,18 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
-        }
+        }*/
 
         arguments = getArguments();
         sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         if (arguments != null) {
-            Timber.v("arguments != null");
+            /*Timber.v("arguments != null");*/
             position = arguments.getInt(ARG_ITEM_ID);
             // businessID = new String[]{ arguments.getString(getString(R.string.business_id)) };
-            Timber.v("position: " + position);
+            /*Timber.v("position: " + position);*/
             // Timber.v("businessID: " + businessID[0]);
         }
         Activity activity = this.getActivity();
@@ -128,9 +118,9 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
-        }
+        }*/
         rootView = inflater.inflate(R.layout.activity_detail, container, false);
 
         // Gets the MapView from the XML layout and creates it
@@ -145,8 +135,6 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             MapsInitializer.initialize(this.getActivity());
         }
-
-
 
         phoneOfBusiness = (TextView) rootView.findViewById(R.id.tvPhone);
         emailOfBusiness = (TextView) rootView.findViewById(R.id.tvEmail);
@@ -168,7 +156,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Timber.v("onCreateLoader(int id, Bundle args)");
+        /*Timber.v("onCreateLoader(int id, Bundle args)");*/
         return new CursorLoader(
                 getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,
@@ -181,34 +169,35 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
+        /*Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");*/
 
         if (data != null && data.moveToFirst()) {
-            Timber.v("data != null && data.moveToFirst()");
+            /*Timber.v("data != null && data.moveToFirst()");*/
             data.move(position);
 
             _id = data.getString(Utility.COL_ID);
-            Timber.v("_id: " + _id);
             businessId = data.getString(Utility.COL_BUSINESS_ID);
-            Timber.v("businessID: " + businessId);
             businessName = data.getString(Utility.COL_BUSINESS_NAME);
-            Timber.v("businessName: " + businessName);
             businessAddress = data.getString(Utility.COL_BUSINESS_ADDRESS);
-            Timber.v("businessAddress: " + businessAddress);
             businessPhone = data.getString(Utility.COL_BUSINESS_PHONE);
-            Timber.v("businessPhone: " + businessPhone);
             businessWebsite = data.getString(Utility.COL_BUSINESS_WEBSITE);
-            Timber.v("businessWebsite: " + businessWebsite);
             businessLatitude = data.getDouble(Utility.COL_BUSINESS_LATITUDE);
-            Timber.v("businessLatitude: " + businessLatitude);
             businessLongitude = data.getDouble(Utility.COL_BUSINESS_LONGITUDE);
-            Timber.v("businessLongitude: " + businessLongitude);
             wageRate = data.getInt(Utility.COL_WAGERATE);
-            Timber.v("wageRate: " + wageRate);
             postDate = data.getDouble(Utility.COL_POSTDATE);
-            Timber.v("postDate: " + postDate);
             user = data.getString(Utility.COL_OWNER);
-            Timber.v("user: " + user);
+
+            /*Timber.v("_id: " + _id);
+            Timber.v("businessID: " + businessId);
+            Timber.v("businessName: " + businessName);
+            Timber.v("businessAddress: " + businessAddress);
+            Timber.v("businessPhone: " + businessPhone);
+            Timber.v("businessWebsite: " + businessWebsite);
+            Timber.v("businessLatitude: " + businessLatitude);
+            Timber.v("businessLongitude: " + businessLongitude);
+            Timber.v("wageRate: " + wageRate);
+            Timber.v("postDate: " + postDate);
+            Timber.v("user: " + user);*/
 
             if (appBarLayout != null) {
                 appBarLayout.setTitle(businessName);
@@ -229,7 +218,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Timber.v("onLoaderReset(Loader<Cursor> loader)");
+        /*Timber.v("onLoaderReset(Loader<Cursor> loader)");*/
     }
 
     @Override

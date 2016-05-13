@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -41,6 +42,7 @@ public class SignInActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private SharedPreferences.Editor settingsPrefEditor;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
     private boolean signout;
@@ -52,6 +54,7 @@ public class SignInActivity extends AppCompatActivity
 
         signout = false;
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate()");
@@ -164,7 +167,6 @@ public class SignInActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            editor = sharedPref.edit();
             editor.putString(getString(R.string.person_name), result.getSignInAccount().getDisplayName());
             editor.putString(getString(R.string.person_email), result.getSignInAccount().getEmail());
             editor.putString(getString(R.string.person_id), result.getSignInAccount().getId());
@@ -196,9 +198,10 @@ public class SignInActivity extends AppCompatActivity
                 editor.commit();
             }
 
+            // use SyncAdapter to manage the job posts in the jobposts db
+            HelpWantedSyncAdapter.initializeSyncAdapter(this);
+
             if (!signout) { //only send the user to the Job Listing when this is the firstRun
-                // use SyncAdapter to manage the job posts in the jobposts db
-                HelpWantedSyncAdapter.initializeSyncAdapter(this);
                 startActivity(new Intent(this, MainActivity.class));
             }
         } else {
@@ -237,6 +240,11 @@ public class SignInActivity extends AppCompatActivity
         // set the new Share Pref value for signout
         editor.putBoolean("signout", false);
         editor.commit();
+
+        settingsPrefEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        settingsPrefEditor.remove(getString(R.string.range));
+        settingsPrefEditor.remove("enable_notifications");
+        settingsPrefEditor.commit();
 
         // since the user is signing out, we need to flush the jobpost table
         getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);

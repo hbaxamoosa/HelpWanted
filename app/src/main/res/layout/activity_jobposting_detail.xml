@@ -39,6 +39,7 @@
         android:id="@+id/fragment_detail_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

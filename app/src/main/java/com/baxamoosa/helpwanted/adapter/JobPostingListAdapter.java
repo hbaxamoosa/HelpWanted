@@ -12,8 +12,6 @@ import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 
-import timber.log.Timber;
-
 /**
  * Created by hasnainbaxamoosa on 4/29/16.
  */
@@ -29,14 +27,14 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
 
     @Override
     public JobPostingListAdapter.JobPostingListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Timber.v("onCreateViewHolder(ViewGroup parent, int viewType)");
+        /*Timber.v("onCreateViewHolder(ViewGroup parent, int viewType)");*/
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_jobpost, parent, false);
         return new JobPostingListAdapterViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(JobPostingListAdapter.JobPostingListAdapterViewHolder holder, int position) {
-        Timber.v("onBindViewHolder(JobPostingListAdapter.JobPostingListAdapterViewHolder holder, int position)");
+        /*Timber.v("onBindViewHolder(JobPostingListAdapter.JobPostingListAdapterViewHolder holder, int position)");*/
         holder.mWageRate.setText("$" + Integer.toString(mJobPost[position].getWageRate()));
         holder.mName.setText(mJobPost[position].getbusinessName());
         holder.mAddress.setText(mJobPost[position].getbusinessAddress());
@@ -44,11 +42,11 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
 
     @Override
     public int getItemCount() {
-        if (mJobPost != null) {
+        /*if (mJobPost != null) {
             Timber.v("getItemCount(): " + mJobPost.length);
         } else {
             Timber.v("mJobPost is null");
-        }
+        }*/
         return (null != mJobPost ? mJobPost.length : 0);
     }
 
@@ -68,20 +66,17 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
 
         @Override
         public void onClick(View v) {
-            Timber.v("onClick(View v) inside JobPostingListAdapterViewHolder");
+            /*Timber.v("onClick(View v) inside JobPostingListAdapterViewHolder");*/
             int adapterPosition = getAdapterPosition();
-            int layoutPosition = getLayoutPosition();
+            // int layoutPosition = getLayoutPosition();
 
-            Timber.v("adapterPosition is " + adapterPosition + " and layoutPosition is " + layoutPosition);
+            /*Timber.v("adapterPosition is " + adapterPosition + " and layoutPosition is " + layoutPosition);*/
             Intent intent = new Intent(v.getContext(), JobPostingDetailActivity.class);
             intent.putExtra(JobPostingDetailFragment.ARG_ITEM_ID, adapterPosition);
 
             intent.putExtra(v.getContext().getResources().getString(R.string._id), mJobPost[adapterPosition].get_id());
-            Timber.v("mJobPost[position].get_id(): " + mJobPost[adapterPosition].get_id());
             intent.putExtra(v.getContext().getResources().getString(R.string.business_id), mJobPost[adapterPosition].getBusinessId());
-            Timber.v("mJobPost[position].getBusinessId(): " + mJobPost[adapterPosition].getBusinessId());
             intent.putExtra(v.getContext().getResources().getString(R.string.business_name), mJobPost[adapterPosition].getbusinessName());
-            Timber.v("mJobPost[position].getBusinessName(): " + mJobPost[adapterPosition].getbusinessName());
             intent.putExtra(v.getContext().getResources().getString(R.string.business_address), mJobPost[adapterPosition].getbusinessAddress());
             intent.putExtra(v.getContext().getResources().getString(R.string.business_phone), mJobPost[adapterPosition].getbusinessPhone());
             intent.putExtra(v.getContext().getResources().getString(R.string.business_website), mJobPost[adapterPosition].getbusinessWebsite());
@@ -90,6 +85,10 @@ public class JobPostingListAdapter extends RecyclerView.Adapter<JobPostingListAd
             intent.putExtra(v.getContext().getResources().getString(R.string.business_wage_rate), mJobPost[adapterPosition].getWageRate()); // int
             intent.putExtra(v.getContext().getResources().getString(R.string.business_post_date), mJobPost[adapterPosition].getDate()); // double
             intent.putExtra(v.getContext().getResources().getString(R.string.business_owner), mJobPost[adapterPosition].getUser());
+
+            /*Timber.v("mJobPost[position].get_id(): " + mJobPost[adapterPosition].get_id());
+            Timber.v("mJobPost[position].getBusinessId(): " + mJobPost[adapterPosition].getBusinessId());
+            Timber.v("mJobPost[position].getBusinessName(): " + mJobPost[adapterPosition].getbusinessName());*/
 
             v.getContext().startActivity(intent);
         }

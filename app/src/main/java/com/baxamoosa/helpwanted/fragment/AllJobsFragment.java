@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.adapter.JobPostingListAdapter;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import timber.log.Timber;
 
@@ -28,8 +30,8 @@ import timber.log.Timber;
  */
 public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public JobPost[] mJobPost;
-    private RecyclerView.Adapter mJobPostingListAdapter;
+    public JobPost[] mAll;
+    private RecyclerView.Adapter mAllAdapter;
     private RecyclerView mRecyclerView;
     private SharedPreferences sharedPref;
 
@@ -37,7 +39,7 @@ public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Timber.v("onCreate(Bundle savedInstanceState)");
+        /*Timber.v("onCreate(Bundle savedInstanceState)");*/
 
         sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -47,7 +49,7 @@ public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
+        /*Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");*/
 
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_jobs, container, false);
 
@@ -56,7 +58,7 @@ public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCal
         mRecyclerView.setLayoutManager(manager);
 
         try {
-            mRecyclerView.setAdapter(mJobPostingListAdapter);
+            mRecyclerView.setAdapter(mAllAdapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,51 +68,62 @@ public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (BuildConfig.DEBUG) {
-            Timber.v("Loader<Cursor> onCreateLoader(int id, Bundle args)");
-        }
+        Calendar calendar = Calendar.getInstance();
+        GregorianCalendar validDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - Utility.LENGTH_OF_VALIDITY));
+        Long validTime = validDate.getTimeInMillis();
+        /*Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
+
+        Timber.v("validTime: " + validTime);
+        Timber.v("validTime String: " + validTime);*/
+
+        String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + ">?";
+        String[] selectionArgs = {validTime.toString()};
+
+        /*Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0]);*/
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,
                 Utility.JOBPOST_COLUMNS,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
-        }
+        }*/
 
-        if (data.getCount() != 0) {
-            mJobPost = Utility.populateJobPostArray(loader, data);
+        if (loader.getId() == Utility.ALL_JOBPOSTS && data.getCount() != 0) {
+            mAll = Utility.populateJobPostArray(loader, data);
 
-            mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+            mAllAdapter = new JobPostingListAdapter(mAll);
             try {
-                mRecyclerView.setAdapter(mJobPostingListAdapter);
+                mRecyclerView.setAdapter(mAllAdapter);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             Timber.v("nothing returned");
         }
+        /*data.close();*/
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onLoaderReset(Loader<Cursor> loader)");
-        }
+        }*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(Utility.ALL_JOBPOSTS, null, AllJobsFragment.this);
-        if (mJobPostingListAdapter != null) {
-            mJobPostingListAdapter.notifyDataSetChanged();
+        if (mAllAdapter != null) {
+            mAllAdapter.notifyDataSetChanged();
         }
     }
 

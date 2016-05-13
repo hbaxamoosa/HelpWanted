@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.adapter.JobPostingListAdapter;
 import com.baxamoosa.helpwanted.data.JobPostContract;
@@ -29,8 +28,8 @@ import timber.log.Timber;
  */
 public class MyJobFavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public JobPost[] mJobPost;
-    private RecyclerView.Adapter mJobPostingListAdapter;
+    public JobPost[] mFavorites;
+    private RecyclerView.Adapter mFavoriteAdapter;
     private RecyclerView mRecyclerView;
     private TextView emptyView;
     private SharedPreferences sharedPref;
@@ -39,7 +38,7 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Timber.v("onCreate(Bundle savedInstanceState)");
+        /*Timber.v("onCreate(Bundle savedInstanceState)");*/
 
         sharedPref = getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -49,7 +48,7 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
+        /*Timber.v("onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");*/
 
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_jobs, container, false);
 
@@ -58,7 +57,7 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(manager);
 
         try {
-            mRecyclerView.setAdapter(mJobPostingListAdapter);
+            mRecyclerView.setAdapter(mFavoriteAdapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,9 +67,9 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("Loader<Cursor> onCreateLoader(int id, Bundle args)");
-        }
+        }*/
 
         return new CursorLoader(getActivity(),
                 JobPostContract.FavoriteList.CONTENT_URI,
@@ -82,37 +81,38 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");
-        }
+        }*/
 
         if (data.getCount() != 0) {
-            mJobPost = Utility.populateJobPostArray(loader, data);
+            mFavorites = Utility.populateJobPostArray(loader, data);
 
-            mJobPostingListAdapter = new JobPostingListAdapter(mJobPost);
+            mFavoriteAdapter = new JobPostingListAdapter(mFavorites);
             try {
-                mRecyclerView.setAdapter(mJobPostingListAdapter);
+                mRecyclerView.setAdapter(mFavoriteAdapter);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             Timber.v("nothing returned");
         }
+        data.close();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onLoaderReset(Loader<Cursor> loader)");
-        }
+        }*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(Utility.FAVORITE_JOBPOSTS, null, MyJobFavoriteFragment.this);
-        if (mJobPostingListAdapter != null) {
-            mJobPostingListAdapter.notifyDataSetChanged();
+        if (mFavoriteAdapter != null) {
+            mFavoriteAdapter.notifyDataSetChanged();
         }
     }
 

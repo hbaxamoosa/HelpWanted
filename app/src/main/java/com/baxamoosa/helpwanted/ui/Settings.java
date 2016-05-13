@@ -18,8 +18,7 @@ import com.baxamoosa.helpwanted.R;
 
 // http://developer.android.com/reference/android/preference/PreferenceScreen.html
 // http://developer.android.com/guide/topics/ui/settings.html
-public class Settings extends PreferenceActivity
-        implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class Settings extends PreferenceActivity implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

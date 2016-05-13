@@ -1,28 +1,28 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
-    <string name="app_name">HelpWanted</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_signout">Sign Out</string>
-    <string name="title_jobposting_detail">JobPosting Detail</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_my_jobs">MyJobs</string>
-    <string name="title_activity_place_picker">Place Picker</string>
-    <string name="title_activity_google_accounts">Google Accounts</string>
+    <string name="app_name" translatable="false">HelpWanted</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="action_signout" translatable="false">Sign Out</string>
+    <string name="title_jobposting_detail" translatable="false">JobPosting Detail</string>
+    <string name="title_activity_settings" translatable="false">Settings</string>
+    <string name="title_activity_my_jobs" translatable="false">MyJobs</string>
+    <string name="title_activity_place_picker" translatable="false">Place Picker</string>
+    <string name="title_activity_google_accounts" translatable="false">Google Accounts</string>
 
-    <string name="placeholder_name">Firstname Lastname</string>
+    <string name="placeholder_name" translatable="true">Firstname Lastname</string>
 
     <!-- User details -->
-    <string name="person_name">PersonName</string>
-    <string name="person_email">PersonEmail</string>
-    <string name="person_id">PersonId</string>
-    <string name="person_photo">PersonPhoto</string>
-    <string name="person_latitude">PersonLatitude</string>
-    <string name="person_longitude">PersonLongitude</string>
+    <string name="person_name" translatable="false">PersonName</string>
+    <string name="person_email" translatable="false">PersonEmail</string>
+    <string name="person_id" translatable="false">PersonId</string>
+    <string name="person_photo" translatable="false">PersonPhoto</string>
+    <string name="person_latitude" translatable="false">PersonLatitude</string>
+    <string name="person_longitude" translatable="false">PersonLongitude</string>
 
     <!-- Key name for storing location in SharedPreferences -->
-    <string name="default_zipcode">zipcode</string>
+    <string name="default_zipcode" translatable="false">zipcode</string>
 
     <!-- Label for the location preference [CHAR LIMIT=30] -->
-    <string name="pref_location_label">Location</string>
+    <string name="pref_location_label" translatable="false">Location</string>
 
     <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_key" translatable="false">location</string>
@@ -38,166 +38,138 @@
     <string name="pref_location_default" translatable="false">94043</string>
 
     <!-- Content description for the get current location button in the location preference -->
-    <string name="pref_current_location_desc">Use my location</string>
+    <string name="pref_current_location_desc" translatable="true">Use my location</string>
 
     <!-- Strings used when displaying the state of the Location in settings -->
-    <string name="pref_location_error_description">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
-    <string name="pref_location_unknown_description">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_error_description" translatable="true">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_unknown_description" translatable="true">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
 
 
     <!-- Strings related to Notification Enabled preference -->
     <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
-    <string name="pref_enable_notifications_label">Job Posting Notifications</string>
+    <string name="pref_enable_notifications_label" translatable="true">Job Posting Notifications</string>
 
-    <string name="pref_enable_notifications_true">Enabled</string>
-    <string name="pref_enable_notifications_false">Not Enabled</string>
+    <string name="pref_enable_notifications_true" translatable="false">Enabled</string>
+    <string name="pref_enable_notifications_false" translatable="false">Not Enabled</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
 
     <!-- Strings related to Notification preference -->
-    <string name="pref_last_notification">last_notification</string>
+    <string name="pref_last_notification" translatable="false">last_notification</string>
 
     <!-- For Google Places API Attributions -->
     <string name="attribution_text" translatable="true">Powered by Google</string>
 
 
     <!-- Navigation drawer labels -->
-    <string name="job_posting">Job Postings</string>
-    <string name="my_jobs">My Jobs</string>
+    <string name="job_posting" translatable="true">Job Postings</string>
+    <string name="my_jobs" translatable="true">My Jobs</string>
 
-    <!-- Placepicker -->
-    <string name="selected_place">Last Selected Place:</string>
-    <string name="place_details">
-    <![CDATA[
-        <b>%1$s</b>
-        <br/>
-        <i>Place Id: %2$s</i>
-        <br/>
-        Address: %3$s
-        <br/>
-        Phone: %4$s
-        <br/>
-        Website: %5$s
-    ]]>
-    </string>
-    <string name="intro_message">
-        <![CDATA[
-
-
-            This sample uses the PlaceAutocompleteFragment from the Places API for Android within a
-            CardView to provide an autocomplete powered search experience. Once a place is selected,
-            its details are displayed.
-
-
-        ]]>
-    </string>
-
-    <string name="title_text">Google Sign-In\nfor HelpWanted</string>
+    <string name="title_text" translatable="true">Google Sign-In\nfor HelpWanted</string>
 
     <!-- Sign-in status messages -->
-    <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="signed_in">Signed in</string>
-    <string name="signing_in">Signing in…</string>
-    <string name="signed_out">Signed out</string>
-    <string name="signed_in_err">"Error: please check logs."</string>
-    <string name="error_null_person">
+    <string name="signed_in_fmt" translatable="false">Signed in as: %s</string>
+    <string name="signed_in" translatable="false">Signed in</string>
+    <string name="signing_in" translatable="false">Signing in…</string>
+    <string name="signed_out" translatable="false">Signed out</string>
+    <string name="signed_in_err" translatable="false">"Error: please check logs."</string>
+    <string name="error_null_person" translatable="false">
         Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
         enabled for your project, you have a properly configured google-services.json file
         and that your device has an internet connection.
     </string>
-    <string name="loading">Loading…</string>
-    <string name="auth_code_fmt">Auth Code: %s</string>
-    <string name="id_token_fmt">ID Token: %s</string>
+    <string name="loading" translatable="true">Loading…</string>
+    <string name="auth_code_fmt" translatable="false">Auth Code: %s</string>
+    <string name="id_token_fmt" translatable="false">ID Token: %s</string>
 
     <!-- Google Play Services error for Toast -->
-    <string name="play_services_error_fmt">Google Play Services Error: %i</string>
+    <string name="play_services_error_fmt" translatable="true">Google Play Services Error: %i</string>
 
     <!-- Button labels -->
-    <string name="sign_out">Sign Out</string>
-    <string name="cancel">Cancel</string>
+    <string name="sign_out" translatable="false">Sign Out</string>
+    <string name="cancel" translatable="false">Cancel</string>
 
     <!-- Content Description for images -->
-    <string name="desc_google_icon">Google Logo</string>
+    <string name="desc_google_icon" translatable="false">Google Logo</string>
 
     <!-- Rationale for asking for Contacts -->
-    <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
+    <string name="contacts_permission_rationale" translatable="true">Contacts access is needed in order to retrieve your email address.</string>
 
     <!-- Activity Names and Descriptions -->
-    <string name="name_sign_in_activity">SignInActivity</string>
-    <string name="desc_sign_in_activity">Signing in, signing out, and revoking access.</string>
-    <string name="desc_sign_in_activity_scopes">Signing in, signing out, and revoking access with Google Drive permissions.</string>
-    <string name="name_id_token_activity">IdTokenActivity</string>
-    <string name="desc_id_token_activity">Retrieving an ID Token for the user.</string>
-    <string name="desc_auth_code_activity">Demonstrate retrieving an auth code for authorizing your server.</string>
-    <string name="name_auth_code_activity">ServerAuthCodeActivity</string>
+    <string name="name_sign_in_activity" translatable="false">SignInActivity</string>
+    <string name="desc_sign_in_activity" translatable="false">Signing in, signing out, and revoking access.</string>
+    <string name="desc_sign_in_activity_scopes" translatable="false">Signing in, signing out, and revoking access with Google Drive permissions.</string>
+    <string name="name_id_token_activity" translatable="false">IdTokenActivity</string>
+    <string name="desc_id_token_activity" translatable="false">Retrieving an ID Token for the user.</string>
+    <string name="desc_auth_code_activity" translatable="false">Demonstrate retrieving an auth code for authorizing your server.</string>
+    <string name="name_auth_code_activity" translatable="false">ServerAuthCodeActivity</string>
 
     <!-- TODO(user): replace with your real server client ID -->
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
-    <string name="server_client_id">YOUR_SERVER_CLIENT_ID</string>
+    <string name="server_client_id" translatable="false">YOUR_SERVER_CLIENT_ID</string>
 
     <!-- CardView -->
-    <string name="imagetext_cardview_overlay">Image Overlay</string>
-    <string name="imagetext_cardview_title">Title</string>
-    <string name="imagetext_cardview_contents">This is a CardView widget. CardView widgets can have shadows and rounded corners.</string>
-    <string name="title_activity_view_job_post">ViewJobPost</string>
+    <string name="imagetext_cardview_overlay" translatable="false">Image Overlay</string>
+    <string name="imagetext_cardview_title" translatable="false">Title</string>
+    <string name="imagetext_cardview_contents" translatable="false">This is a CardView widget. CardView widgets can have shadows and rounded corners.</string>
+    <string name="title_activity_view_job_post" translatable="false">ViewJobPost</string>
 
     <!-- content_view_job_post -->
-    <string name="_id">_id</string>
-    <string name="business_id">Id</string>
-    <string name="business_name">Name</string>
-    <string name="business_email">Email</string>
-    <string name="business_phone">Phone</string>
-    <string name="business_address">Address</string>
-    <string name="business_website">Website</string>
-    <string name="business_latitude">Latitude</string>
-    <string name="business_longitude">Longitude</string>
-    <string name="business_wage_rate">Wage Rate $</string>
-    <string name="business_post_date">Post Date</string>
-    <string name="business_owner">Username</string>
-    <string name="hello_world">Hello World</string>
-    <string name="favorite_button">Favorite</string>
-    <string name="title_activity_add_edit_job">AddEditJobActivity</string>
+    <string name="_id" translatable="false">_id</string>
+    <string name="business_id" translatable="false">Id</string>
+    <string name="business_name" translatable="false">Name</string>
+    <string name="business_email" translatable="false">Email</string>
+    <string name="business_phone" translatable="false">Phone</string>
+    <string name="business_address" translatable="false">Address</string>
+    <string name="business_website" translatable="false">Website</string>
+    <string name="business_latitude" translatable="false">Latitude</string>
+    <string name="business_longitude" translatable="false">Longitude</string>
+    <string name="business_wage_rate" translatable="false">Wage Rate $</string>
+    <string name="business_post_date" translatable="false">Post Date</string>
+    <string name="business_owner" translatable="false">Username</string>
+    <string name="hello_world" translatable="false">Hello World</string>
+    <string name="favorite_button" translatable="false">Favorite</string>
+    <string name="title_activity_add_edit_job" translatable="false">AddEditJobActivity</string>
 
-    <string name="add_favorite">Job Post was added to favorites</string>
-    <string name="remove_favorite">Job Post was removed from favorites</string>
+    <string name="add_favorite" translatable="true">Job Post was added to favorites</string>
+    <string name="remove_favorite" translatable="true">Job Post was removed from favorites</string>
 
     <!-- Shared Prefs -->
-    <string name="preference_file_key">com.baxamoosa.helpwanted.PREFERENCE_FILE_KEY</string>
+    <string name="preference_file_key" translatable="false">com.baxamoosa.helpwanted.PREFERENCE_FILE_KEY</string>
 
     <!-- No network error message -->
-    <string name="no_network">No network available, please try again later</string>
+    <string name="no_network" translatable="true">No network available, please try again later</string>
 
     <!-- For Content Provider -->
-    <string name="content_authority">com.baxamoosa.helpwanted</string>
+    <string name="content_authority" translatable="false">com.baxamoosa.helpwanted</string>
 
     <!-- SyncAdapter related -->
-    <string name="sync_account_type">com.baxamoosa.helpwanted</string>
+    <string name="sync_account_type" translatable="false">com.baxamoosa.helpwanted</string>
 
     <!-- Firebase connection string -->
-    <string name="firebase_connection_string">https://intense-torch-7152.firebaseio.com/jobposts</string>
+    <string name="firebase_connection_string" translatable="false">https://intense-torch-7152.firebaseio.com/jobposts</string>
 
     <!-- PLacepicker placeholder text -->
-    <string name="placepicker_placeholder_text">Place picker is loading...</string>
-    <string name="empty_jobpost_list">No Job Posts available yet! Go to \'My Job\' and use the \'+\' button to add the first!</string>
+    <string name="placepicker_placeholder_text" translatable="false">Place picker is loading...</string>
+    <string name="empty_jobpost_list" translatable="true">No Job Posts available yet! Go to \'My Job\' and use the \'+\' button to add the first!</string>
 
     <!-- menu_detail.xml -->
-    <string name="action_share">Share</string>
-    <string name="action_delete_favorite">Delete</string>
-    <string name="action_edit">Edit</string>
-    <string name="post_job">Post Job</string>
-    <string name="placepickerNewPlace">Pick a different place</string>
+    <string name="action_share" translatable="false">Share</string>
+    <string name="action_delete_favorite" translatable="false">Delete</string>
+    <string name="action_edit" translatable="false">Edit</string>
+    <string name="post_job" translatable="false">Post Job</string>
+    <string name="placepickerNewPlace" translatable="false">Pick a different place</string>
 
     <!-- PlacePickerActivity.java -->
-    <string name="addJob">addJob</string>
+    <string name="addJob" translatable="false">addJob</string>
 
     <!-- JobPostingDetailActivity.java -->
-    <string name="editJob">editJob</string>
+    <string name="editJob" translatable="false">editJob</string>
 
     <!-- banner ad -->
-    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="range">Range</string>
-    <string name="range_summary">Distance (in meters) to monitor job posts</string>
-    <string name="default_range">500</string>
-
-    <string name="cheese_ipsum">Jarlsberg lancashire edam.</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="range" translatable="false">range</string>
+    <string name="range_summary" translatable="false">Distance (in meters) to monitor job posts</string>
+    <string name="default_range" translatable="false">5000</string>
+    <string name="cheese_ipsum">some text</string>
 </resources>

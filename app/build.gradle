@@ -23,6 +23,16 @@ android {
             it.resValue("string", "places_api_key", MyGooglePlayServicesPlacePickerApiKey)
         }
     }
+    productFlavors {
+        free {
+            applicationId "com.baxamoosa.helpwanted.free"
+            versionName "1.0-free"
+        }
+        paid {
+            applicationId "com.baxamoosa.helpwanted.paid"
+            versionName "1.0-paid"
+        }
+    }
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE-FIREBASE.txt'

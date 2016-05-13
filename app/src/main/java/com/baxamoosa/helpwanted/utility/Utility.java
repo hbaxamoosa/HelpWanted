@@ -13,12 +13,8 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.firebase.client.Firebase;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-
-import timber.log.Timber;
 
 /**
  * Created by hasnainbaxamoosa on 4/14/16.
@@ -56,7 +52,7 @@ public class Utility {
             JobPostContract.JobPostList.COLUMN_OWNER
     };
 
-    public static final int LENGTH_OF_VALIDITY = 3; // using a small window for testing purposes. for Production this should be 30
+    public static final int LENGTH_OF_VALIDITY = 7; // using a small window for testing purposes. for Production this should be 30
     public static Firebase mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
     /**
@@ -113,15 +109,10 @@ public class Utility {
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar validDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - LENGTH_OF_VALIDITY));
         Long validTime = validDate.getTimeInMillis();
-        Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
-        Timber.v("date: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(postDate)));
-        if (validTime < postDate) {
-            Timber.v("result is valid");
-            bool = true;
-        } else {
-            Timber.v("result is invalid");
-            bool = false;
-        }
+        /*Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
+        Timber.v("date: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(postDate)));*/
+        /*Timber.v("result is valid");*//*Timber.v("result is invalid");*/
+        bool = validTime < postDate;
         return bool;
     }
 }

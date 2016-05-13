@@ -10,10 +10,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
-
-import timber.log.Timber;
 
 /**
  * Created by hasnainbaxamoosa on 4/14/16.
@@ -28,9 +25,9 @@ public class Settings extends PreferenceActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onCreate");
-        }
+        }*/
 
         // Add 'general' preferences, defined in the XML file
         addPreferencesFromResource(R.xml.pref_general);
@@ -41,9 +38,9 @@ public class Settings extends PreferenceActivity
     public void onResume() {
         super.onResume();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onResume()");
-        }
+        }*/
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.registerOnSharedPreferenceChangeListener(this);
@@ -53,9 +50,9 @@ public class Settings extends PreferenceActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onPause()");
-        }
+        }*/
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.unregisterOnSharedPreferenceChangeListener(this);
@@ -65,18 +62,18 @@ public class Settings extends PreferenceActivity
     public void onStart() {
         super.onStart();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onStart()");
-        }
+        }*/
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onStop()");
-        }
+        }*/
     }
 
     // This gets called before the preference is changed
@@ -89,9 +86,9 @@ public class Settings extends PreferenceActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             Timber.v("onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)");
-        }
+        }*/
 
         if (key.equals(getString(R.string.range))) {
             Preference rangePref = findPreference(getString(R.string.range));

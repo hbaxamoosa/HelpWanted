@@ -76,7 +76,7 @@ public class SignInActivity extends AppCompatActivity
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
@@ -325,7 +325,7 @@ public class SignInActivity extends AppCompatActivity
                 signOutAndRevoke();
                 break;
             case R.id.cancel_button:
-                startActivity(new Intent(this, JobPostingListActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 break;
         }
     }

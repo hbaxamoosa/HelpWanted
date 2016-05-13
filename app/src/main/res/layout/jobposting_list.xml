@@ -10,6 +10,6 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.JobPostingListActivity"
+    tools:context=".ui.MainActivity"
     tools:listitem="@layout/cardview_jobpost" />
 

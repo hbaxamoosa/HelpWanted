@@ -119,8 +119,7 @@ public class AddEditJobActivity extends AppCompatActivity {
                     sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
             rootRef.push().setValue(a);
 
-            // job post submitted via to Firebase, so go back to JobPostingListActivity
-            startActivity(new Intent(this, JobPostingListActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
         } else if (getIntent().hasExtra(getString(R.string.editJob))) { // editing an existing job post
             Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
             // TODO: 5/9/16 delete the existing post and create a new job post Timber.v("deleteJobPost()");
@@ -176,8 +175,7 @@ public class AddEditJobActivity extends AppCompatActivity {
                     sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
             rootRef.push().setValue(a);
 
-            // job post submitted via to Firebase, so go back to JobPostingListActivity
-            startActivity(new Intent(this, JobPostingListActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
         } else {
             /*Timber.v("this should NEVER happen");*/
         }

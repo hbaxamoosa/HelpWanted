@@ -102,13 +102,15 @@ public class AllJobsFragment extends Fragment implements LoaderManager.LoaderCal
             mAllAdapter = new JobPostingListAdapter(mAll);
             try {
                 mRecyclerView.setAdapter(mAllAdapter);
+                data.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             Timber.v("nothing returned");
+            // nothing returned, so close cursor
+            data.close();
         }
-        /*data.close();*/
     }
 
     @Override

@@ -101,6 +101,7 @@ public class Utility {
 
             mCursor.moveToNext();
         }
+        mCursor.close();
         return jobPosts;
     }
 

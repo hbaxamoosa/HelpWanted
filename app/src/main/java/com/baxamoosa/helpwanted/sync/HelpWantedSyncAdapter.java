@@ -39,6 +39,8 @@ import timber.log.Timber;
  */
 public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
+    public static final String ACTION_DATA_UPDATED = "com.baxamoosa.helpwanted.ACTION_DATA_UPDATED";
+
     // Interval at which to sync job posts, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
@@ -251,7 +253,7 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
                     jobpostLocation.setLongitude(mCursor.getDouble(Utility.COL_BUSINESS_LONGITUDE));
 
                     float distanceInMeters = jobpostLocation.distanceTo(userLocation);
-                    Timber.v("distanceInMeters for " + i + " is: " + distanceInMeters);
+                    // Timber.v("distanceInMeters for " + i + " is: " + distanceInMeters);
                     if (distanceInMeters < rangeInFloat) {
                         notifCount++;
                     }

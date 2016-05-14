@@ -171,4 +171,6 @@
     <string name="range_summary" translatable="false">Distance (in meters) to monitor job posts</string>
     <string name="default_range" translatable="false">5000</string>
     <string name="cheese_ipsum">some text</string>
+    <string name="title_football_scores_widget">Job Posts</string>
+    <string name="empty_string">no job posts availaable</string>
 </resources>

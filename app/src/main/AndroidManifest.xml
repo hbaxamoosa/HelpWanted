@@ -24,10 +24,12 @@
     <!-- Permissions required for Google Cloud Messaging -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <!-- needed for Google Maps -->
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+    <!-- needed for Google Maps -->
     <permission
         android:name="com.example.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -53,6 +55,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
 
+        <!-- Signin Activity - Launcher -->
         <activity
             android:name=".ui.SignInActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -62,6 +65,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Settings -->
         <activity
             android:name=".ui.Settings"
             android:label="@string/title_activity_settings"
@@ -72,10 +77,12 @@
                 android:value=".ui.MainActivity" />
         </activity>
 
+        <!-- MainActivity - called from Signin -->
         <activity
             android:name=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <!-- Job Posting Detail -->
         <activity
             android:name=".ui.JobPostingDetailActivity"
             android:parentActivityName=".ui.MainActivity"
@@ -85,6 +92,7 @@
                 android:value=".ui.MainActivity" />
         </activity>
 
+        <!-- Add Edit Job -->
         <activity
             android:name=".ui.AddEditJobActivity"
             android:label="@string/title_activity_add_edit_job"
@@ -95,6 +103,7 @@
                 android:value=".ui.MainActivity" />
         </activity>
 
+        <!-- Place Picker -->
         <activity
             android:name=".ui.PlacePickerActivity"
             android:label="@string/title_activity_place_picker"
@@ -105,6 +114,7 @@
                 android:value="com.baxamoosa.helpwanted.ui.MainActivity" />
         </activity>
 
+        <!-- Job Posts content provider -->
         <provider
             android:name=".data.JobPostsProvider"
             android:authorities="@string/content_authority"
@@ -134,6 +144,23 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
+
+        <!-- Job Posts Widget -->
+        <receiver
+            android:name=".widget.JobPostsWidgetProvider"
+            android:label="@string/title_football_scores_widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.baxamoosa.helpwanted.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_jobposts" />
+        </receiver>
+
+        <service
+            android:name=".widget.JobPostsWidgetIntentService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

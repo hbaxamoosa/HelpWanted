@@ -109,6 +109,7 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
             mExpired = Utility.populateJobPostArray(loader, data);
 
             mExpiredAdapter = new JobPostingListAdapter(mExpired);
+            data.close();
             try {
                 mRecyclerView.setAdapter(mExpiredAdapter);
             } catch (Exception e) {
@@ -116,8 +117,9 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
             }
         } else {
             Timber.v("nothing returned");
+            // nothing returned, so close cursor
+            data.close();
         }
-        /*data.close();*/
     }
 
     @Override

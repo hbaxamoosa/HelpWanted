@@ -89,6 +89,7 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
             mFavorites = Utility.populateJobPostArray(loader, data);
 
             mFavoriteAdapter = new JobPostingListAdapter(mFavorites);
+            data.close();
             try {
                 mRecyclerView.setAdapter(mFavoriteAdapter);
             } catch (Exception e) {
@@ -96,8 +97,9 @@ public class MyJobFavoriteFragment extends Fragment implements LoaderManager.Loa
             }
         } else {
             Timber.v("nothing returned");
+            // nothing returned, so close cursor
+            data.close();
         }
-        /*data.close();*/
     }
 
     @Override

@@ -109,6 +109,7 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
             mActive = Utility.populateJobPostArray(loader, data);
 
             mActiveAdapter = new JobPostingListAdapter(mActive);
+            data.close();
             try {
                 mRecyclerView.setAdapter(mActiveAdapter);
             } catch (Exception e) {
@@ -116,8 +117,10 @@ public class MyJobActiveFragment extends Fragment implements LoaderManager.Loade
             }
         } else {
             Timber.v("nothing returned");
+            // nothing returned, so close cursor
+            data.close();
         }
-        /*data.close();*/
+
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.baxamoosa.helpwanted">
+    package="com.baxamoosa.helpwanted" >
 
     <!-- This permission is necessary in order for HelpWanted to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -33,6 +33,7 @@
     <permission
         android:name="com.example.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.example.permission.MAPS_RECEIVE" />
 
     <permission
@@ -47,7 +48,7 @@
         android:icon="@drawable/ic_launcher_big"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -58,7 +59,7 @@
         <!-- Signin Activity - Launcher -->
         <activity
             android:name=".ui.SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -71,7 +72,7 @@
             android:name=".ui.Settings"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/SettingsTheme">
+            android:theme="@style/SettingsTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
@@ -86,7 +87,7 @@
         <activity
             android:name=".ui.JobPostingDetailActivity"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
@@ -97,7 +98,7 @@
             android:name=".ui.AddEditJobActivity"
             android:label="@string/title_activity_add_edit_job"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
@@ -108,7 +109,7 @@
             android:name=".ui.PlacePickerActivity"
             android:label="@string/title_activity_place_picker"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.baxamoosa.helpwanted.ui.MainActivity" />
@@ -122,7 +123,7 @@
             android:syncable="true" />
 
         <!-- HelpWanted's dummy authentication service -->
-        <service android:name=".sync.HelpWantedAuthenticatorService">
+        <service android:name=".sync.HelpWantedAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -135,7 +136,7 @@
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.HelpWantedSyncService"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -148,11 +149,12 @@
         <!-- Job Posts Widget -->
         <receiver
             android:name=".widget.JobPostsWidgetProvider"
-            android:label="@string/title_football_scores_widget">
+            android:label="@string/title_football_scores_widget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.baxamoosa.helpwanted.ACTION_DATA_UPDATED" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_jobposts" />

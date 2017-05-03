@@ -1,20 +1,5 @@
 package com.baxamoosa.helpwanted.ui;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
-
-import com.baxamoosa.helpwanted.R;
-import com.baxamoosa.helpwanted.data.JobPostContract;
-import com.baxamoosa.helpwanted.model.JobPost;
-import com.baxamoosa.helpwanted.sync.HelpWantedSyncAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,6 +11,25 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
+
+import com.baxamoosa.helpwanted.BuildConfig;
+import com.baxamoosa.helpwanted.R;
+import com.baxamoosa.helpwanted.data.JobPostContract;
+import com.baxamoosa.helpwanted.model.JobPost;
+import com.baxamoosa.helpwanted.sync.HelpWantedSyncAdapter;
+
+import timber.log.Timber;
+
 /**
  * Created by hasnainbaxamoosa on 4/18/16.
  */
@@ -36,6 +40,8 @@ import com.google.android.gms.common.api.Status;
  */
 public class SignInActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+
+    // TODO: 5/2/17 replace with https://firebase.google.com/docs/auth/android/google-signin and https://github.com/firebase/quickstart-android/blob/master/auth/app/src/main/java/com/google/firebase/quickstart/auth/GoogleSignInActivity.java#
 
     private static final int RC_SIGN_IN = 9001;
     public static JobPost[] mJobPost;
@@ -163,6 +169,13 @@ public class SignInActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (BuildConfig.DEBUG) {
+            Timber.v("onActivityResult(int requestCode, int resultCode, Intent data)");
+            Timber.v("requestCode: " + requestCode);
+            Timber.v("resultCode: " + resultCode);
+            Timber.v("data: " + data);
+        }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {

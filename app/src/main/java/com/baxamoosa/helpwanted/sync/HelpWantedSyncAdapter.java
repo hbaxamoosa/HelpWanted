@@ -39,6 +39,11 @@ import timber.log.Timber;
  */
 public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
 
+    /**
+     * TODO: see https://medium.com/@dftaiwo/understanding-the-power-of-firebase-security-rules-part-1-f46aae773a24#.bralgtj47
+     * for Understanding the Power of Firebase Security Rules
+     */
+
     public static final String ACTION_DATA_UPDATED = "com.baxamoosa.helpwanted.ACTION_DATA_UPDATED";
 
     // Interval at which to sync job posts, in seconds.

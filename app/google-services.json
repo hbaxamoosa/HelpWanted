@@ -1,43 +1,155 @@
 {
   "project_info": {
-    "project_id": "enduring-signal-128617",
     "project_number": "144628742909",
-    "name": "HelpWanted"
+    "firebase_url": "https://enduring-signal-128617.firebaseio.com",
+    "project_id": "enduring-signal-128617",
+    "storage_bucket": "enduring-signal-128617.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:144628742909:android:d81713ebd41544b9",
-        "client_id": "android:com.baxamoosa.helpwanted",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.baxamoosa.helpwanted",
-          "certificate_hash": []
+          "package_name": "com.baxamoosa.helpwanted"
         }
       },
-      "oauth_client": [],
-      "api_key": [],
+      "oauth_client": [
+        {
+          "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "144628742909-b0g8vopdcmh00tcce4r5munstqtkregf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baxamoosa.helpwanted",
+            "certificate_hash": "0ff1c6288a37b2c39629699924a69014c94a2541"
+          }
+        },
+        {
+          "client_id": "144628742909-d046jp8k1991qqrv9rfhvvgjk6lbd2d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPDepzV8NTksTsRFZvLwlW3HbJT6s84pk"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 1
         },
-        "cloud_messaging_service": {
-          "status": 1,
-          "apns_config": []
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144628742909:android:04023f5c1611a13f",
+        "android_client_info": {
+          "package_name": "com.baxamoosa.helpwanted.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "144628742909-dqmf8ighjcfu1984j6352750vu26r0as.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baxamoosa.helpwanted.free",
+            "certificate_hash": "0ff1c6288a37b2c39629699924a69014c94a2541"
+          }
+        },
+        {
+          "client_id": "144628742909-d046jp8k1991qqrv9rfhvvgjk6lbd2d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPDepzV8NTksTsRFZvLwlW3HbJT6s84pk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
           "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144628742909:android:7df8d6e0aff46b52",
+        "android_client_info": {
+          "package_name": "com.baxamoosa.helpwanted.paid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "144628742909-mup80i1a34alubj9mpi59j8c6p08kbcf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baxamoosa.helpwanted.paid",
+            "certificate_hash": "0ff1c6288a37b2c39629699924a69014c94a2541"
+          }
+        },
+        {
+          "client_id": "144628742909-d046jp8k1991qqrv9rfhvvgjk6lbd2d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPDepzV8NTksTsRFZvLwlW3HbJT6s84pk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144628742909-5r30n9e81fuiqq7p1pu7m17e0qbn1kqb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

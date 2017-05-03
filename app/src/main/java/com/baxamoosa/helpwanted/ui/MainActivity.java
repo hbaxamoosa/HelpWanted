@@ -9,6 +9,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import android.Manifest;
 import android.content.Context;
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient mGoogleApiClient;
     private int REQUEST_LOCATION = 1;
 
+    // for Firebase Analytics
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     /**
      * Helper method to format information about a place nicely.
      */
@@ -89,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         /**
          * TODO: 01/11/2017 Bottom Navigation Bar using https://github.com/AutSoft/BottomNavigationTest

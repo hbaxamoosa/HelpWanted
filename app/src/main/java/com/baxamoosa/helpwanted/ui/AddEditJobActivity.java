@@ -1,5 +1,8 @@
 package com.baxamoosa.helpwanted.ui;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -103,8 +106,14 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra(getString(R.string.addJob))) { // adding a new job post
             Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
-            Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
-            Firebase mJobPost = rootRef.child("jobpost");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+            Timber.v("FirebaseDatabase: " + database.toString());
+
+            DatabaseReference myRef = database.getReference("jobpost");
+
+            // Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
+            // Firebase mJobPost = rootRef.child("jobpost");
 
             JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
                     getIntent().getExtras().getString(getString(R.string.business_id)),
@@ -117,7 +126,8 @@ public class AddEditJobActivity extends AppCompatActivity {
                     Integer.parseInt(wageRate.getText().toString()),
                     date.getTime(),
                     sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-            rootRef.push().setValue(a);
+            // rootRef.push().setValue(a);
+            myRef.push().setValue(a);
 
             startActivity(new Intent(this, MainActivity.class));
         } else if (getIntent().hasExtra(getString(R.string.editJob))) { // editing an existing job post

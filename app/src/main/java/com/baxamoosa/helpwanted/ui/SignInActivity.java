@@ -1,5 +1,16 @@
 package com.baxamoosa.helpwanted.ui;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -11,17 +22,6 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
-
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
@@ -31,17 +31,12 @@ import com.baxamoosa.helpwanted.sync.HelpWantedSyncAdapter;
 import timber.log.Timber;
 
 /**
- * Created by hasnainbaxamoosa on 4/18/16.
- */
-
-/**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-
-    // TODO: 5/2/17 replace with https://firebase.google.com/docs/auth/android/google-signin and https://github.com/firebase/quickstart-android/blob/master/auth/app/src/main/java/com/google/firebase/quickstart/auth/GoogleSignInActivity.java#
+public class SignInActivity extends AppCompatActivity implements
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     private static final int RC_SIGN_IN = 9001;
     public static JobPost[] mJobPost;
@@ -62,16 +57,13 @@ public class SignInActivity extends AppCompatActivity
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onCreate()");
-        }*/
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.cancel_button).setOnClickListener(this);
+        // findViewById(R.id.disconnect_button).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -85,22 +77,15 @@ public class SignInActivity extends AppCompatActivity
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
 
         // [START customize_button]
-        // Customize sign-in button. The sign-in button can be displayed in
-        // multiple sizes and color schemes. It can also be contextually
-        // rendered based on the requested scopes. For example. a red button may
-        // be displayed when Google+ scopes are requested, but a white button
-        // may be displayed when only basic profile is requested. Try adding the
-        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
-        // difference.
+        // Set the dimensions of the sign-in button.
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(gso.getScopeArray());
         // [END customize_button]
     }
 
@@ -108,19 +93,11 @@ public class SignInActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onStart()");
-        }*/
-
-        mGoogleApiClient.connect();
-
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
-            /*if (BuildConfig.DEBUG) {
-                Timber.v("Got cached sign-in");
-            }*/
+            Timber.v("Got cached sign-in");
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
@@ -139,30 +116,9 @@ public class SignInActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onStop()");
-        }*/
-
-        if (mGoogleApiClient.isConnected()) {
-            /*if (BuildConfig.DEBUG) {
-                Timber.v("mGoogleApiClient.disconnect()");
-            }*/
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
-
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onResume()");
-        }*/
-
-        mGoogleApiClient.connect();
+        hideProgressDialog();
     }
 
     // [START onActivityResult]
@@ -188,7 +144,6 @@ public class SignInActivity extends AppCompatActivity
             handleSignInResult(result);
         }
     }
-    // [END onActivityResult]
 
     // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
@@ -208,7 +163,7 @@ public class SignInActivity extends AppCompatActivity
                 /*Timber.v("Error: " + e);*/
                 editor = sharedPref.edit();
                 editor.putBoolean("signout", false);
-                editor.commit();
+                editor.apply();
             }
 
             // use SyncAdapter to manage the job posts in the jobposts db
@@ -223,7 +178,6 @@ public class SignInActivity extends AppCompatActivity
         }
     }
     // [END handleSignInResult]
-
     // [START signIn]
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -249,15 +203,15 @@ public class SignInActivity extends AppCompatActivity
         editor = sharedPref.edit();
         // first clear all existing Share Prefs
         editor.clear();
-        editor.commit();
+        // editor.apply();
         // set the new Share Pref value for signout
         editor.putBoolean("signout", false);
-        editor.commit();
+        editor.apply();
 
         settingsPrefEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         settingsPrefEditor.remove(getString(R.string.range));
         settingsPrefEditor.remove("enable_notifications");
-        settingsPrefEditor.commit();
+        settingsPrefEditor.apply();
 
         // since the user is signing out, we need to flush the jobpost table
         getContentResolver().delete(JobPostContract.JobPostList.CONTENT_URI, null, null);
@@ -285,27 +239,15 @@ public class SignInActivity extends AppCompatActivity
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onConnectionFailed: " + connectionResult);
-        }*/
+        Timber.v("onConnectionFailed:" + connectionResult);
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onConnected");
-        }*/
-    }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection to Google Play services was lost for some reason.
-        // We call connect() to attempt to re-establish the connection or get a
-        // ConnectionResult that we can attempt to resolve.
-        mGoogleApiClient.connect();
-        /*if (BuildConfig.DEBUG) {
-            Timber.v("onConnectionFailed: " + cause);
-        }*/
+    protected void onStop() {
+        super.onStop();
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
     }
 
     private void showProgressDialog() {
@@ -346,7 +288,7 @@ public class SignInActivity extends AppCompatActivity
                 signOutAndRevoke();
                 break;
             case R.id.cancel_button:
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(SignInActivity.this, MainActivity.class));
                 break;
         }
     }

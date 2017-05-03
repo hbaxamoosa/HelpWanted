@@ -1,5 +1,13 @@
 package com.baxamoosa.helpwanted.fragment;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +32,6 @@ import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
 
 public class JobPostingDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
@@ -63,6 +65,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
     private MapView mapView;
     private GoogleMap map;
     private boolean tablet;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -129,7 +132,13 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             tablet = true;
             mapView.onCreate(savedInstanceState);
             // Gets to GoogleMap from the MapView and does initialization stuff
-            map = mapView.getMap();
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    map = googleMap;
+                    // see https://developers.google.com/android/reference/com/google/android/gms/maps/MapView for reference
+                }
+            });
             map.getUiSettings().setMyLocationButtonEnabled(false);
 
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls

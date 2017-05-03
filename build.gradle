@@ -5,8 +5,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
-        classpath 'com.google.gms:google-services:2.0.0-alpha6'
+        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.google.gms:google-services:3.0.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -16,6 +16,18 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+    }
+
+    // Abstracted values for the purposes of consistency
+    project.ext {
+        myBuildToolsVersion = "25.0.1" //String
+        myMinSdkVersion = 15 //Integer
+        myTargetSdkVersion = 25
+        myCompileSdkVersion = 25
+        myAndroidSupportLibraryVersion = "25.3.1"
+        myFirebaseClientAndroidVersion = "2.5.2"
+        myFirebaseLibraryVersion = "9.6.1"
+        myGooglePlayServicesVersion = "10.2.4"
     }
 }
 

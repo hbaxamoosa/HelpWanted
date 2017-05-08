@@ -1,5 +1,11 @@
 package com.baxamoosa.helpwanted.ui;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,11 +28,6 @@ import com.baxamoosa.helpwanted.ToastAdListener;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.fragment.JobPostingDetailFragment;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import timber.log.Timber;
 
@@ -183,22 +184,25 @@ public class JobPostingDetailActivity extends AppCompatActivity {
 
     public void deleteJobPost() {
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("jobpost");
         // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
-        Utility.mRef
+        databaseReference
                 .orderByChild("_id")
                 .equalTo(intentExtras.getString(getString(R.string._id)))
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren()) {
-                            DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+                            Timber.v("dataSnapshot.hasChildren(): " + "TRUE");
+                            com.google.firebase.database.DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
                             firstChild.getRef().removeValue();
                         }
                     }
 
                     @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        Timber.v(String.valueOf(firebaseError));
+                    public void onCancelled(DatabaseError databaseError) {
+                        Timber.v("onCancelled(DatabaseError databaseError): " + databaseError.getMessage());
                     }
                 });
 
@@ -220,7 +224,7 @@ public class JobPostingDetailActivity extends AppCompatActivity {
     public boolean checkIfOwner() {
         boolean isOwner;
         String selection = JobPostContract.JobPostList.COLUMN_OWNER + "=? AND " + JobPostContract.JobPostList.COLUMN_BUSINESSID + "=?";
-        String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), "no@one.com"), intentExtras.getString(getString(R.string.business_id))};
+        String[] selectionArgs = {sharedPref.getString(getString(R.string.person_email), getIntent().getStringExtra(getString(R.string.person_email))), intentExtras.getString(getString(R.string.business_id))};
 
         ContentResolver resolver = getContentResolver();
 

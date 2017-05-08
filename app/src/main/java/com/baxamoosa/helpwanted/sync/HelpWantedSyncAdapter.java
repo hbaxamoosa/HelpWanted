@@ -1,5 +1,11 @@
 package com.baxamoosa.helpwanted.sync;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -28,9 +34,6 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.ui.MainActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 import timber.log.Timber;
 
@@ -200,12 +203,14 @@ public class HelpWantedSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Timber.v("The read failed: " + firebaseError.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                Timber.v("The read failed: " + databaseError.getMessage());
             }
         };
 
-        Utility.mRef.addValueEventListener(jobPostsListener);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("jobpost");
+        databaseReference.addValueEventListener(jobPostsListener);
 
         ContentResolver mResolver = getContext().getContentResolver();
         Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, null, null, null);

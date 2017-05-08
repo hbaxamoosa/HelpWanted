@@ -1,11 +1,5 @@
 package com.baxamoosa.helpwanted.ui;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
-import com.baxamoosa.helpwanted.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -13,6 +7,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
+import com.baxamoosa.helpwanted.R;
 
 /**
  * Created by hasnainbaxamoosa on 4/18/16.
@@ -60,7 +61,7 @@ public class PlacePickerActivity extends AppCompatActivity {
             }*/
             switch (requestCode) {
                 case PLACE_PICKER_FLAG:
-                    Place place = PlacePicker.getPlace(data, this);
+                    Place place = PlacePicker.getPlace(this, data);
                     Intent mIntent = new Intent(this, AddEditJobActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putString(getString(R.string.addJob), getString(R.string.addJob));

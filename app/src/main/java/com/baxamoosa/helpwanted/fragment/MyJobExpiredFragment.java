@@ -21,7 +21,9 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import timber.log.Timber;
@@ -80,16 +82,16 @@ public class MyJobExpiredFragment extends Fragment implements LoaderManager.Load
         Calendar calendar = Calendar.getInstance();
         GregorianCalendar validDate = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), (calendar.get(Calendar.DAY_OF_MONTH) - Utility.LENGTH_OF_VALIDITY));
         Long validTime = validDate.getTimeInMillis();
-        /*Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
+        Timber.v("validTime: " + new SimpleDateFormat("MM/dd/yyyy").format(new Date(validTime)));
 
         Timber.v("validTime: " + validTime);
-        Timber.v("validTime String: " + validTime);*/
+        Timber.v("validTime String: " + validTime);
 
         String selection = JobPostContract.JobPostList.COLUMN_POSTDATE + "<? AND " + JobPostContract.JobPostList.COLUMN_OWNER + "=?";
-        String[] selectionArgs = {validTime.toString(), sharedPref.getString(getString(R.string.person_email), "no@one.com")};
+        String[] selectionArgs = {validTime.toString(), sharedPref.getString(getString(R.string.person_email), "no@one.com" /* default value */)};
 
-        /*Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0] + " " + selectionArgs[1]);*/
+        Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0] + " " + selectionArgs[1]);
 
         return new CursorLoader(getActivity(),
                 JobPostContract.JobPostList.CONTENT_URI,

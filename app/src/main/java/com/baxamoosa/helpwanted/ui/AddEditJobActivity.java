@@ -1,7 +1,11 @@
 package com.baxamoosa.helpwanted.ui;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -9,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,10 +24,6 @@ import com.baxamoosa.helpwanted.R;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
 import com.baxamoosa.helpwanted.utility.Utility;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 import java.util.Date;
 
@@ -37,6 +38,8 @@ public class AddEditJobActivity extends AppCompatActivity {
     private EditText wageRate;
     private Date date;
     private SharedPreferences sharedPref;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +60,20 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        database = FirebaseDatabase.getInstance();
+
+        Timber.v("FirebaseDatabase: " + database.toString());
+
+        myRef = database.getReference("jobpost");
+
         if (getIntent().hasExtra(getString(R.string.addJob))) {
-            /*Timber.v("getIntent().hasExtra(getString(R.string.addJob))");*/
+            Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
             addJob();
         } else if (getIntent().hasExtra(getString(R.string.editJob))) {
-            /*Timber.v("getIntent().hasExtra(getString(R.string.editJob))");*/
+            Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
             editJob();
         } else {
-            /*Timber.v("this should NEVER happen");*/
+            Timber.v("this should NEVER happen");
         }
     }
 
@@ -78,7 +87,8 @@ public class AddEditJobActivity extends AppCompatActivity {
         if (getIntent().hasExtra(getString(R.string.business_phone))) {
             phone.setText(getIntent().getStringExtra(getString(R.string.business_phone)));
         }
-        email.setText(sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
+        email.setText(sharedPref.getString(getString(R.string.person_email), "no@one.com" /* default value */));
+        Timber.v(getIntent().getStringExtra(getString(R.string.business_phone)));
     }
 
     private void editJob() {
@@ -86,11 +96,11 @@ public class AddEditJobActivity extends AppCompatActivity {
         String selection = JobPostContract.FavoriteList.COLUMN_ID + "=?";
         String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string._id))};
 
-        /*Timber.v("selection: " + selection);
-        Timber.v("selectionArgs: " + selectionArgs[0]);*/
+        Timber.v("selection: " + selection);
+        Timber.v("selectionArgs: " + selectionArgs[0]);
 
         Cursor mCursor = mResolver.query(JobPostContract.JobPostList.CONTENT_URI, Utility.JOBPOST_COLUMNS, selection, selectionArgs, null);
-        /*Timber.v("mCursor.getCount: " + mCursor.getCount());*/
+        Timber.v("mCursor.getCount: " + mCursor.getCount());
         mCursor.moveToFirst();
 
         // set text values into view
@@ -106,14 +116,6 @@ public class AddEditJobActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra(getString(R.string.addJob))) { // adding a new job post
             Timber.v("getIntent().hasExtra(getString(R.string.addJob))");
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-            Timber.v("FirebaseDatabase: " + database.toString());
-
-            DatabaseReference myRef = database.getReference("jobpost");
-
-            // Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
-            // Firebase mJobPost = rootRef.child("jobpost");
 
             JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string.business_id)),
                     getIntent().getExtras().getString(getString(R.string.business_id)),
@@ -125,33 +127,36 @@ public class AddEditJobActivity extends AppCompatActivity {
                     getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
                     Integer.parseInt(wageRate.getText().toString()),
                     date.getTime(),
-                    sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-            // rootRef.push().setValue(a);
-            myRef.push().setValue(a);
+                    sharedPref.getString(getString(R.string.person_email), getIntent().getStringExtra(getString(R.string.person_email))));
+            myRef.push().setValue(a).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Timber.v(e.getLocalizedMessage());
+                }
+            });
 
             startActivity(new Intent(this, MainActivity.class));
         } else if (getIntent().hasExtra(getString(R.string.editJob))) { // editing an existing job post
             Timber.v("getIntent().hasExtra(getString(R.string.editJob))");
 
             // delete job post from Firebase (cloud). See http://www.sitepoint.com/creating-a-cloud-backend-for-your-android-app-using-firebase/
-            Utility.mRef
-                    .orderByChild("_id")
-                    .equalTo(getIntent().getExtras().getString(getString(R.string._id)))
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChildren()) {
-                                /*Timber.v("dataSnapshot.hasChildren()");*/
-                                DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-                                firstChild.getRef().removeValue();
-                            }
-                        }
+            Query deleteQuery = myRef.orderByChild("_id").equalTo(getIntent().getExtras().getString(getString(R.string._id)));
 
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                            /*Timber.v("onCancelled(FirebaseError firebaseError)");*/
-                        }
-                    });
+            deleteQuery.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()) {
+                        Timber.v("dataSnapshot.hasChildren(): " + "TRUE");
+                        DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+                        firstChild.getRef().removeValue();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Timber.v("onCancelled(FirebaseError firebaseError): " + databaseError);
+                }
+            });
 
             String selection = JobPostContract.FavoriteList.COLUMN_BUSINESSID + "=?";
             String[] selectionArgs = {getIntent().getExtras().getString(getString(R.string.business_id))};
@@ -168,9 +173,6 @@ public class AddEditJobActivity extends AppCompatActivity {
             resolverFavorites.delete(JobPostContract.FavoriteList.CONTENT_URI, selection, selectionArgs);
             /*Timber.v("Job post for business ID " + getIntent().getExtras().getString(getString(R.string.business_id)) + " deleted");*/
 
-            Firebase rootRef = new Firebase(getString(R.string.firebase_connection_string));
-            Firebase mJobPost = rootRef.child("jobpost");
-
             JobPost a = new JobPost(getIntent().getExtras().getString(getString(R.string._id)),
                     getIntent().getExtras().getString(getString(R.string.business_id)),
                     name.getText().toString(),
@@ -181,12 +183,18 @@ public class AddEditJobActivity extends AppCompatActivity {
                     getIntent().getExtras().getDouble(getString(R.string.business_longitude)),
                     Integer.parseInt(wageRate.getText().toString()),
                     date.getTime(),
-                    sharedPref.getString(getString(R.string.person_email), "someone@email.com"));
-            rootRef.push().setValue(a);
+                    sharedPref.getString(getString(R.string.person_email), getIntent().getStringExtra(getString(R.string.person_email))));
+            // rootRef.push().setValue(a);
+            myRef.push().setValue(a).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Timber.v(e.getLocalizedMessage());
+                }
+            });
 
             startActivity(new Intent(this, MainActivity.class));
         } else {
-            /*Timber.v("this should NEVER happen");*/
+            Timber.v("this should NEVER happen");
         }
 
     }

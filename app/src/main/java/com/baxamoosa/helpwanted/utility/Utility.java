@@ -7,11 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.Loader;
 
-import com.baxamoosa.helpwanted.R;
-import com.baxamoosa.helpwanted.application.HelpWantedApplication;
 import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.model.JobPost;
-import com.firebase.client.Firebase;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -53,7 +50,6 @@ public class Utility {
     };
 
     public static final int LENGTH_OF_VALIDITY = 7; // using a small window for testing purposes. for Production this should be 30
-    public static Firebase mRef = new Firebase(HelpWantedApplication.getAppContext().getResources().getString(R.string.firebase_connection_string));
 
     /**
      * Returns true if the network is available or about to become available.

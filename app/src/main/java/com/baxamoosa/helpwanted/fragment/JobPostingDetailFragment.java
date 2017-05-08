@@ -33,6 +33,8 @@ import com.baxamoosa.helpwanted.data.JobPostContract;
 import com.baxamoosa.helpwanted.ui.JobPostingDetailActivity;
 import com.baxamoosa.helpwanted.utility.Utility;
 
+import timber.log.Timber;
+
 public class JobPostingDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment argument representing the item ID that this fragment represents.
@@ -181,7 +183,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
         /*Timber.v("onLoadFinished(Loader<Cursor> loader, Cursor data)");*/
 
         if (data != null && data.moveToFirst()) {
-            /*Timber.v("data != null && data.moveToFirst()");*/
+            Timber.v("data != null && data.moveToFirst()");
             data.move(position);
 
             _id = data.getString(Utility.COL_ID);
@@ -196,7 +198,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             postDate = data.getDouble(Utility.COL_POSTDATE);
             user = data.getString(Utility.COL_OWNER);
 
-            /*Timber.v("_id: " + _id);
+            Timber.v("_id: " + _id);
             Timber.v("businessID: " + businessId);
             Timber.v("businessName: " + businessName);
             Timber.v("businessAddress: " + businessAddress);
@@ -206,7 +208,7 @@ public class JobPostingDetailFragment extends Fragment implements LoaderManager.
             Timber.v("businessLongitude: " + businessLongitude);
             Timber.v("wageRate: " + wageRate);
             Timber.v("postDate: " + postDate);
-            Timber.v("user: " + user);*/
+            Timber.v("user: " + user);
 
             if (appBarLayout != null) {
                 appBarLayout.setTitle(businessName);

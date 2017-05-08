@@ -1,16 +1,5 @@
 package com.baxamoosa.helpwanted.ui;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,6 +10,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 
 import com.baxamoosa.helpwanted.BuildConfig;
 import com.baxamoosa.helpwanted.R;
@@ -130,7 +129,7 @@ public class SignInActivity extends AppCompatActivity implements
             Timber.v("onActivityResult(int requestCode, int resultCode, Intent data)");
             Timber.v("requestCode: " + requestCode);
             Timber.v("resultCode: " + resultCode);
-            Timber.v("data: " + data);
+            Timber.v("data: " + data.toString());
         }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
